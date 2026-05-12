@@ -206,7 +206,7 @@ function App() {
                       {colorSectionBg === c.hex && <Check className="h-3.5 w-3.5 text-primary" />}
                     </span>
                     <div
-                      className="w-6 h-6 rounded-xs border border-border shrink-0"
+                      className="w-6 h-6 rounded-xs border border-black/10 shrink-0"
                       style={{ backgroundColor: c.hex }}
                     />
                     <span className="flex-1 text-sm">{c.name}</span>
