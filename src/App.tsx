@@ -96,7 +96,7 @@ function ComponentBlock({ name, children, align, headerRight }: { name: string; 
   return (
     <div className="mb-8">
       <div className="flex items-center justify-between mb-3">
-        <div className="font-mono text-xs text-muted-foreground">&lt;{name} /&gt;</div>
+        <div className="font-mono text-base text-muted-foreground">&lt;{name} /&gt;</div>
         {headerRight}
       </div>
       <div className={`flex flex-wrap ${align === "start" ? "items-start" : "items-center"} gap-4 p-6 bg-card border border-border rounded-md`}>
