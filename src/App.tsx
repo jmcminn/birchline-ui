@@ -1,5 +1,7 @@
 import { useState } from "react"
+import { format } from "date-fns"
 import { toast } from "sonner"
+import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -57,7 +59,18 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { MoreHorizontal, Plus, Search, Trash2, Copy, Pencil, ArrowRight, Info, PanelRight, Bell } from "lucide-react"
+import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem, CommandShortcut, CommandSeparator } from "@/components/ui/command"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Calendar } from "@/components/ui/calendar"
+import { Progress } from "@/components/ui/progress"
+import { Skeleton } from "@/components/ui/skeleton"
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
+import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, navigationMenuTriggerStyle } from "@/components/ui/navigation-menu"
+import { Toggle } from "@/components/ui/toggle"
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
+import { Sidebar, SidebarHeader, SidebarContent, SidebarGroup, SidebarGroupLabel, SidebarItem, SidebarFooter } from "@/components/ui/sidebar"
+import { MoreHorizontal, Plus, Search, Trash2, Copy, Pencil, ArrowRight, Info, PanelRight, Bell, CalendarDays, Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, LayoutGrid, List, Home, Settings, FolderOpen, Inbox, FileText, BarChart3, AlertCircle, CheckCircle, AlertTriangle, InfoIcon, Terminal, ChevronRight } from "lucide-react"
 
 function Section({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
   return (
@@ -102,6 +115,23 @@ function ColorSwatch({ color, hex, token, noBorder }: { color: string; hex: stri
       <span className="font-mono text-xs text-gray-700 block">{hex}</span>
       <span className="font-mono text-[11px] text-muted-foreground block">{token}</span>
     </div>
+  )
+}
+
+function DatePickerDemo() {
+  const [date, setDate] = useState<Date>()
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button variant="outline" className={cn("w-[260px] justify-start text-left font-normal", !date && "text-muted-foreground")}>
+          <CalendarDays className="mr-2 h-4 w-4" />
+          {date ? format(date, "PPP") : "Pick a date"}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-0" align="start">
+        <Calendar mode="single" selected={date} onSelect={setDate} />
+      </PopoverContent>
+    </Popover>
   )
 }
 
@@ -675,6 +705,251 @@ function App() {
                 <Button size="sm">Continue <ArrowRight className="ml-2 h-4 w-4" /></Button>
               </CardFooter>
             </Card>
+            </LabeledItem>
+          </ComponentBlock>
+        </Section>
+
+        {/* ── MEDIUM PRIORITY ── */}
+        <Section id="medium" title="Extended Components">
+          <ComponentBlock name="Command">
+            <LabeledItem label="Inline palette">
+              <Command className="rounded-md border border-border shadow-sm w-[350px]">
+                <CommandInput placeholder="Type a command or search…" />
+                <CommandList>
+                  <CommandEmpty>No results found.</CommandEmpty>
+                  <CommandGroup heading="Suggestions">
+                    <CommandItem><FileText className="mr-2 h-4 w-4" /> New document<CommandShortcut>⌘N</CommandShortcut></CommandItem>
+                    <CommandItem><Search className="mr-2 h-4 w-4" /> Search tasks<CommandShortcut>⌘K</CommandShortcut></CommandItem>
+                    <CommandItem><Settings className="mr-2 h-4 w-4" /> Settings<CommandShortcut>⌘,</CommandShortcut></CommandItem>
+                  </CommandGroup>
+                  <CommandSeparator />
+                  <CommandGroup heading="Recent">
+                    <CommandItem><FolderOpen className="mr-2 h-4 w-4" /> Q3 Roadmap</CommandItem>
+                    <CommandItem><BarChart3 className="mr-2 h-4 w-4" /> Analytics Dashboard</CommandItem>
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </LabeledItem>
+          </ComponentBlock>
+
+          <ComponentBlock name="Popover">
+            <LabeledItem label="Filter popover">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline">Open popover</Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-80">
+                  <div className="grid gap-4">
+                    <div className="space-y-2">
+                      <h4 className="font-medium leading-none">Filter tasks</h4>
+                      <p className="text-sm text-muted-foreground">Narrow down your task list.</p>
+                    </div>
+                    <div className="grid gap-2">
+                      <div className="grid grid-cols-3 items-center gap-4">
+                        <Label>Status</Label>
+                        <Select defaultValue="all">
+                          <SelectTrigger className="col-span-2 h-8">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">All</SelectItem>
+                            <SelectItem value="active">Active</SelectItem>
+                            <SelectItem value="done">Done</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="grid grid-cols-3 items-center gap-4">
+                        <Label>Assignee</Label>
+                        <Input className="col-span-2 h-8" placeholder="Search…" />
+                      </div>
+                    </div>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </LabeledItem>
+          </ComponentBlock>
+
+          <ComponentBlock name="Calendar">
+            <LabeledItem label="Date picker">
+              <DatePickerDemo />
+            </LabeledItem>
+            <LabeledItem label="Inline calendar">
+              <div className="border border-border rounded-md bg-card">
+                <Calendar mode="single" className="rounded-md" />
+              </div>
+            </LabeledItem>
+          </ComponentBlock>
+
+          <ComponentBlock name="Progress">
+            <LabeledItem label="25%">
+              <div className="w-[260px]"><Progress value={25} /></div>
+            </LabeledItem>
+            <LabeledItem label="65%">
+              <div className="w-[260px]"><Progress value={65} /></div>
+            </LabeledItem>
+            <LabeledItem label="100%">
+              <div className="w-[260px]"><Progress value={100} /></div>
+            </LabeledItem>
+          </ComponentBlock>
+
+          <ComponentBlock name="Skeleton" align="start">
+            <LabeledItem label="Card skeleton">
+              <div className="flex items-center space-x-4">
+                <Skeleton className="h-12 w-12 rounded-full" />
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-[250px]" />
+                  <Skeleton className="h-4 w-[200px]" />
+                </div>
+              </div>
+            </LabeledItem>
+            <LabeledItem label="List skeleton">
+              <div className="space-y-3 w-[300px]">
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-[80%]" />
+                <Skeleton className="h-4 w-[60%]" />
+              </div>
+            </LabeledItem>
+          </ComponentBlock>
+
+          <ComponentBlock name="Breadcrumb">
+            <LabeledItem label="Default">
+              <Breadcrumb>
+                <BreadcrumbList>
+                  <BreadcrumbItem><BreadcrumbLink>Home</BreadcrumbLink></BreadcrumbItem>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem><BreadcrumbLink>Projects</BreadcrumbLink></BreadcrumbItem>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem><BreadcrumbPage>Q3 Roadmap</BreadcrumbPage></BreadcrumbItem>
+                </BreadcrumbList>
+              </Breadcrumb>
+            </LabeledItem>
+          </ComponentBlock>
+        </Section>
+
+        {/* ── LOW PRIORITY ── */}
+        <Section id="low" title="Layout & Navigation">
+          <ComponentBlock name="NavigationMenu">
+            <LabeledItem label="Top nav">
+              <NavigationMenu>
+                <NavigationMenuList>
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger>Projects</NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <ul className="grid gap-3 p-4 w-[400px] md:grid-cols-2">
+                        <li><NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "w-full justify-start")}>Q3 Roadmap</NavigationMenuLink></li>
+                        <li><NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "w-full justify-start")}>Design System</NavigationMenuLink></li>
+                        <li><NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "w-full justify-start")}>API Migration</NavigationMenuLink></li>
+                        <li><NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "w-full justify-start")}>Mobile App</NavigationMenuLink></li>
+                      </ul>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+                  <NavigationMenuItem>
+                    <NavigationMenuLink className={navigationMenuTriggerStyle()}>Tasks</NavigationMenuLink>
+                  </NavigationMenuItem>
+                  <NavigationMenuItem>
+                    <NavigationMenuLink className={navigationMenuTriggerStyle()}>Reports</NavigationMenuLink>
+                  </NavigationMenuItem>
+                </NavigationMenuList>
+              </NavigationMenu>
+            </LabeledItem>
+          </ComponentBlock>
+
+          <ComponentBlock name="Toggle">
+            <LabeledItem label="Default">
+              <Toggle aria-label="Toggle bold"><Bold className="h-4 w-4" /></Toggle>
+            </LabeledItem>
+            <LabeledItem label="Outline">
+              <Toggle variant="outline" aria-label="Toggle italic"><Italic className="h-4 w-4" /></Toggle>
+            </LabeledItem>
+            <LabeledItem label="With text">
+              <Toggle aria-label="Toggle underline"><Underline className="h-4 w-4 mr-2" /> Underline</Toggle>
+            </LabeledItem>
+          </ComponentBlock>
+
+          <ComponentBlock name="ToggleGroup">
+            <LabeledItem label="Text alignment">
+              <ToggleGroup type="single" defaultValue="left" variant="outline">
+                <ToggleGroupItem value="left" aria-label="Left"><AlignLeft className="h-4 w-4" /></ToggleGroupItem>
+                <ToggleGroupItem value="center" aria-label="Center"><AlignCenter className="h-4 w-4" /></ToggleGroupItem>
+                <ToggleGroupItem value="right" aria-label="Right"><AlignRight className="h-4 w-4" /></ToggleGroupItem>
+              </ToggleGroup>
+            </LabeledItem>
+            <LabeledItem label="View switcher">
+              <ToggleGroup type="single" defaultValue="grid" variant="outline">
+                <ToggleGroupItem value="grid" aria-label="Grid"><LayoutGrid className="h-4 w-4" /></ToggleGroupItem>
+                <ToggleGroupItem value="list" aria-label="List"><List className="h-4 w-4" /></ToggleGroupItem>
+              </ToggleGroup>
+            </LabeledItem>
+          </ComponentBlock>
+
+          <ComponentBlock name="Alert" align="start">
+            <LabeledItem label="Default">
+              <Alert className="w-[400px]">
+                <Terminal className="h-4 w-4" />
+                <AlertTitle>Heads up!</AlertTitle>
+                <AlertDescription>You can add components to your app using the CLI.</AlertDescription>
+              </Alert>
+            </LabeledItem>
+            <LabeledItem label="Destructive">
+              <Alert variant="destructive" className="w-[400px]">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>Your session has expired. Please log in again.</AlertDescription>
+              </Alert>
+            </LabeledItem>
+            <LabeledItem label="Success">
+              <Alert variant="success" className="w-[400px]">
+                <CheckCircle className="h-4 w-4" />
+                <AlertTitle>Success</AlertTitle>
+                <AlertDescription>Your changes have been saved successfully.</AlertDescription>
+              </Alert>
+            </LabeledItem>
+            <LabeledItem label="Warning">
+              <Alert variant="warning" className="w-[400px]">
+                <AlertTriangle className="h-4 w-4" />
+                <AlertTitle>Warning</AlertTitle>
+                <AlertDescription>You are approaching your storage limit.</AlertDescription>
+              </Alert>
+            </LabeledItem>
+            <LabeledItem label="Info">
+              <Alert variant="info" className="w-[400px]">
+                <InfoIcon className="h-4 w-4" />
+                <AlertTitle>Note</AlertTitle>
+                <AlertDescription>This feature is currently in beta.</AlertDescription>
+              </Alert>
+            </LabeledItem>
+          </ComponentBlock>
+
+          <ComponentBlock name="Sidebar" align="start">
+            <LabeledItem label="App sidebar">
+              <Sidebar className="h-[400px] rounded-md border border-border">
+                <SidebarHeader>
+                  <span className="font-serif text-lg font-medium">Range</span>
+                </SidebarHeader>
+                <SidebarContent>
+                  <SidebarGroup>
+                    <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+                    <SidebarItem active><Home className="h-4 w-4" /> Dashboard</SidebarItem>
+                    <SidebarItem><Inbox className="h-4 w-4" /> Inbox</SidebarItem>
+                    <SidebarItem><FileText className="h-4 w-4" /> Tasks</SidebarItem>
+                    <SidebarItem><BarChart3 className="h-4 w-4" /> Reports</SidebarItem>
+                  </SidebarGroup>
+                  <SidebarGroup>
+                    <SidebarGroupLabel>Projects</SidebarGroupLabel>
+                    <SidebarItem><ChevronRight className="h-4 w-4" /> Q3 Roadmap</SidebarItem>
+                    <SidebarItem><ChevronRight className="h-4 w-4" /> Design System</SidebarItem>
+                    <SidebarItem><ChevronRight className="h-4 w-4" /> API Migration</SidebarItem>
+                  </SidebarGroup>
+                </SidebarContent>
+                <SidebarFooter>
+                  <div className="flex items-center gap-2">
+                    <Avatar className="h-7 w-7">
+                      <AvatarFallback className="text-[10px]">JM</AvatarFallback>
+                    </Avatar>
+                    <span className="text-sm">Jason McMinn</span>
+                  </div>
+                </SidebarFooter>
+              </Sidebar>
             </LabeledItem>
           </ComponentBlock>
         </Section>
