@@ -3,9 +3,15 @@ import { useState, useRef, useCallback } from "react"
 import { X } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(
-  ({ className, type, value: controlledValue, onChange, ...props }, ref) => {
-    const [internalValue, setInternalValue] = useState("")
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  wrapperClassName?: string
+}
+
+const Input = React.forwardRef<HTMLInputElement, InputProps>(
+  ({ className, wrapperClassName, type, value: controlledValue, defaultValue, onChange, ...props }, ref) => {
+    const [internalValue, setInternalValue] = useState(
+      defaultValue !== undefined ? String(defaultValue) : ""
+    )
     const inputRef = useRef<HTMLInputElement | null>(null)
 
     const isControlled = controlledValue !== undefined
@@ -39,7 +45,7 @@ const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLI
     }
 
     return (
-      <div className="relative w-full">
+      <div className={cn("relative w-full", wrapperClassName)}>
         <input
           type={type}
           className={cn(

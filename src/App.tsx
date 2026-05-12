@@ -484,11 +484,9 @@ function App() {
               </div>
             </LabeledItem>
             <LabeledItem label="With icon">
-              <div className="w-[260px]">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input className="pl-9" placeholder="Search…" />
-                </div>
+              <div className="w-[260px] relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground z-10" />
+                <Input className="pl-9" placeholder="Search…" />
               </div>
             </LabeledItem>
           </ComponentBlock>
