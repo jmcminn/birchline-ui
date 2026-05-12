@@ -265,109 +265,133 @@ function App() {
             </LabeledItem>
           </ComponentBlock>
 
-          <ComponentBlock name="Input">
-            <div className="w-[260px]">
-              <Input placeholder="Search tasks…" />
-            </div>
-            <div className="w-[260px]">
-              <Input defaultValue="Weekly planning" />
-            </div>
-            <div className="w-[260px]">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input className="pl-9" placeholder="Search…" />
+          <ComponentBlock name="Input" align="start">
+            <LabeledItem label="Placeholder">
+              <div className="w-[260px]">
+                <Input placeholder="Search tasks…" />
               </div>
-            </div>
+            </LabeledItem>
+            <LabeledItem label="Filled">
+              <div className="w-[260px]">
+                <Input defaultValue="Weekly planning" />
+              </div>
+            </LabeledItem>
+            <LabeledItem label="With icon">
+              <div className="w-[260px]">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input className="pl-9" placeholder="Search…" />
+                </div>
+              </div>
+            </LabeledItem>
           </ComponentBlock>
 
-          <ComponentBlock name="Textarea">
-            <div className="w-[340px]">
-              <Textarea placeholder="Add a description…" />
-            </div>
-            <div className="w-[340px]">
-              <Textarea defaultValue="Review milestones, assign owners, and surface blockers before they cascade. Make sure to update the project board after the meeting." />
-            </div>
+          <ComponentBlock name="Textarea" align="start">
+            <LabeledItem label="Placeholder">
+              <div className="w-[340px]">
+                <Textarea placeholder="Add a description…" />
+              </div>
+            </LabeledItem>
+            <LabeledItem label="Filled">
+              <div className="w-[340px]">
+                <Textarea defaultValue="Review milestones, assign owners, and surface blockers before they cascade. Make sure to update the project board after the meeting." />
+              </div>
+            </LabeledItem>
           </ComponentBlock>
 
-          <ComponentBlock name="Select">
-            <div className="w-[260px]">
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder="Choose a status…" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="draft">Draft</SelectItem>
-                  <SelectItem value="review">In review</SelectItem>
-                  <SelectItem value="done">Done</SelectItem>
-                  <SelectItem value="archived">Archived</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="w-[260px]">
-              <Select defaultValue="review">
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="draft">Draft</SelectItem>
-                  <SelectItem value="review">In review</SelectItem>
-                  <SelectItem value="done">Done</SelectItem>
-                  <SelectItem value="archived">Archived</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+          <ComponentBlock name="Select" align="start">
+            <LabeledItem label="Placeholder">
+              <div className="w-[260px]">
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choose a status…" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="draft">Draft</SelectItem>
+                    <SelectItem value="review">In review</SelectItem>
+                    <SelectItem value="done">Done</SelectItem>
+                    <SelectItem value="archived">Archived</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </LabeledItem>
+            <LabeledItem label="Pre-selected">
+              <div className="w-[260px]">
+                <Select defaultValue="review">
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="draft">Draft</SelectItem>
+                    <SelectItem value="review">In review</SelectItem>
+                    <SelectItem value="done">Done</SelectItem>
+                    <SelectItem value="archived">Archived</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </LabeledItem>
           </ComponentBlock>
 
           <ComponentBlock name="DropdownMenu">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="icon">
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start">
-                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem><Pencil className="mr-2 h-4 w-4" /> Edit task</DropdownMenuItem>
-                <DropdownMenuItem><Copy className="mr-2 h-4 w-4" /> Duplicate</DropdownMenuItem>
-                <DropdownMenuItem><ArrowRight className="mr-2 h-4 w-4" /> Move to…</DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-destructive focus:text-destructive">
-                  <Trash2 className="mr-2 h-4 w-4" /> Delete
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <LabeledItem label="Action menu">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="icon">
+                    <MoreHorizontal className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start">
+                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem><Pencil className="mr-2 h-4 w-4" /> Edit task</DropdownMenuItem>
+                  <DropdownMenuItem><Copy className="mr-2 h-4 w-4" /> Duplicate</DropdownMenuItem>
+                  <DropdownMenuItem><ArrowRight className="mr-2 h-4 w-4" /> Move to…</DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem className="text-destructive focus:text-destructive">
+                    <Trash2 className="mr-2 h-4 w-4" /> Delete
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </LabeledItem>
           </ComponentBlock>
 
           <ComponentBlock name="Checkbox">
-            <div className="flex items-center gap-2.5">
-              <Checkbox id="c1" checked={checked1} onCheckedChange={(v) => setChecked1(v === true)} />
-              <Label htmlFor="c1" className="cursor-pointer">Notify assignees</Label>
-            </div>
-            <div className="flex items-center gap-2.5">
-              <Checkbox id="c2" checked={checked2} onCheckedChange={(v) => setChecked2(v === true)} />
-              <Label htmlFor="c2" className="cursor-pointer">Archive on complete</Label>
-            </div>
+            <LabeledItem label="Unchecked">
+              <div className="flex items-center gap-2.5">
+                <Checkbox id="c1" checked={checked1} onCheckedChange={(v) => setChecked1(v === true)} />
+                <Label htmlFor="c1" className="cursor-pointer">Notify assignees</Label>
+              </div>
+            </LabeledItem>
+            <LabeledItem label="Checked">
+              <div className="flex items-center gap-2.5">
+                <Checkbox id="c2" checked={checked2} onCheckedChange={(v) => setChecked2(v === true)} />
+                <Label htmlFor="c2" className="cursor-pointer">Archive on complete</Label>
+              </div>
+            </LabeledItem>
           </ComponentBlock>
 
           <ComponentBlock name="Switch">
-            <div className="flex items-center gap-3">
-              <Switch id="s1" checked={switchOn} onCheckedChange={setSwitchOn} />
-              <Label htmlFor="s1" className="cursor-pointer">Enable notifications</Label>
-            </div>
-            <div className="flex items-center gap-3">
-              <Switch id="s2" />
-              <Label htmlFor="s2" className="cursor-pointer">Dark mode</Label>
-            </div>
+            <LabeledItem label="On">
+              <div className="flex items-center gap-3">
+                <Switch id="s1" checked={switchOn} onCheckedChange={setSwitchOn} />
+                <Label htmlFor="s1" className="cursor-pointer">Enable notifications</Label>
+              </div>
+            </LabeledItem>
+            <LabeledItem label="Off">
+              <div className="flex items-center gap-3">
+                <Switch id="s2" />
+                <Label htmlFor="s2" className="cursor-pointer">Dark mode</Label>
+              </div>
+            </LabeledItem>
           </ComponentBlock>
 
           <ComponentBlock name="Badge">
-            <Badge variant="default">Draft</Badge>
-            <Badge variant="accent">In review</Badge>
-            <Badge variant="success">Done</Badge>
-            <Badge variant="warning">Overdue</Badge>
-            <Badge variant="destructive">Failed</Badge>
-            <Badge variant="info">Info</Badge>
+            <LabeledItem label="Default"><Badge variant="default">Draft</Badge></LabeledItem>
+            <LabeledItem label="Accent"><Badge variant="accent">In review</Badge></LabeledItem>
+            <LabeledItem label="Success"><Badge variant="success">Done</Badge></LabeledItem>
+            <LabeledItem label="Warning"><Badge variant="warning">Overdue</Badge></LabeledItem>
+            <LabeledItem label="Destructive"><Badge variant="destructive">Failed</Badge></LabeledItem>
+            <LabeledItem label="Info"><Badge variant="info">Info</Badge></LabeledItem>
           </ComponentBlock>
 
           <ComponentBlock name="Avatar">
@@ -406,54 +430,64 @@ function App() {
           </ComponentBlock>
 
           <ComponentBlock name="Tooltip">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="outline" size="icon">
-                  <Info className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>View project details</p>
-              </TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="outline" size="icon">
-                  <Bell className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>3 unread notifications</p>
-              </TooltipContent>
-            </Tooltip>
-            <span className="text-sm text-muted-foreground ml-2">Hover the icons</span>
+            <LabeledItem label="Info">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="outline" size="icon">
+                    <Info className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>View project details</p>
+                </TooltipContent>
+              </Tooltip>
+            </LabeledItem>
+            <LabeledItem label="Notification">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="outline" size="icon">
+                    <Bell className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>3 unread notifications</p>
+                </TooltipContent>
+              </Tooltip>
+            </LabeledItem>
           </ComponentBlock>
 
           <ComponentBlock name="Toast">
-            <Button
-              variant="outline"
-              onClick={() => toast.success("Task created", { description: "Weekly planning has been added to your board." })}
-            >
-              Show success toast
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => toast.error("Something went wrong", { description: "Please try again later." })}
-            >
-              Show error toast
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => toast("Task updated", {
-                description: "Status changed to In Progress.",
-                action: { label: "Undo", onClick: () => toast("Undone!") },
-              })}
-            >
-              Toast with action
-            </Button>
+            <LabeledItem label="Success">
+              <Button
+                variant="outline"
+                onClick={() => toast.success("Task created", { description: "Weekly planning has been added to your board." })}
+              >
+                Show success toast
+              </Button>
+            </LabeledItem>
+            <LabeledItem label="Error">
+              <Button
+                variant="outline"
+                onClick={() => toast.error("Something went wrong", { description: "Please try again later." })}
+              >
+                Show error toast
+              </Button>
+            </LabeledItem>
+            <LabeledItem label="With action">
+              <Button
+                variant="outline"
+                onClick={() => toast("Task updated", {
+                  description: "Status changed to In Progress.",
+                  action: { label: "Undo", onClick: () => toast("Undone!") },
+                })}
+              >
+                Toast with action
+              </Button>
+            </LabeledItem>
           </ComponentBlock>
 
           <ComponentBlock name="Dialog">
+            <LabeledItem label="Form modal">
             <Dialog>
               <DialogTrigger asChild>
                 <Button><Plus className="mr-2 h-4 w-4" /> Create task</Button>
@@ -492,9 +526,11 @@ function App() {
                 </DialogFooter>
               </DialogContent>
             </Dialog>
+            </LabeledItem>
           </ComponentBlock>
 
           <ComponentBlock name="AlertDialog">
+            <LabeledItem label="Destructive confirm">
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button variant="destructive"><Trash2 className="mr-2 h-4 w-4" /> Delete project</Button>
@@ -514,9 +550,11 @@ function App() {
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
+            </LabeledItem>
           </ComponentBlock>
 
           <ComponentBlock name="Sheet">
+            <LabeledItem label="Right panel">
             <Sheet>
               <SheetTrigger asChild>
                 <Button variant="outline"><PanelRight className="mr-2 h-4 w-4" /> Open detail panel</Button>
@@ -551,6 +589,7 @@ function App() {
                 </div>
               </SheetContent>
             </Sheet>
+            </LabeledItem>
           </ComponentBlock>
 
           <ComponentBlock name="Table" align="start">
@@ -592,26 +631,29 @@ function App() {
             </div>
           </ComponentBlock>
 
-          <ComponentBlock name="Tabs">
-            <Tabs defaultValue="overview" className="w-full">
-              <TabsList>
-                <TabsTrigger value="overview">Overview</TabsTrigger>
-                <TabsTrigger value="tasks">Tasks</TabsTrigger>
-                <TabsTrigger value="settings">Settings</TabsTrigger>
-              </TabsList>
-              <TabsContent value="overview" className="p-4 text-sm text-muted-foreground">
-                Project overview content goes here.
-              </TabsContent>
-              <TabsContent value="tasks" className="p-4 text-sm text-muted-foreground">
-                Task list content goes here.
-              </TabsContent>
-              <TabsContent value="settings" className="p-4 text-sm text-muted-foreground">
-                Settings content goes here.
-              </TabsContent>
-            </Tabs>
+          <ComponentBlock name="Tabs" align="start">
+            <LabeledItem label="Default">
+              <Tabs defaultValue="overview" className="w-full">
+                <TabsList>
+                  <TabsTrigger value="overview">Overview</TabsTrigger>
+                  <TabsTrigger value="tasks">Tasks</TabsTrigger>
+                  <TabsTrigger value="settings">Settings</TabsTrigger>
+                </TabsList>
+                <TabsContent value="overview" className="p-4 text-sm text-muted-foreground">
+                  Project overview content goes here.
+                </TabsContent>
+                <TabsContent value="tasks" className="p-4 text-sm text-muted-foreground">
+                  Task list content goes here.
+                </TabsContent>
+                <TabsContent value="settings" className="p-4 text-sm text-muted-foreground">
+                  Settings content goes here.
+                </TabsContent>
+              </Tabs>
+            </LabeledItem>
           </ComponentBlock>
 
-          <ComponentBlock name="Card">
+          <ComponentBlock name="Card" align="start">
+            <LabeledItem label="With progress">
             <Card className="w-[350px]">
               <CardHeader>
                 <CardTitle>Weekly planning</CardTitle>
@@ -633,6 +675,7 @@ function App() {
                 <Button size="sm">Continue <ArrowRight className="ml-2 h-4 w-4" /></Button>
               </CardFooter>
             </Card>
+            </LabeledItem>
           </ComponentBlock>
         </Section>
       </div>
