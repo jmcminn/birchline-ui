@@ -163,7 +163,7 @@ function UserSelector({
               </button>
             )}
           </div>
-          <CommandList className="max-h-[min(60vh,400px)]">
+          <CommandList className="max-h-[calc(var(--radix-popover-content-available-height,50vh)-64px-44px)] overflow-y-auto">
             <CommandEmpty>No users found.</CommandEmpty>
             <CommandGroup>
               <CommandItem
