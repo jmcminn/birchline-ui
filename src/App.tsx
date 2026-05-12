@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { format } from "date-fns"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
@@ -70,7 +70,17 @@ import { Toggle } from "@/components/ui/toggle"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
 import { Sidebar, SidebarHeader, SidebarContent, SidebarGroup, SidebarGroupLabel, SidebarItem, SidebarFooter } from "@/components/ui/sidebar"
-import { MoreHorizontal, Plus, Search, Trash2, Copy, Pencil, ArrowRight, Info, PanelRight, Bell, CalendarDays, Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, LayoutGrid, List, Home, Settings, FolderOpen, Inbox, FileText, BarChart3, AlertCircle, CheckCircle, AlertTriangle, InfoIcon, Terminal, ChevronRight, Check, Palette } from "lucide-react"
+import { MoreHorizontal, Plus, Search, Trash2, Copy, Pencil, ArrowRight, Info, PanelRight, Bell, CalendarDays, Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, LayoutGrid, List, Home, Settings, FolderOpen, Inbox, FileText, BarChart3, AlertCircle, CheckCircle, AlertTriangle, InfoIcon, Terminal, ChevronRight, Check, Palette, ArrowUpDown, ArrowUp, ArrowDown, X } from "lucide-react"
+import {
+  useReactTable,
+  getCoreRowModel,
+  getSortedRowModel,
+  getFilteredRowModel,
+  flexRender,
+  type ColumnDef,
+  type SortingState,
+  type ColumnFiltersState,
+} from "@tanstack/react-table"
 
 function Section({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
   return (
@@ -153,12 +163,56 @@ const birchlineColors = [
   { name: "Sea Glass", hex: "#5B8E8A" },
 ]
 
-const tasks = [
+type Task = {
+  id: string
+  title: string
+  status: "In Progress" | "Done" | "Todo" | "Backlog"
+  priority: "High" | "Medium" | "Low"
+  assignee: string
+}
+
+const tasks: Task[] = [
   { id: "TASK-001", title: "Design onboarding flow", status: "In Progress", priority: "High", assignee: "JM" },
   { id: "TASK-002", title: "Set up CI/CD pipeline", status: "Done", priority: "Medium", assignee: "AK" },
   { id: "TASK-003", title: "Write API documentation", status: "Todo", priority: "Low", assignee: "SR" },
   { id: "TASK-004", title: "Fix login redirect bug", status: "In Progress", priority: "High", assignee: "JM" },
   { id: "TASK-005", title: "Add dark mode support", status: "Backlog", priority: "Medium", assignee: "LP" },
+  { id: "TASK-006", title: "Migrate to PostgreSQL 16", status: "Todo", priority: "High", assignee: "AK" },
+  { id: "TASK-007", title: "Implement SSO integration", status: "In Progress", priority: "High", assignee: "SR" },
+  { id: "TASK-008", title: "Refactor notification service", status: "Backlog", priority: "Low", assignee: "LP" },
+  { id: "TASK-009", title: "Add export to CSV", status: "Done", priority: "Medium", assignee: "JM" },
+  { id: "TASK-010", title: "Performance audit homepage", status: "Todo", priority: "Medium", assignee: "AK" },
+]
+
+const priorityOrder: Record<string, number> = { High: 0, Medium: 1, Low: 2 }
+const statusOrder: Record<string, number> = { "In Progress": 0, Todo: 1, Backlog: 2, Done: 3 }
+
+const taskColumns: ColumnDef<Task>[] = [
+  {
+    accessorKey: "id",
+    header: "ID",
+    enableColumnFilter: false,
+  },
+  {
+    accessorKey: "title",
+    header: "Title",
+  },
+  {
+    accessorKey: "status",
+    header: "Status",
+    sortingFn: (a, b) => (statusOrder[a.getValue("status") as string] ?? 99) - (statusOrder[b.getValue("status") as string] ?? 99),
+  },
+  {
+    accessorKey: "priority",
+    header: "Priority",
+    sortingFn: (a, b) => (priorityOrder[a.getValue("priority") as string] ?? 99) - (priorityOrder[b.getValue("priority") as string] ?? 99),
+  },
+  {
+    accessorKey: "assignee",
+    header: "Assignee",
+    enableSorting: false,
+    enableColumnFilter: false,
+  },
 ]
 
 function App() {
@@ -167,6 +221,23 @@ function App() {
   const [switchOn, setSwitchOn] = useState(true)
   const [tableDensity, setTableDensity] = useState<TableDensity>("default")
   const [colorSectionBg, setColorSectionBg] = useState("#FAF9F5")
+  const [sorting, setSorting] = useState<SortingState>([])
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [globalFilter, setGlobalFilter] = useState("")
+
+  const columns = useMemo(() => taskColumns, [])
+
+  const table = useReactTable({
+    data: tasks,
+    columns,
+    state: { sorting, columnFilters, globalFilter },
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    onGlobalFilterChange: setGlobalFilter,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+  })
 
   return (
     <TooltipProvider>
@@ -677,8 +748,24 @@ function App() {
 
           <ComponentBlock name="Table" align="start">
             <div className="w-full">
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-sm text-muted-foreground">Row density</span>
+              <div className="flex items-center gap-3 mb-3">
+                <div className="relative flex-1">
+                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+                  <Input
+                    placeholder="Filter tasks…"
+                    value={globalFilter}
+                    onChange={(e) => setGlobalFilter(e.target.value)}
+                    className="pl-8 h-8 text-sm"
+                  />
+                  {globalFilter && (
+                    <button
+                      onClick={() => setGlobalFilter("")}
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  )}
+                </div>
                 <Select value={tableDensity} onValueChange={(v) => setTableDensity(v as TableDensity)}>
                   <SelectTrigger className="w-[160px] h-8 text-xs">
                     <SelectValue />
@@ -694,38 +781,83 @@ function App() {
               <div className="border border-border rounded-md overflow-hidden">
               <Table density={tableDensity}>
                 <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[100px]">ID</TableHead>
-                    <TableHead>Title</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Priority</TableHead>
-                    <TableHead className="w-[60px]">Assignee</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {tasks.map((task) => (
-                    <TableRow key={task.id}>
-                      <TableCell className="font-mono text-xs text-muted-foreground">{task.id}</TableCell>
-                      <TableCell className="font-medium">{task.title}</TableCell>
-                      <TableCell>
-                        <Badge variant={
-                          task.status === "Done" ? "success" :
-                          task.status === "In Progress" ? "accent" :
-                          task.status === "Todo" ? "warning" : "default"
-                        }>
-                          {task.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-sm">{task.priority}</TableCell>
-                      <TableCell>
-                        <Avatar className="h-7 w-7">
-                          <AvatarFallback className="text-[10px]">{task.assignee}</AvatarFallback>
-                        </Avatar>
-                      </TableCell>
+                  {table.getHeaderGroups().map((headerGroup) => (
+                    <TableRow key={headerGroup.id}>
+                      {headerGroup.headers.map((header) => (
+                        <TableHead
+                          key={header.id}
+                          className={cn(
+                            header.column.getCanSort() && "cursor-pointer select-none",
+                            header.id === "id" && "w-[100px]",
+                            header.id === "assignee" && "w-[80px]",
+                          )}
+                          onClick={header.column.getToggleSortingHandler()}
+                        >
+                          <div className="flex items-center gap-1.5">
+                            {flexRender(header.column.columnDef.header, header.getContext())}
+                            {header.column.getCanSort() && (
+                              header.column.getIsSorted() === "asc" ? (
+                                <ArrowUp className="h-3.5 w-3.5 text-primary" />
+                              ) : header.column.getIsSorted() === "desc" ? (
+                                <ArrowDown className="h-3.5 w-3.5 text-primary" />
+                              ) : (
+                                <ArrowUpDown className="h-3.5 w-3.5 text-muted-foreground/50" />
+                              )
+                            )}
+                          </div>
+                        </TableHead>
+                      ))}
                     </TableRow>
                   ))}
+                </TableHeader>
+                <TableBody>
+                  {table.getRowModel().rows.length ? (
+                    table.getRowModel().rows.map((row) => (
+                      <TableRow key={row.id}>
+                        <TableCell className="font-mono text-xs text-muted-foreground">{row.original.id}</TableCell>
+                        <TableCell className="font-medium">{row.original.title}</TableCell>
+                        <TableCell>
+                          <Badge variant={
+                            row.original.status === "Done" ? "success" :
+                            row.original.status === "In Progress" ? "accent" :
+                            row.original.status === "Todo" ? "warning" : "default"
+                          }>
+                            {row.original.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-sm">{row.original.priority}</TableCell>
+                        <TableCell>
+                          <Avatar className="h-7 w-7">
+                            <AvatarFallback className="text-[10px]">{row.original.assignee}</AvatarFallback>
+                          </Avatar>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
+                        No tasks found.
+                      </TableCell>
+                    </TableRow>
+                  )}
                 </TableBody>
               </Table>
+              </div>
+              <div className="flex items-center justify-between mt-3">
+                <span className="text-xs text-muted-foreground">
+                  {table.getFilteredRowModel().rows.length} of {tasks.length} task(s)
+                </span>
+                {(sorting.length > 0 || globalFilter) && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 text-xs"
+                    onClick={() => { setSorting([]); setGlobalFilter(""); setColumnFilters([]) }}
+                  >
+                    <X className="h-3 w-3 mr-1" />
+                    Reset
+                  </Button>
+                )}
               </div>
             </div>
           </ComponentBlock>
