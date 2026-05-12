@@ -838,10 +838,11 @@ function App() {
             </LabeledItem>
           </ComponentBlock>
 
-          <ComponentBlock name="Calendar">
+          <ComponentBlock name="Calendar" align="start">
             <LabeledItem label="Date picker">
               <DatePickerDemo />
             </LabeledItem>
+            <div className="w-32" />
             <LabeledItem label="Inline calendar">
               <div className="border border-border rounded-md bg-card">
                 <Calendar mode="single" className="rounded-md" />
