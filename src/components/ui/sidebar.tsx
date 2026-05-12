@@ -24,7 +24,7 @@ SidebarHeader.displayName = "SidebarHeader"
 
 const SidebarContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn("flex-1 overflow-y-auto py-2", className)} {...props} />
+    <div ref={ref} className={cn("flex-1 py-2", className)} {...props} />
   )
 )
 SidebarContent.displayName = "SidebarContent"

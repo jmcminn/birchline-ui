@@ -939,7 +939,7 @@ function App() {
 
           <ComponentBlock name="Sidebar" align="start">
             <LabeledItem label="App sidebar">
-              <Sidebar className="h-[400px] rounded-md border border-border">
+              <Sidebar className="rounded-md border border-border">
                 <SidebarHeader>
                   <span className="font-serif text-lg font-medium">Range</span>
                 </SidebarHeader>
