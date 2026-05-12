@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react"
-import { Check, UserPlus, UserRound } from "lucide-react"
+import { Check, UserPlus, UserRound, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem, CommandSeparator } from "@/components/ui/command"
@@ -94,6 +94,7 @@ function UserSelector({
   className,
 }: UserSelectorProps) {
   const [open, setOpen] = useState(false)
+  const [search, setSearch] = useState("")
 
   const selectedUser = useMemo(
     () => users.find((u) => u.id === value) ?? null,
@@ -113,10 +114,11 @@ function UserSelector({
   function handleSelect(userId: string | null) {
     onSelect?.(userId)
     setOpen(false)
+    setSearch("")
   }
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={(v) => { setOpen(v); if (!v) setSearch("") }}>
       <PopoverTrigger asChild>
         <button
           className={cn(
@@ -140,10 +142,28 @@ function UserSelector({
           )}
         </button>
       </PopoverTrigger>
-      <PopoverContent className="w-[340px] p-0" align="start">
-        <Command>
-          <CommandInput placeholder="Search users" />
-          <CommandList>
+      <PopoverContent
+        className="w-fit min-w-[280px] max-w-[400px] p-0"
+        align="start"
+        collisionPadding={16}
+      >
+        <Command value={search} onValueChange={setSearch}>
+          <div className="relative">
+            <CommandInput
+              placeholder="Search users"
+              value={search}
+              onValueChange={setSearch}
+            />
+            {search.length > 0 && (
+              <button
+                onClick={() => setSearch("")}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
+          </div>
+          <CommandList className="max-h-[min(60vh,400px)]">
             <CommandEmpty>No users found.</CommandEmpty>
             <CommandGroup>
               <CommandItem
