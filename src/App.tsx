@@ -71,7 +71,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
 import { Sidebar, SidebarHeader, SidebarContent, SidebarGroup, SidebarGroupLabel, SidebarItem, SidebarFooter } from "@/components/ui/sidebar"
 import { UserSelector, type User } from "@/components/ui/user-selector"
-import { MoreHorizontal, Plus, Search, Trash2, Copy, Pencil, ArrowRight, Info, PanelRight, Bell, CalendarDays, Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, LayoutGrid, List, Home, Settings, FolderOpen, Inbox, FileText, BarChart3, AlertCircle, CheckCircle, AlertTriangle, InfoIcon, Terminal, ChevronRight, Check, Palette, ArrowUpDown, ArrowUp, ArrowDown, X } from "lucide-react"
+import { MoreHorizontal, Plus, Search, Trash2, Copy, Pencil, ArrowRight, Info, PanelRight, Bell, CalendarDays, Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, LayoutGrid, List, Home, Settings, FolderOpen, Inbox, FileText, BarChart3, AlertCircle, CheckCircle, AlertTriangle, InfoIcon, Terminal, ChevronRight, Check, Palette, ArrowUpDown, ArrowUp, ArrowDown, X, GripVertical } from "lucide-react"
 import {
   useReactTable,
   getCoreRowModel,
@@ -81,7 +81,25 @@ import {
   type ColumnDef,
   type SortingState,
   type ColumnFiltersState,
+  type ColumnOrderState,
 } from "@tanstack/react-table"
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core"
+import {
+  arrayMove,
+  SortableContext,
+  horizontalListSortingStrategy,
+  useSortable,
+} from "@dnd-kit/sortable"
+import { CSS } from "@dnd-kit/utilities"
+import { restrictToHorizontalAxis } from "@dnd-kit/modifiers"
 
 function Section({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
   return (
@@ -146,6 +164,74 @@ function HighlightText({ text, query }: { text: string; query: string }) {
         )
       )}
     </>
+  )
+}
+
+function DraggableTableHeader({
+  header,
+  globalFilter,
+}: {
+  header: import("@tanstack/react-table").Header<Task, unknown>
+  globalFilter: string
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: header.column.id,
+  })
+
+  const style: React.CSSProperties = {
+    width: header.getSize(),
+    transform: CSS.Translate?.toString(transform) ?? undefined,
+    transition,
+    opacity: isDragging ? 0.6 : 1,
+    position: "relative",
+  }
+
+  return (
+    <TableHead
+      ref={setNodeRef}
+      style={style}
+      className={cn(
+        header.column.getCanSort() && "select-none",
+        isDragging && "z-10",
+      )}
+    >
+      <div className="flex items-center gap-1">
+        <button
+          className="cursor-grab active:cursor-grabbing text-muted-foreground/40 hover:text-muted-foreground -ml-1 shrink-0"
+          {...attributes}
+          {...listeners}
+        >
+          <GripVertical className="h-3.5 w-3.5" />
+        </button>
+        <div
+          className={cn("flex items-center gap-1.5 flex-1", header.column.getCanSort() && "cursor-pointer")}
+          onClick={header.column.getToggleSortingHandler()}
+        >
+          {flexRender(header.column.columnDef.header, header.getContext())}
+          {header.column.getCanSort() && (
+            header.column.getIsSorted() === "asc" ? (
+              <ArrowUp className="h-3.5 w-3.5 text-primary" />
+            ) : header.column.getIsSorted() === "desc" ? (
+              <ArrowDown className="h-3.5 w-3.5 text-primary" />
+            ) : (
+              <ArrowUpDown className="h-3.5 w-3.5 text-muted-foreground/50" />
+            )
+          )}
+        </div>
+        {header.column.getCanResize() && (
+          <div
+            onMouseDown={header.getResizeHandler()}
+            onTouchStart={header.getResizeHandler()}
+            onClick={(e) => e.stopPropagation()}
+            className={cn(
+              "absolute right-0 top-0 h-full w-1 cursor-col-resize select-none touch-none",
+              "hover:bg-primary/30",
+              header.column.getIsResizing() && "bg-primary/50",
+            )}
+          />
+        )}
+      </div>
+    </TableHead>
   )
 }
 
@@ -214,26 +300,36 @@ const taskColumns: ColumnDef<Task>[] = [
     accessorKey: "id",
     header: "ID",
     enableColumnFilter: false,
+    size: 100,
+    minSize: 70,
   },
   {
     accessorKey: "title",
     header: "Title",
+    size: 280,
+    minSize: 120,
   },
   {
     accessorKey: "status",
     header: "Status",
     sortingFn: (a, b) => (statusOrder[a.getValue("status") as string] ?? 99) - (statusOrder[b.getValue("status") as string] ?? 99),
+    size: 140,
+    minSize: 90,
   },
   {
     accessorKey: "priority",
     header: "Priority",
     sortingFn: (a, b) => (priorityOrder[a.getValue("priority") as string] ?? 99) - (priorityOrder[b.getValue("priority") as string] ?? 99),
+    size: 120,
+    minSize: 80,
   },
   {
     accessorKey: "assignee",
     header: "Assignee",
     enableSorting: false,
     enableColumnFilter: false,
+    size: 90,
+    minSize: 60,
   },
 ]
 
@@ -271,20 +367,42 @@ function App() {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [globalFilter, setGlobalFilter] = useState("")
+  const [columnOrder, setColumnOrder] = useState<ColumnOrderState>(
+    taskColumns.map((c) => (c as { accessorKey: string }).accessorKey)
+  )
 
   const columns = useMemo(() => taskColumns, [])
 
   const table = useReactTable({
     data: tasks,
     columns,
-    state: { sorting, columnFilters, globalFilter },
+    state: { sorting, columnFilters, globalFilter, columnOrder },
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
+    onColumnOrderChange: setColumnOrder,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    enableColumnResizing: true,
+    columnResizeMode: "onChange",
   })
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor)
+  )
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event
+    if (active && over && active.id !== over.id) {
+      setColumnOrder((prev) => {
+        const oldIndex = prev.indexOf(active.id as string)
+        const newIndex = prev.indexOf(over.id as string)
+        return arrayMove(prev, oldIndex, newIndex)
+      })
+    }
+  }
 
   return (
     <TooltipProvider>
@@ -873,69 +991,69 @@ function App() {
                 </div>
               </div>
               <div className="border border-border rounded-md overflow-hidden">
-              <Table density={tableDensity}>
+              <Table density={tableDensity} className="w-full" style={{ tableLayout: "fixed" }}>
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  modifiers={[restrictToHorizontalAxis]}
+                  onDragEnd={handleDragEnd}
+                >
                 <TableHeader>
                   {table.getHeaderGroups().map((headerGroup) => (
                     <TableRow key={headerGroup.id}>
-                      {headerGroup.headers.map((header) => (
-                        <TableHead
-                          key={header.id}
-                          className={cn(
-                            header.column.getCanSort() && "cursor-pointer select-none",
-                            header.id === "id" && "w-[100px]",
-                            header.id === "assignee" && "w-[80px]",
-                          )}
-                          onClick={header.column.getToggleSortingHandler()}
-                        >
-                          <div className="flex items-center gap-1.5">
-                            {flexRender(header.column.columnDef.header, header.getContext())}
-                            {header.column.getCanSort() && (
-                              header.column.getIsSorted() === "asc" ? (
-                                <ArrowUp className="h-3.5 w-3.5 text-primary" />
-                              ) : header.column.getIsSorted() === "desc" ? (
-                                <ArrowDown className="h-3.5 w-3.5 text-primary" />
-                              ) : (
-                                <ArrowUpDown className="h-3.5 w-3.5 text-muted-foreground/50" />
-                              )
-                            )}
-                          </div>
-                        </TableHead>
-                      ))}
+                      <SortableContext items={columnOrder} strategy={horizontalListSortingStrategy}>
+                        {headerGroup.headers.map((header) => (
+                          <DraggableTableHeader
+                            key={header.id}
+                            header={header}
+                            globalFilter={globalFilter}
+                          />
+                        ))}
+                      </SortableContext>
                     </TableRow>
                   ))}
                 </TableHeader>
+                </DndContext>
                 <TableBody>
                   {table.getRowModel().rows.length ? (
                     table.getRowModel().rows.map((row) => (
                       <TableRow key={row.id}>
-                        <TableCell className="font-mono text-xs text-muted-foreground">
-                          <HighlightText text={row.original.id} query={globalFilter} />
-                        </TableCell>
-                        <TableCell className="font-medium">
-                          <HighlightText text={row.original.title} query={globalFilter} />
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant={
-                            row.original.status === "Done" ? "success" :
-                            row.original.status === "In Progress" ? "accent" :
-                            row.original.status === "Todo" ? "warning" : "default"
-                          }>
-                            <HighlightText text={row.original.status} query={globalFilter} />
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-sm">
-                          <HighlightText text={row.original.priority} query={globalFilter} />
-                        </TableCell>
-                        <TableCell>
-                          <Avatar className="h-7 w-7">
-                            <AvatarFallback className="text-[10px]">{row.original.assignee}</AvatarFallback>
-                          </Avatar>
-                        </TableCell>
+                        {row.getVisibleCells().map((cell) => {
+                          const colId = cell.column.id
+                          const val = cell.getValue() as string
+                          return (
+                            <TableCell
+                              key={cell.id}
+                              style={{ width: cell.column.getSize() }}
+                              className={cn(
+                                colId === "id" && "font-mono text-xs text-muted-foreground",
+                                colId === "title" && "font-medium",
+                                colId === "priority" && "text-sm",
+                              )}
+                            >
+                              {colId === "status" ? (
+                                <Badge variant={
+                                  val === "Done" ? "success" :
+                                  val === "In Progress" ? "accent" :
+                                  val === "Todo" ? "warning" : "default"
+                                }>
+                                  <HighlightText text={val} query={globalFilter} />
+                                </Badge>
+                              ) : colId === "assignee" ? (
+                                <Avatar className="h-7 w-7">
+                                  <AvatarFallback className="text-[10px]">{val}</AvatarFallback>
+                                </Avatar>
+                              ) : (
+                                <HighlightText text={val} query={globalFilter} />
+                              )}
+                            </TableCell>
+                          )
+                        })}
                       </TableRow>
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
+                      <TableCell colSpan={columnOrder.length} className="h-24 text-center text-muted-foreground">
                         No tasks found.
                       </TableCell>
                     </TableRow>
