@@ -842,7 +842,7 @@ function App() {
             <LabeledItem label="Date picker">
               <DatePickerDemo />
             </LabeledItem>
-            <div className="w-32" />
+            <div className="w-16" />
             <LabeledItem label="Inline calendar">
               <div className="border border-border rounded-md bg-card">
                 <Calendar mode="single" className="rounded-md" />
