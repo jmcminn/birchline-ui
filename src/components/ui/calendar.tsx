@@ -14,8 +14,8 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
       className={cn("p-4", className)}
       classNames={{
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
-        month: "flex flex-wrap items-center gap-y-4",
-        month_caption: "flex-1 text-center",
+        month: "grid grid-cols-[auto_1fr_auto] items-center gap-y-4",
+        month_caption: "text-center",
         caption_label: "text-sm font-medium",
         nav: "hidden",
         button_previous: cn(
@@ -26,7 +26,7 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
           buttonVariants({ variant: "outline" }),
           "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100"
         ),
-        month_grid: "w-full border-collapse space-y-1",
+        month_grid: "col-span-3 w-full border-collapse space-y-1",
         weekdays: "flex",
         weekday: "text-muted-foreground rounded-sm w-9 font-normal text-[0.8rem]",
         week: "flex w-full mt-2",
