@@ -70,7 +70,7 @@ import { Toggle } from "@/components/ui/toggle"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
 import { Sidebar, SidebarHeader, SidebarContent, SidebarGroup, SidebarGroupLabel, SidebarItem, SidebarFooter } from "@/components/ui/sidebar"
-import { MoreHorizontal, Plus, Search, Trash2, Copy, Pencil, ArrowRight, Info, PanelRight, Bell, CalendarDays, Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, LayoutGrid, List, Home, Settings, FolderOpen, Inbox, FileText, BarChart3, AlertCircle, CheckCircle, AlertTriangle, InfoIcon, Terminal, ChevronRight } from "lucide-react"
+import { MoreHorizontal, Plus, Search, Trash2, Copy, Pencil, ArrowRight, Info, PanelRight, Bell, CalendarDays, Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, LayoutGrid, List, Home, Settings, FolderOpen, Inbox, FileText, BarChart3, AlertCircle, CheckCircle, AlertTriangle, InfoIcon, Terminal, ChevronRight, Check, Palette } from "lucide-react"
 
 function Section({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
   return (
@@ -135,6 +135,24 @@ function DatePickerDemo() {
   )
 }
 
+const birchlineColors = [
+  { name: "Ivory", hex: "#FAF9F5" },
+  { name: "White", hex: "#FFFFFF" },
+  { name: "Clay", hex: "#D97757" },
+  { name: "Slate", hex: "#141413" },
+  { name: "Oat", hex: "#E3DACC" },
+  { name: "Gray 100", hex: "#F0EEE6" },
+  { name: "Gray 300", hex: "#D1CFC5" },
+  { name: "Gray 500", hex: "#87867F" },
+  { name: "Gray 700", hex: "#3D3D3A" },
+  { name: "Olive", hex: "#788C5D" },
+  { name: "Warning", hex: "#C78E3F" },
+  { name: "Danger", hex: "#B04A4A" },
+  { name: "Info", hex: "#5C7CA3" },
+  { name: "Dusty Plum", hex: "#7B6B8A" },
+  { name: "Sea Glass", hex: "#5B8E8A" },
+]
+
 const tasks = [
   { id: "TASK-001", title: "Design onboarding flow", status: "In Progress", priority: "High", assignee: "JM" },
   { id: "TASK-002", title: "Set up CI/CD pipeline", status: "Done", priority: "Medium", assignee: "AK" },
@@ -148,6 +166,7 @@ function App() {
   const [checked2, setChecked2] = useState(true)
   const [switchOn, setSwitchOn] = useState(true)
   const [tableDensity, setTableDensity] = useState<TableDensity>("default")
+  const [colorSectionBg, setColorSectionBg] = useState("#FAF9F5")
 
   return (
     <TooltipProvider>
@@ -164,38 +183,75 @@ function App() {
         </header>
 
         {/* ── COLOR ── */}
-        <Section id="color" title="Color">
-          <div className="mb-7">
-            <div className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground mb-3">Primary</div>
-            <div className="grid grid-cols-[repeat(auto-fill,minmax(96px,1fr))] gap-x-4 gap-y-5">
-              <ColorSwatch color="#D97757" hex="#D97757" token="--clay" noBorder />
-              <ColorSwatch color="#141413" hex="#141413" token="--slate" noBorder />
-              <ColorSwatch color="#FAF9F5" hex="#FAF9F5" token="--ivory" />
-              <ColorSwatch color="#E3DACC" hex="#E3DACC" token="--oat" noBorder />
+        <section id="color" className="mb-16">
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="font-serif text-[26px] font-medium tracking-tight">Color</h2>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="gap-2">
+                  <div className="w-4 h-4 rounded-xs border border-border" style={{ backgroundColor: colorSectionBg }} />
+                  <Palette className="h-3.5 w-3.5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-[240px] max-h-[400px] overflow-y-auto">
+                <DropdownMenuLabel>Background color</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {birchlineColors.map((c) => (
+                  <DropdownMenuItem
+                    key={c.hex}
+                    onClick={() => setColorSectionBg(c.hex)}
+                    className="gap-3"
+                  >
+                    <span className="w-4 shrink-0 flex items-center justify-center">
+                      {colorSectionBg === c.hex && <Check className="h-3.5 w-3.5 text-primary" />}
+                    </span>
+                    <div
+                      className="w-6 h-6 rounded-xs border border-border shrink-0"
+                      style={{ backgroundColor: c.hex }}
+                    />
+                    <span className="flex-1 text-sm">{c.name}</span>
+                    <span className="font-mono text-[11px] text-muted-foreground">{c.hex}</span>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+          <Separator className="mb-7" />
+          <div className="rounded-md p-6 -mx-6 transition-colors" style={{ backgroundColor: colorSectionBg }}>
+            <div className="max-w-[980px] mx-auto">
+              <div className="mb-7">
+                <div className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground mb-3">Primary</div>
+                <div className="grid grid-cols-[repeat(auto-fill,minmax(96px,1fr))] gap-x-4 gap-y-5">
+                  <ColorSwatch color="#D97757" hex="#D97757" token="--clay" noBorder />
+                  <ColorSwatch color="#141413" hex="#141413" token="--slate" noBorder />
+                  <ColorSwatch color="#FAF9F5" hex="#FAF9F5" token="--ivory" />
+                  <ColorSwatch color="#E3DACC" hex="#E3DACC" token="--oat" noBorder />
+                </div>
+              </div>
+              <div className="mb-7">
+                <div className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground mb-3">Neutral</div>
+                <div className="grid grid-cols-[repeat(auto-fill,minmax(96px,1fr))] gap-x-4 gap-y-5">
+                  <ColorSwatch color="#FFFFFF" hex="#FFFFFF" token="--white" />
+                  <ColorSwatch color="#F0EEE6" hex="#F0EEE6" token="--gray-100" />
+                  <ColorSwatch color="#D1CFC5" hex="#D1CFC5" token="--gray-300" noBorder />
+                  <ColorSwatch color="#87867F" hex="#87867F" token="--gray-500" noBorder />
+                  <ColorSwatch color="#3D3D3A" hex="#3D3D3A" token="--gray-700" noBorder />
+                </div>
+              </div>
+              <div>
+                <div className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground mb-3">Semantic</div>
+                <div className="grid grid-cols-[repeat(auto-fill,minmax(96px,1fr))] gap-x-4 gap-y-5">
+                  <ColorSwatch color="#788C5D" hex="#788C5D" token="--success" noBorder />
+                  <ColorSwatch color="#C78E3F" hex="#C78E3F" token="--warning" noBorder />
+                  <ColorSwatch color="#B04A4A" hex="#B04A4A" token="--danger" noBorder />
+                  <ColorSwatch color="#5C7CA3" hex="#5C7CA3" token="--info" noBorder />
+                  <ColorSwatch color="#7B6B8A" hex="#7B6B8A" token="--dusty-plum" noBorder />
+                  <ColorSwatch color="#5B8E8A" hex="#5B8E8A" token="--sea-glass" noBorder />
+                </div>
+              </div>
             </div>
           </div>
-          <div className="mb-7">
-            <div className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground mb-3">Neutral</div>
-            <div className="grid grid-cols-[repeat(auto-fill,minmax(96px,1fr))] gap-x-4 gap-y-5">
-              <ColorSwatch color="#FFFFFF" hex="#FFFFFF" token="--white" />
-              <ColorSwatch color="#F0EEE6" hex="#F0EEE6" token="--gray-100" />
-              <ColorSwatch color="#D1CFC5" hex="#D1CFC5" token="--gray-300" noBorder />
-              <ColorSwatch color="#87867F" hex="#87867F" token="--gray-500" noBorder />
-              <ColorSwatch color="#3D3D3A" hex="#3D3D3A" token="--gray-700" noBorder />
-            </div>
-          </div>
-          <div>
-            <div className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground mb-3">Semantic</div>
-            <div className="grid grid-cols-[repeat(auto-fill,minmax(96px,1fr))] gap-x-4 gap-y-5">
-              <ColorSwatch color="#788C5D" hex="#788C5D" token="--success" noBorder />
-              <ColorSwatch color="#C78E3F" hex="#C78E3F" token="--warning" noBorder />
-              <ColorSwatch color="#B04A4A" hex="#B04A4A" token="--danger" noBorder />
-              <ColorSwatch color="#5C7CA3" hex="#5C7CA3" token="--info" noBorder />
-              <ColorSwatch color="#7B6B8A" hex="#7B6B8A" token="--dusty-plum" noBorder />
-              <ColorSwatch color="#5B8E8A" hex="#5B8E8A" token="--sea-glass" noBorder />
-            </div>
-          </div>
-        </Section>
+        </section>
 
         {/* ── TYPOGRAPHY ── */}
         <Section id="typography" title="Typography">
