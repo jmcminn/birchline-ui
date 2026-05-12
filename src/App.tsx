@@ -746,6 +746,20 @@ function App() {
             </LabeledItem>
           </ComponentBlock>
 
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-sm text-muted-foreground">Row density</span>
+            <Select value={tableDensity} onValueChange={(v) => setTableDensity(v as TableDensity)}>
+              <SelectTrigger className="w-[160px] h-8 text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="compact">Compact</SelectItem>
+                <SelectItem value="default">Default</SelectItem>
+                <SelectItem value="comfortable">Comfortable</SelectItem>
+                <SelectItem value="spacious">Spacious</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
           <ComponentBlock name="Table" align="start">
             <div className="w-full">
               <div className="flex items-center gap-3 mb-3">
@@ -766,17 +780,6 @@ function App() {
                     </button>
                   )}
                 </div>
-                <Select value={tableDensity} onValueChange={(v) => setTableDensity(v as TableDensity)}>
-                  <SelectTrigger className="w-[160px] h-8 text-xs">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="compact">Compact</SelectItem>
-                    <SelectItem value="default">Default</SelectItem>
-                    <SelectItem value="comfortable">Comfortable</SelectItem>
-                    <SelectItem value="spacious">Spacious</SelectItem>
-                  </SelectContent>
-                </Select>
               </div>
               <div className="border border-border rounded-md overflow-hidden">
               <Table density={tableDensity}>
