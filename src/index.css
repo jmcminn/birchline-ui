@@ -90,7 +90,10 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+[data-sonner-toast] {
+  align-items: flex-start !important;
+}
+
 [data-sonner-toast] [data-icon] {
-  align-self: flex-start;
-  margin-top: 2px;
+  margin-top: 3px;
 }
