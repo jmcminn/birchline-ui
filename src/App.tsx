@@ -193,7 +193,7 @@ function App() {
                   <Palette className="h-3.5 w-3.5" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-[280px] max-h-[400px] overflow-y-auto">
+              <DropdownMenuContent align="end" className="w-[280px]">
                 <DropdownMenuLabel>Background color</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 {birchlineColors.map((c) => (
