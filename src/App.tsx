@@ -92,10 +92,13 @@ function Section({ id, title, children }: { id: string; title: string; children:
   )
 }
 
-function ComponentBlock({ name, children, align }: { name: string; children: React.ReactNode; align?: string }) {
+function ComponentBlock({ name, children, align, headerRight }: { name: string; children: React.ReactNode; align?: string; headerRight?: React.ReactNode }) {
   return (
     <div className="mb-8">
-      <div className="font-mono text-xs text-muted-foreground mb-3">&lt;{name} /&gt;</div>
+      <div className="flex items-center justify-between mb-3">
+        <div className="font-mono text-xs text-muted-foreground">&lt;{name} /&gt;</div>
+        {headerRight}
+      </div>
       <div className={`flex flex-wrap ${align === "start" ? "items-start" : "items-center"} gap-4 p-6 bg-card border border-border rounded-md`}>
         {children}
       </div>
@@ -746,21 +749,22 @@ function App() {
             </LabeledItem>
           </ComponentBlock>
 
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-sm text-muted-foreground">Row density</span>
-            <Select value={tableDensity} onValueChange={(v) => setTableDensity(v as TableDensity)}>
-              <SelectTrigger className="w-[160px] h-8 text-xs">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="compact">Compact</SelectItem>
-                <SelectItem value="default">Default</SelectItem>
-                <SelectItem value="comfortable">Comfortable</SelectItem>
-                <SelectItem value="spacious">Spacious</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <ComponentBlock name="Table" align="start">
+          <ComponentBlock name="Table" align="start" headerRight={
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">Row density</span>
+              <Select value={tableDensity} onValueChange={(v) => setTableDensity(v as TableDensity)}>
+                <SelectTrigger className="w-[140px] h-7 text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="compact">Compact</SelectItem>
+                  <SelectItem value="default">Default</SelectItem>
+                  <SelectItem value="comfortable">Comfortable</SelectItem>
+                  <SelectItem value="spacious">Spacious</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          }>
             <div className="w-full">
               <div className="flex items-center gap-3 mb-3">
                 <div className="relative flex-1">
