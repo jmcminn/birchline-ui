@@ -10,7 +10,7 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
-      className={cn("p-3", className)}
+      className={cn("px-6 py-3", className)}
       classNames={{
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
         month: "space-y-4",
@@ -19,11 +19,11 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         nav: "space-x-1 flex items-center",
         button_previous: cn(
           buttonVariants({ variant: "outline" }),
-          "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 absolute left-1"
+          "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 absolute left-0"
         ),
         button_next: cn(
           buttonVariants({ variant: "outline" }),
-          "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 absolute right-1"
+          "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 absolute right-0"
         ),
         month_grid: "w-full border-collapse space-y-1",
         weekdays: "flex",
