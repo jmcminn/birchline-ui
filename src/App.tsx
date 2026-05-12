@@ -70,6 +70,7 @@ import { Toggle } from "@/components/ui/toggle"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
 import { Sidebar, SidebarHeader, SidebarContent, SidebarGroup, SidebarGroupLabel, SidebarItem, SidebarFooter } from "@/components/ui/sidebar"
+import { UserSelector, type User } from "@/components/ui/user-selector"
 import { MoreHorizontal, Plus, Search, Trash2, Copy, Pencil, ArrowRight, Info, PanelRight, Bell, CalendarDays, Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, LayoutGrid, List, Home, Settings, FolderOpen, Inbox, FileText, BarChart3, AlertCircle, CheckCircle, AlertTriangle, InfoIcon, Terminal, ChevronRight, Check, Palette, ArrowUpDown, ArrowUp, ArrowDown, X } from "lucide-react"
 import {
   useReactTable,
@@ -236,12 +237,25 @@ const taskColumns: ColumnDef<Task>[] = [
   },
 ]
 
+const sampleUsers: User[] = [
+  { id: "u1", name: "Bob Jones", email: "bob@example.com", initials: "BJ", role: "Admin" },
+  { id: "u2", name: "Karen Davis", email: "karen@example.com", initials: "KD", role: "Collaborator" },
+  { id: "u3", name: "Grace Martinez", email: "grace@example.com", initials: "GM", role: "Collaborator" },
+  { id: "u4", name: "Eva Chen", email: "eva@example.com", initials: "EC", role: "Guest" },
+  { id: "u5", name: "Paul Lee", email: "paul@example.com", initials: "PL", role: "Guest" },
+  { id: "u6", name: "Alice Smith", email: "alice@example.com", initials: "AS", role: "Admin" },
+  { id: "u7", name: "Carol Hernandez-White", email: "carol@example.com", initials: "CH", role: "Collaborator" },
+]
+
+const recentUserIds = ["u1", "u2", "u3", "u4", "u5"]
+
 function App() {
   const [checked1, setChecked1] = useState(false)
   const [checked2, setChecked2] = useState(true)
   const [switchOn, setSwitchOn] = useState(true)
   const [tableDensity, setTableDensity] = useState<TableDensity>("default")
   const [colorSectionBg, setColorSectionBg] = useState("#FAF9F5")
+  const [selectedUserId, setSelectedUserId] = useState<string | null>("u7")
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [globalFilter, setGlobalFilter] = useState("")
@@ -505,6 +519,27 @@ function App() {
                   <SelectItem value="archived">Archived</SelectItem>
                 </SelectContent>
               </Select>
+            </LabeledItem>
+          </ComponentBlock>
+
+          <ComponentBlock name="UserSelector" align="start">
+            <LabeledItem label="With selection">
+              <UserSelector
+                users={sampleUsers}
+                recentIds={recentUserIds}
+                value={selectedUserId}
+                onSelect={setSelectedUserId}
+                onInvite={() => toast("Invite user flow triggered")}
+              />
+            </LabeledItem>
+            <LabeledItem label="No selection">
+              <UserSelector
+                users={sampleUsers}
+                recentIds={recentUserIds}
+                value={null}
+                onSelect={() => {}}
+                onInvite={() => toast("Invite user flow triggered")}
+              />
             </LabeledItem>
           </ComponentBlock>
 
