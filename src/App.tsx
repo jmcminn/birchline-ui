@@ -131,6 +131,23 @@ function ColorSwatch({ color, hex, token, noBorder }: { color: string; hex: stri
   )
 }
 
+function HighlightText({ text, query }: { text: string; query: string }) {
+  if (query.length < 2) return <>{text}</>
+  const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "gi")
+  const parts = text.split(regex)
+  return (
+    <>
+      {parts.map((part, i) =>
+        regex.test(part) ? (
+          <mark key={i} className="bg-highlight text-foreground rounded-xs px-0.5">{part}</mark>
+        ) : (
+          part
+        )
+      )}
+    </>
+  )
+}
+
 function DatePickerDemo() {
   const [date, setDate] = useState<Date>()
   return (
@@ -823,18 +840,24 @@ function App() {
                   {table.getRowModel().rows.length ? (
                     table.getRowModel().rows.map((row) => (
                       <TableRow key={row.id}>
-                        <TableCell className="font-mono text-xs text-muted-foreground">{row.original.id}</TableCell>
-                        <TableCell className="font-medium">{row.original.title}</TableCell>
+                        <TableCell className="font-mono text-xs text-muted-foreground">
+                          <HighlightText text={row.original.id} query={globalFilter} />
+                        </TableCell>
+                        <TableCell className="font-medium">
+                          <HighlightText text={row.original.title} query={globalFilter} />
+                        </TableCell>
                         <TableCell>
                           <Badge variant={
                             row.original.status === "Done" ? "success" :
                             row.original.status === "In Progress" ? "accent" :
                             row.original.status === "Todo" ? "warning" : "default"
                           }>
-                            {row.original.status}
+                            <HighlightText text={row.original.status} query={globalFilter} />
                           </Badge>
                         </TableCell>
-                        <TableCell className="text-sm">{row.original.priority}</TableCell>
+                        <TableCell className="text-sm">
+                          <HighlightText text={row.original.priority} query={globalFilter} />
+                        </TableCell>
                         <TableCell>
                           <Avatar className="h-7 w-7">
                             <AvatarFallback className="text-[10px]">{row.original.assignee}</AvatarFallback>
