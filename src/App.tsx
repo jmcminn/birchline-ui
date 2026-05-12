@@ -381,6 +381,7 @@ function App() {
               { cls: "font-serif text-2xl leading-[1.3] font-medium", name: "Heading 2", meta: "24 / 1.3 / 500" },
               { cls: "font-sans text-base leading-[1.55]", name: "Body", meta: "16 / 1.55 / 430", text: "Review milestones, assign owners, and surface blockers before they cascade." },
               { cls: "font-sans text-sm leading-[1.5]", name: "Small", meta: "14 / 1.5 / 430", text: "Review milestones, assign owners, and surface blockers before they cascade." },
+              { cls: "font-sans text-[13px] leading-[1.45]", name: "Fine", meta: "13 / 1.45 / 430", text: "Review milestones, assign owners, and surface blockers before they cascade." },
               { cls: "font-sans text-xs leading-[1.4] font-medium text-muted-foreground", name: "Caption", meta: "12 / 1.4 / 500", text: "UPDATED 2 HOURS AGO" },
             ].map((row, i, arr) => (
               <div key={row.name} className={`flex items-baseline justify-between gap-6 px-6 py-5 ${i < arr.length - 1 ? "border-b border-gray-100" : ""}`}>
