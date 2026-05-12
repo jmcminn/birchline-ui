@@ -332,34 +332,30 @@ function App() {
 
           <ComponentBlock name="Select" align="start">
             <LabeledItem label="Placeholder">
-              <div className="w-[260px]">
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Choose a status…" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="draft">Draft</SelectItem>
-                    <SelectItem value="review">In review</SelectItem>
-                    <SelectItem value="done">Done</SelectItem>
-                    <SelectItem value="archived">Archived</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              <Select>
+                <SelectTrigger>
+                  <SelectValue placeholder="Choose a status…" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="draft">Draft</SelectItem>
+                  <SelectItem value="review">In review</SelectItem>
+                  <SelectItem value="done">Done</SelectItem>
+                  <SelectItem value="archived">Archived</SelectItem>
+                </SelectContent>
+              </Select>
             </LabeledItem>
             <LabeledItem label="Pre-selected">
-              <div className="w-[260px]">
-                <Select defaultValue="review">
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="draft">Draft</SelectItem>
-                    <SelectItem value="review">In review</SelectItem>
-                    <SelectItem value="done">Done</SelectItem>
-                    <SelectItem value="archived">Archived</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              <Select defaultValue="review">
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="draft">Draft</SelectItem>
+                  <SelectItem value="review">In review</SelectItem>
+                  <SelectItem value="done">Done</SelectItem>
+                  <SelectItem value="archived">Archived</SelectItem>
+                </SelectContent>
+              </Select>
             </LabeledItem>
           </ComponentBlock>
 
