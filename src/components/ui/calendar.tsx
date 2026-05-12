@@ -37,10 +37,10 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
             : "[&:has([aria-selected])]:rounded-sm"
         ),
         day_button:
-          "inline-flex items-center justify-center rounded-sm h-9 w-9 p-0 text-sm font-normal cursor-pointer hover:bg-gray-100 aria-selected:bg-primary aria-selected:text-primary-foreground aria-selected:hover:bg-primary aria-selected:hover:text-primary-foreground",
+          "inline-flex items-center justify-center rounded-sm h-9 w-9 p-0 text-sm font-normal cursor-pointer hover:bg-gray-100",
         range_start: "day-range-start",
         range_end: "day-range-end",
-        selected: "bg-primary text-primary-foreground rounded-sm hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
+        selected: "[&>button]:bg-primary [&>button]:text-primary-foreground [&>button]:hover:bg-primary [&>button]:hover:text-primary-foreground [&>button]:rounded-sm",
         today: "bg-gray-100 text-foreground rounded-sm",
         outside: "day-outside text-muted-foreground aria-selected:bg-gray-100/50 aria-selected:text-muted-foreground",
         disabled: "text-muted-foreground opacity-50",
