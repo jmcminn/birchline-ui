@@ -164,6 +164,7 @@ const birchlineColors = [
   { name: "Info", hex: "#5C7CA3" },
   { name: "Dusty Plum", hex: "#7B6B8A" },
   { name: "Sea Glass", hex: "#5B8E8A" },
+  { name: "Highlight", hex: "#F5E6B8" },
 ]
 
 type Task = {
@@ -321,6 +322,7 @@ function App() {
                   <ColorSwatch color="#5C7CA3" hex="#5C7CA3" token="--info" noBorder />
                   <ColorSwatch color="#7B6B8A" hex="#7B6B8A" token="--dusty-plum" noBorder />
                   <ColorSwatch color="#5B8E8A" hex="#5B8E8A" token="--sea-glass" noBorder />
+                  <ColorSwatch color="#F5E6B8" hex="#F5E6B8" token="--highlight" />
                 </div>
               </div>
             </div>
