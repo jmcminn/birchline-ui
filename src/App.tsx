@@ -245,6 +245,18 @@ const sampleUsers: User[] = [
   { id: "u5", name: "Paul Lee", email: "paul@example.com", initials: "PL", role: "Guest" },
   { id: "u6", name: "Alice Smith", email: "alice@example.com", initials: "AS", role: "Admin" },
   { id: "u7", name: "Carol Hernandez-White", email: "carol@example.com", initials: "CH", role: "Collaborator" },
+  { id: "u8", name: "David Park", email: "david@example.com", initials: "DP", role: "Collaborator" },
+  { id: "u9", name: "Nina Patel", email: "nina@example.com", initials: "NP", role: "Admin" },
+  { id: "u10", name: "Marcus Rivera", email: "marcus@example.com", initials: "MR", role: "Guest" },
+  { id: "u11", name: "Sasha Kowalski", email: "sasha@example.com", initials: "SK", role: "Collaborator" },
+  { id: "u12", name: "Tomas Nguyen", email: "tomas@example.com", initials: "TN", role: "Guest" },
+  { id: "u13", name: "Lily Okafor", email: "lily@example.com", initials: "LO", role: "Collaborator" },
+  { id: "u14", name: "James Whitfield", email: "james@example.com", initials: "JW", role: "Admin" },
+  { id: "u15", name: "Rachel Tanaka", email: "rachel@example.com", initials: "RT", role: "Guest" },
+  { id: "u16", name: "Omar Fitzgerald", email: "omar@example.com", initials: "OF", role: "Collaborator" },
+  { id: "u17", name: "Hannah Berg", email: "hannah@example.com", initials: "HB", role: "Collaborator" },
+  { id: "u18", name: "Victor Chang", email: "victor@example.com", initials: "VC", role: "Guest" },
+  { id: "u19", name: "Priya Sharma", email: "priya@example.com", initials: "PS", role: "Admin" },
 ]
 
 const recentUserIds = ["u1", "u2", "u3", "u4", "u5"]
