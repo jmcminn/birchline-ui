@@ -549,6 +549,15 @@ function App() {
               <UserSelector
                 users={sampleUsers}
                 recentIds={recentUserIds}
+                value={undefined}
+                onSelect={() => {}}
+                onInvite={() => toast("Invite user flow triggered")}
+              />
+            </LabeledItem>
+            <LabeledItem label="No assignee">
+              <UserSelector
+                users={sampleUsers}
+                recentIds={recentUserIds}
                 value={null}
                 onSelect={() => {}}
                 onInvite={() => toast("Invite user flow triggered")}
