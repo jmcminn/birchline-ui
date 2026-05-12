@@ -15,7 +15,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Toaster } from "@/components/ui/toaster"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, type TableDensity } from "@/components/ui/table"
 import {
   Dialog,
   DialogContent,
@@ -147,6 +147,7 @@ function App() {
   const [checked1, setChecked1] = useState(false)
   const [checked2, setChecked2] = useState(true)
   const [switchOn, setSwitchOn] = useState(true)
+  const [tableDensity, setTableDensity] = useState<TableDensity>("default")
 
   return (
     <TooltipProvider>
@@ -623,8 +624,23 @@ function App() {
           </ComponentBlock>
 
           <ComponentBlock name="Table" align="start">
-            <div className="w-full border border-border rounded-md overflow-hidden">
-              <Table>
+            <div className="w-full">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-sm text-muted-foreground">Row density</span>
+                <Select value={tableDensity} onValueChange={(v) => setTableDensity(v as TableDensity)}>
+                  <SelectTrigger className="w-[160px] h-8 text-xs">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="compact">Compact</SelectItem>
+                    <SelectItem value="default">Default</SelectItem>
+                    <SelectItem value="comfortable">Comfortable</SelectItem>
+                    <SelectItem value="spacious">Spacious</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="border border-border rounded-md overflow-hidden">
+              <Table density={tableDensity}>
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-[100px]">ID</TableHead>
@@ -658,6 +674,7 @@ function App() {
                   ))}
                 </TableBody>
               </Table>
+              </div>
             </div>
           </ComponentBlock>
 
