@@ -10,13 +10,14 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
+      navLayout="around"
       className={cn("p-4", className)}
       classNames={{
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
-        month: "space-y-4 relative",
-        month_caption: "flex justify-center items-center h-9",
+        month: "flex flex-wrap items-center gap-y-4",
+        month_caption: "flex-1 text-center",
         caption_label: "text-sm font-medium",
-        nav: "absolute top-0 inset-x-0 flex items-center justify-between z-10 h-9",
+        nav: "hidden",
         button_previous: cn(
           buttonVariants({ variant: "outline" }),
           "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100"
