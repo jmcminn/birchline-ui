@@ -147,7 +147,7 @@ function UserSelector({
         align="start"
         collisionPadding={16}
       >
-        <Command value={search} onValueChange={setSearch}>
+        <Command>
           <div className="relative">
             <CommandInput
               placeholder="Search users"
