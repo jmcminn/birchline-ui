@@ -169,20 +169,22 @@ function HighlightText({ text, query }: { text: string; query: string }) {
 
 function DraggableTableHeader({
   header,
-  globalFilter,
+  draggingColumnId,
 }: {
   header: import("@tanstack/react-table").Header<Task, unknown>
-  globalFilter: string
+  draggingColumnId: string | null
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: header.column.id,
   })
 
+  const isBeingDragged = draggingColumnId === header.column.id
+
   const style: React.CSSProperties = {
     width: header.getSize(),
     transform: CSS.Translate?.toString(transform) ?? undefined,
     transition,
-    opacity: isDragging ? 0.6 : 1,
+    opacity: isDragging ? 0.8 : 1,
     position: "relative",
   }
 
@@ -193,18 +195,17 @@ function DraggableTableHeader({
       className={cn(
         header.column.getCanSort() && "select-none",
         isDragging && "z-10",
+        isBeingDragged && "z-10",
       )}
+      className="group"
     >
-      <div className="flex items-center gap-1">
-        <button
-          className="cursor-grab active:cursor-grabbing text-muted-foreground/40 hover:text-muted-foreground -ml-1 shrink-0"
-          {...attributes}
-          {...listeners}
-        >
-          <GripVertical className="h-3.5 w-3.5" />
-        </button>
+      <div className="flex items-center gap-1.5">
         <div
-          className={cn("flex items-center gap-1.5 flex-1", header.column.getCanSort() && "cursor-pointer")}
+          className={cn(
+            "flex items-center gap-1.5 flex-1",
+            header.column.getCanSort() && "cursor-pointer",
+            isBeingDragged && "text-clay",
+          )}
           onClick={header.column.getToggleSortingHandler()}
         >
           {flexRender(header.column.columnDef.header, header.getContext())}
@@ -218,6 +219,17 @@ function DraggableTableHeader({
             )
           )}
         </div>
+        <button
+          className={cn(
+            "cursor-grab active:cursor-grabbing absolute right-4 top-1/2 -translate-y-1/2",
+            isBeingDragged ? "text-clay opacity-100" : "text-gray-500 hover:text-gray-700 opacity-0 group-hover:opacity-100",
+            "transition-opacity",
+          )}
+          {...attributes}
+          {...listeners}
+        >
+          <GripVertical className="h-3.5 w-3.5" />
+        </button>
         {header.column.getCanResize() && (
           <div
             onMouseDown={header.getResizeHandler()}
@@ -225,12 +237,19 @@ function DraggableTableHeader({
             onClick={(e) => e.stopPropagation()}
             className={cn(
               "absolute right-0 top-0 h-full w-1 cursor-col-resize select-none touch-none",
-              "hover:bg-primary/30",
-              header.column.getIsResizing() && "bg-primary/50",
+              "group-hover:bg-gray-300 hover:!bg-primary/30",
+              header.column.getIsResizing() && "!bg-primary/50",
             )}
           />
         )}
       </div>
+      {isBeingDragged && (
+        <>
+          <div className="pointer-events-none absolute inset-x-0 top-0 bg-clay/10" style={{ height: "500px" }} />
+          <div className="pointer-events-none absolute left-0 top-0 w-0.5 border-l-2 border-dashed" style={{ borderColor: "var(--color-clay)", height: "500px" }} />
+          <div className="pointer-events-none absolute right-0 top-0 w-0.5 border-r-2 border-dashed" style={{ borderColor: "var(--color-clay)", height: "500px" }} />
+        </>
+      )}
     </TableHead>
   )
 }
@@ -370,6 +389,7 @@ function App() {
   const [columnOrder, setColumnOrder] = useState<ColumnOrderState>(
     taskColumns.map((c) => (c as { accessorKey: string }).accessorKey)
   )
+  const [draggingColumnId, setDraggingColumnId] = useState<string | null>(null)
 
   const columns = useMemo(() => taskColumns, [])
 
@@ -393,6 +413,10 @@ function App() {
     useSensor(KeyboardSensor)
   )
 
+  function handleDragStart(event: DragEndEvent) {
+    setDraggingColumnId(event.active.id as string)
+  }
+
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event
     if (active && over && active.id !== over.id) {
@@ -402,6 +426,7 @@ function App() {
         return arrayMove(prev, oldIndex, newIndex)
       })
     }
+    setDraggingColumnId(null)
   }
 
   return (
@@ -968,7 +993,7 @@ function App() {
                       onClick={() => { setSorting([]); setGlobalFilter(""); setColumnFilters([]) }}
                     >
                       <X className="h-3 w-3 mr-1" />
-                      Reset
+                      Reset Sorting
                     </Button>
                   )}
                 </div>
@@ -996,6 +1021,7 @@ function App() {
                   sensors={sensors}
                   collisionDetection={closestCenter}
                   modifiers={[restrictToHorizontalAxis]}
+                  onDragStart={handleDragStart}
                   onDragEnd={handleDragEnd}
                 >
                 <TableHeader>
@@ -1006,7 +1032,7 @@ function App() {
                           <DraggableTableHeader
                             key={header.id}
                             header={header}
-                            globalFilter={globalFilter}
+                            draggingColumnId={draggingColumnId}
                           />
                         ))}
                       </SortableContext>

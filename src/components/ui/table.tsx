@@ -21,7 +21,7 @@ const Table = React.forwardRef<
   React.HTMLAttributes<HTMLTableElement> & { density?: TableDensity }
 >(({ className, density = "default", children, ...props }, ref) => (
   <TableDensityContext.Provider value={density}>
-    <div className="relative w-full overflow-auto">
+    <div className="relative w-full overflow-x-auto overflow-y-visible">
       <table
         ref={ref}
         className={cn("w-full caption-bottom text-sm", className)}
