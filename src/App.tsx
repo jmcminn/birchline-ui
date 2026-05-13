@@ -91,6 +91,7 @@ import {
   useSensor,
   useSensors,
   type DragEndEvent,
+  type DragOverEvent,
 } from "@dnd-kit/core"
 import {
   arrayMove,
@@ -111,25 +112,28 @@ function Section({ id, title, children }: { id: string; title: string; children:
   )
 }
 
-function ComponentBlock({ name, children, align, headerRight }: { name: string; children: React.ReactNode; align?: string; headerRight?: React.ReactNode }) {
+function ComponentBlock({ name, children, align, headerRight, gap }: { name: string; children: React.ReactNode; align?: string; headerRight?: React.ReactNode; gap?: string }) {
   return (
     <div className="mb-8">
       <div className="flex items-center justify-between mb-3">
         <div className="font-mono text-base text-muted-foreground">&lt;{name} /&gt;</div>
         {headerRight}
       </div>
-      <div className={`flex flex-wrap ${align === "start" ? "items-start" : "items-center"} gap-4 p-6 bg-card border border-border rounded-md`}>
+      <div className={`flex flex-wrap ${align === "start" ? "items-start" : align === "end" ? "items-end" : "items-center"} ${gap ?? "gap-4"} p-6 bg-card border border-border rounded-md`}>
         {children}
       </div>
     </div>
   )
 }
 
-function LabeledItem({ label, children }: { label: string; children: React.ReactNode }) {
+function LabeledItem({ label, subtitle, children }: { label: string; subtitle?: string; children: React.ReactNode }) {
   return (
     <div className="flex flex-col items-center gap-2.5">
       {children}
-      <span className="font-mono text-[11px] text-muted-foreground">{label}</span>
+      <div className="flex flex-col items-center">
+        <span className="font-mono text-[11px] text-muted-foreground">{label}</span>
+        {subtitle && <span className="font-mono text-[11px] text-muted-foreground">{subtitle}</span>}
+      </div>
     </div>
   )
 }
@@ -421,7 +425,7 @@ function App() {
     setDraggingColumnId(event.active.id as string)
   }
 
-  function handleDragEnd(event: DragEndEvent) {
+  function handleDragOver(event: DragOverEvent) {
     const { active, over } = event
     if (active && over && active.id !== over.id) {
       setColumnOrder((prev) => {
@@ -430,12 +434,15 @@ function App() {
         return arrayMove(prev, oldIndex, newIndex)
       })
     }
+  }
+
+  function handleDragEnd() {
     setDraggingColumnId(null)
   }
 
   return (
     <TooltipProvider>
-      <div className="max-w-[980px] mx-auto px-6 py-14">
+      <div className="max-w-[1280px] mx-auto px-6 py-14">
         <Toaster />
 
         <header className="mb-12">
@@ -483,7 +490,7 @@ function App() {
           </div>
           <Separator className="mb-7" />
           <div className="rounded-md p-6 -mx-6 transition-colors" style={{ backgroundColor: colorSectionBg }}>
-            <div className="max-w-[980px] mx-auto">
+            <div className="max-w-[1280px] mx-auto">
               <div className="mb-7">
                 <div className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground mb-3">Primary</div>
                 <div className="grid grid-cols-[repeat(auto-fill,minmax(96px,1fr))] gap-x-4 gap-y-5">
@@ -772,24 +779,24 @@ function App() {
             <LabeledItem label="Info"><Badge variant="info">Info</Badge></LabeledItem>
           </ComponentBlock>
 
-          <ComponentBlock name="Avatar">
-            <LabeledItem label="Image">
+          <ComponentBlock name="Avatar" gap="gap-16" align="end">
+            <LabeledItem label="Image" subtitle="40px">
               <Avatar>
                 <AvatarImage src="https://api.dicebear.com/9.x/initials/svg?seed=JM&backgroundColor=D97757&textColor=ffffff" alt="JM" />
                 <AvatarFallback>JM</AvatarFallback>
               </Avatar>
             </LabeledItem>
-            <LabeledItem label="Fallback">
+            <LabeledItem label="Fallback" subtitle="40px">
               <Avatar>
                 <AvatarFallback>AK</AvatarFallback>
               </Avatar>
             </LabeledItem>
-            <LabeledItem label="Small">
+            <LabeledItem label="Small" subtitle="32px">
               <Avatar className="h-8 w-8">
                 <AvatarFallback className="text-xs">SR</AvatarFallback>
               </Avatar>
             </LabeledItem>
-            <LabeledItem label="Group">
+            <LabeledItem label="Group" subtitle="32px">
               <div className="flex -space-x-2">
                 <Avatar className="h-8 w-8 border-2 border-card">
                   <AvatarFallback className="text-xs">JM</AvatarFallback>
@@ -1026,6 +1033,7 @@ function App() {
                   collisionDetection={closestCenter}
                   modifiers={[restrictToHorizontalAxis]}
                   onDragStart={handleDragStart}
+                  onDragOver={handleDragOver}
                   onDragEnd={handleDragEnd}
                 >
                 <TableHeader>
@@ -1213,6 +1221,10 @@ function App() {
               <DatePickerDemo />
             </LabeledItem>
             <div className="w-16" />
+            <LabeledItem label="Date picker - tasks">
+              <DatePickerDemo />
+            </LabeledItem>
+            <div className="w-16" />
             <LabeledItem label="Inline calendar">
               <div className="border border-border rounded-md bg-card">
                 <Calendar mode="single" className="rounded-md" />
@@ -1379,6 +1391,36 @@ function App() {
                     <SidebarItem><ChevronRight className="h-4 w-4" /> Q3 Roadmap</SidebarItem>
                     <SidebarItem><ChevronRight className="h-4 w-4" /> Design System</SidebarItem>
                     <SidebarItem><ChevronRight className="h-4 w-4" /> API Migration</SidebarItem>
+                  </SidebarGroup>
+                </SidebarContent>
+                <SidebarFooter>
+                  <div className="flex items-center gap-2">
+                    <Avatar className="h-7 w-7">
+                      <AvatarFallback className="text-[10px]">JM</AvatarFallback>
+                    </Avatar>
+                    <span className="text-sm">Jason McMinn</span>
+                  </div>
+                </SidebarFooter>
+              </Sidebar>
+            </LabeledItem>
+            <LabeledItem label="App sidebar (v2)">
+              <Sidebar className="rounded-md border border-border">
+                <SidebarHeader>
+                  <span className="font-serif text-lg font-medium">Range</span>
+                </SidebarHeader>
+                <SidebarContent>
+                  <SidebarGroup>
+                    <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+                    <SidebarItem active className="text-base gap-2.5"><Home className="h-5 w-5" /> Dashboard</SidebarItem>
+                    <SidebarItem className="text-base gap-2.5"><Inbox className="h-5 w-5" /> Inbox</SidebarItem>
+                    <SidebarItem className="text-base gap-2.5"><FileText className="h-5 w-5" /> Tasks</SidebarItem>
+                    <SidebarItem className="text-base gap-2.5"><BarChart3 className="h-5 w-5" /> Reports</SidebarItem>
+                  </SidebarGroup>
+                  <SidebarGroup>
+                    <SidebarGroupLabel>Projects</SidebarGroupLabel>
+                    <SidebarItem className="text-base gap-2.5"><ChevronRight className="h-5 w-5" /> Q3 Roadmap</SidebarItem>
+                    <SidebarItem className="text-base gap-2.5"><ChevronRight className="h-5 w-5" /> Design System</SidebarItem>
+                    <SidebarItem className="text-base gap-2.5"><ChevronRight className="h-5 w-5" /> API Migration</SidebarItem>
                   </SidebarGroup>
                 </SidebarContent>
                 <SidebarFooter>

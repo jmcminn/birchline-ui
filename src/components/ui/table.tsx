@@ -81,7 +81,7 @@ const TableHead = React.forwardRef<HTMLTableCellElement, React.ThHTMLAttributes<
         ref={ref}
         className={cn(
           densityPadding[density],
-          "text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0",
+          "text-left align-middle font-medium text-muted-foreground bg-gray-100/50 [&:has([role=checkbox])]:pr-0",
           className
         )}
         {...props}
