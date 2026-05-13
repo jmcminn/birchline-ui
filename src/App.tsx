@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react"
+import { useState, useMemo, useRef } from "react"
 import { format } from "date-fns"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
@@ -170,9 +170,11 @@ function HighlightText({ text, query }: { text: string; query: string }) {
 function DraggableTableHeader({
   header,
   draggingColumnId,
+  tableRef,
 }: {
   header: import("@tanstack/react-table").Header<Task, unknown>
   draggingColumnId: string | null
+  tableRef: React.RefObject<HTMLTableElement | null>
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: header.column.id,
@@ -188,28 +190,29 @@ function DraggableTableHeader({
     position: "relative",
   }
 
+  const overlayHeight = tableRef.current ? `${tableRef.current.offsetHeight}px` : "999px"
+
   return (
     <TableHead
       ref={setNodeRef}
       style={style}
       className={cn(
+        "group",
         header.column.getCanSort() && "select-none",
-        isDragging && "z-10",
-        isBeingDragged && "z-10",
+        (isDragging || isBeingDragged) && "z-10",
       )}
-      className="group"
     >
       <div className="flex items-center gap-1.5">
         <div
           className={cn(
             "flex items-center gap-1.5 flex-1",
             header.column.getCanSort() && "cursor-pointer",
-            isBeingDragged && "text-clay",
+            (isBeingDragged || header.column.getIsResizing()) && "text-clay",
           )}
           onClick={header.column.getToggleSortingHandler()}
         >
           {flexRender(header.column.columnDef.header, header.getContext())}
-          {header.column.getCanSort() && (
+          {header.column.getCanSort() && !draggingColumnId && (
             header.column.getIsSorted() === "asc" ? (
               <ArrowUp className="h-3.5 w-3.5 text-primary" />
             ) : header.column.getIsSorted() === "desc" ? (
@@ -243,11 +246,11 @@ function DraggableTableHeader({
           />
         )}
       </div>
-      {isBeingDragged && (
+      {(isBeingDragged || header.column.getIsResizing()) && (
         <>
-          <div className="pointer-events-none absolute inset-x-0 top-0 bg-clay/10" style={{ height: "500px" }} />
-          <div className="pointer-events-none absolute left-0 top-0 w-0.5 border-l-2 border-dashed" style={{ borderColor: "var(--color-clay)", height: "500px" }} />
-          <div className="pointer-events-none absolute right-0 top-0 w-0.5 border-r-2 border-dashed" style={{ borderColor: "var(--color-clay)", height: "500px" }} />
+          <div className="pointer-events-none absolute inset-x-0 top-0 bg-clay/10" style={{ height: overlayHeight }} />
+          <div className="pointer-events-none absolute left-0 top-0 w-0.5 border-l-2 border-dashed" style={{ borderColor: "var(--color-clay)", height: overlayHeight }} />
+          <div className="pointer-events-none absolute right-0 top-0 w-0.5 border-r-2 border-dashed" style={{ borderColor: "var(--color-clay)", height: overlayHeight }} />
         </>
       )}
     </TableHead>
@@ -390,6 +393,7 @@ function App() {
     taskColumns.map((c) => (c as { accessorKey: string }).accessorKey)
   )
   const [draggingColumnId, setDraggingColumnId] = useState<string | null>(null)
+  const tableRef = useRef<HTMLTableElement>(null)
 
   const columns = useMemo(() => taskColumns, [])
 
@@ -998,7 +1002,7 @@ function App() {
                   )}
                 </div>
                 <div className="relative w-[200px]">
-                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground z-10" />
                   <Input
                     placeholder="Filter tasks…"
                     value={globalFilter}
@@ -1016,7 +1020,7 @@ function App() {
                 </div>
               </div>
               <div className="border border-border rounded-md overflow-hidden">
-              <Table density={tableDensity} className="w-full" style={{ tableLayout: "fixed" }}>
+              <Table ref={tableRef} density={tableDensity} className="w-full" style={{ tableLayout: "fixed" }}>
                 <DndContext
                   sensors={sensors}
                   collisionDetection={closestCenter}
@@ -1033,6 +1037,7 @@ function App() {
                             key={header.id}
                             header={header}
                             draggingColumnId={draggingColumnId}
+                            tableRef={tableRef}
                           />
                         ))}
                       </SortableContext>
