@@ -537,6 +537,7 @@ function App() {
               { cls: "font-sans text-sm leading-[1.5]", name: "Small", meta: "14 / 1.5 / 430", text: "Review milestones, assign owners, and surface blockers before they cascade." },
               { cls: "font-sans text-[13px] leading-[1.45]", name: "Fine", meta: "13 / 1.45 / 430", text: "Review milestones, assign owners, and surface blockers before they cascade." },
               { cls: "font-sans text-xs leading-[1.4] font-medium text-muted-foreground", name: "Caption", meta: "12 / 1.4 / 500", text: "UPDATED 2 HOURS AGO" },
+              { cls: "font-mono text-xs leading-[1.4] text-gray-700", name: "Code", meta: "12 / 1.4 / 400", text: "Small type monospaced label" },
             ].map((row, i, arr) => (
               <div key={row.name} className={`flex items-baseline justify-between gap-6 px-6 py-5 ${i < arr.length - 1 ? "border-b border-gray-100" : ""}`}>
                 <div className={`flex-1 min-w-0 truncate ${row.cls}`}>
@@ -687,7 +688,17 @@ function App() {
             </LabeledItem>
           </ComponentBlock>
 
-          <ComponentBlock name="UserSelector" align="start">
+          <ComponentBlock name="UserSelector" align="start" gap="gap-16">
+            <LabeledItem label="No assignee">
+              <UserSelector
+                users={sampleUsers}
+                recentIds={recentUserIds}
+                value={null}
+                onSelect={() => {}}
+                onInvite={() => toast("Invite user flow triggered")}
+                noAssigneeLabel="Select User"
+              />
+            </LabeledItem>
             <LabeledItem label="With selection">
               <UserSelector
                 users={sampleUsers}
@@ -702,15 +713,6 @@ function App() {
                 users={sampleUsers}
                 recentIds={recentUserIds}
                 value={undefined}
-                onSelect={() => {}}
-                onInvite={() => toast("Invite user flow triggered")}
-              />
-            </LabeledItem>
-            <LabeledItem label="No assignee">
-              <UserSelector
-                users={sampleUsers}
-                recentIds={recentUserIds}
-                value={null}
                 onSelect={() => {}}
                 onInvite={() => toast("Invite user flow triggered")}
               />

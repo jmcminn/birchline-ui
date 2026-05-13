@@ -23,6 +23,7 @@ interface UserSelectorProps {
   onSelect?: (userId: string | null) => void
   onInvite?: () => void
   placeholder?: string
+  noAssigneeLabel?: string
   className?: string
 }
 
@@ -91,6 +92,7 @@ function UserSelector({
   onSelect,
   onInvite,
   placeholder = "Select user…",
+  noAssigneeLabel = "No Assignee",
   className,
 }: UserSelectorProps) {
   const [open, setOpen] = useState(false)
@@ -142,7 +144,7 @@ function UserSelector({
               <div className="h-6 w-6 rounded-full border-[1.5px] border-dashed border-gray-300 flex items-center justify-center shrink-0">
                 <UserRound className="h-3 w-3 text-gray-300" />
               </div>
-              <span className="text-muted-foreground">No Assignee</span>
+              <span className="text-muted-foreground">{noAssigneeLabel}</span>
             </>
           ) : (
             <span className="text-muted-foreground">{placeholder}</span>
