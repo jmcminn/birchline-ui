@@ -116,10 +116,10 @@ function ComponentBlock({ name, children, align, headerRight, gap }: { name: str
   return (
     <div className="mb-8">
       <div className="flex items-center justify-between mb-3">
-        <div className="font-mono text-base text-muted-foreground">&lt;{name} /&gt;</div>
+        <div className="font-mono text-base text-gray-500">&lt;{name} /&gt;</div>
         {headerRight}
       </div>
-      <div className={`flex flex-wrap ${align === "start" ? "items-start" : align === "end" ? "items-end" : "items-center"} ${gap ?? "gap-4"} p-6 bg-card border border-border rounded-md`}>
+      <div className={`flex flex-wrap ${align === "start" ? "items-start" : align === "end" ? "items-end" : "items-center"} ${gap ?? "gap-4"} p-6 bg-white border border-gray-300 rounded-md`}>
         {children}
       </div>
     </div>
@@ -131,25 +131,28 @@ function LabeledItem({ label, subtitle, children }: { label: string; subtitle?: 
     <div className="flex flex-col items-center gap-2.5">
       {children}
       <div className="flex flex-col items-center">
-        <span className="font-mono text-[11px] text-muted-foreground">{label}</span>
-        {subtitle && <span className="font-mono text-[11px] text-muted-foreground">{subtitle}</span>}
+        <span className="font-mono text-[11px] text-gray-500">{label}</span>
+        {subtitle && <span className="font-mono text-[11px] text-gray-500">{subtitle}</span>}
       </div>
     </div>
   )
 }
 
-function ColorSwatch({ color, hex, token, noBorder }: { color: string; hex: string; token: string; noBorder?: boolean }) {
+function ColorSwatch({ color, hex, token, semantic, noBorder }: { color: string; hex: string; token: string; semantic?: string; noBorder?: boolean }) {
   return (
-    <div>
+    <div className="flex items-center gap-4">
       <div
-        className="w-16 h-16 rounded-sm mb-2"
+        className="w-16 h-16 rounded-sm shrink-0"
         style={{
           backgroundColor: color,
-          border: noBorder ? "1.5px solid transparent" : "1.5px solid var(--color-border)",
+          border: noBorder ? "1.5px solid transparent" : "1.5px solid var(--color-gray-300)",
         }}
       />
-      <span className="font-mono text-xs text-gray-700 block">{hex}</span>
-      <span className="font-mono text-[11px] text-muted-foreground block">{token}</span>
+      <div>
+        <span className="font-mono text-xs text-gray-700 block">{hex}</span>
+        <span className="font-mono text-[11px] text-gray-500 block">{token}</span>
+        {semantic && <span className="font-mono text-[11px] text-gray-500 block">{semantic}</span>}
+      </div>
     </div>
   )
 }
@@ -162,7 +165,7 @@ function HighlightText({ text, query }: { text: string; query: string }) {
     <>
       {parts.map((part, i) =>
         regex.test(part) ? (
-          <mark key={i} className="bg-highlight text-foreground rounded-xs px-0.5">{part}</mark>
+          <mark key={i} className="bg-highlight text-ink rounded-xs px-0.5">{part}</mark>
         ) : (
           part
         )
@@ -218,11 +221,11 @@ function DraggableTableHeader({
           {flexRender(header.column.columnDef.header, header.getContext())}
           {header.column.getCanSort() && !draggingColumnId && (
             header.column.getIsSorted() === "asc" ? (
-              <ArrowUp className="h-3.5 w-3.5 text-primary" />
+              <ArrowUp className="h-3.5 w-3.5 text-clay" />
             ) : header.column.getIsSorted() === "desc" ? (
-              <ArrowDown className="h-3.5 w-3.5 text-primary" />
+              <ArrowDown className="h-3.5 w-3.5 text-clay" />
             ) : (
-              <ArrowUpDown className="h-3.5 w-3.5 text-muted-foreground/50" />
+              <ArrowUpDown className="h-3.5 w-3.5 text-gray-500/50" />
             )
           )}
         </div>
@@ -244,8 +247,8 @@ function DraggableTableHeader({
             onClick={(e) => e.stopPropagation()}
             className={cn(
               "absolute right-0 top-0 h-full w-1 cursor-col-resize select-none touch-none",
-              "group-hover:bg-gray-300 hover:!bg-primary/30",
-              header.column.getIsResizing() && "!bg-primary/50",
+              "group-hover:bg-gray-300 hover:!bg-clay/30",
+              header.column.getIsResizing() && "!bg-clay/50",
             )}
           />
         )}
@@ -266,7 +269,7 @@ function DatePickerDemo() {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" className={cn("w-[260px] justify-start text-left font-normal", !date && "text-muted-foreground")}>
+        <Button variant="outline" className={cn("w-[260px] justify-start text-left font-normal", !date && "text-gray-500")}>
           <CalendarDays className="mr-2 h-4 w-4" />
           {date ? format(date, "PPP") : "Pick a date"}
         </Button>
@@ -360,25 +363,25 @@ const taskColumns: ColumnDef<Task>[] = [
 ]
 
 const sampleUsers: User[] = [
-  { id: "u1", name: "Bob Jones", email: "bob@example.com", initials: "BJ", role: "Admin" },
-  { id: "u2", name: "Karen Davis", email: "karen@example.com", initials: "KD", role: "Collaborator" },
-  { id: "u3", name: "Grace Martinez", email: "grace@example.com", initials: "GM", role: "Collaborator" },
-  { id: "u4", name: "Eva Chen", email: "eva@example.com", initials: "EC", role: "Guest" },
-  { id: "u5", name: "Paul Lee", email: "paul@example.com", initials: "PL", role: "Guest" },
-  { id: "u6", name: "Alice Smith", email: "alice@example.com", initials: "AS", role: "Admin" },
-  { id: "u7", name: "Carol Hernandez-White", email: "carol@example.com", initials: "CH", role: "Collaborator" },
-  { id: "u8", name: "David Park", email: "david@example.com", initials: "DP", role: "Collaborator" },
-  { id: "u9", name: "Nina Patel", email: "nina@example.com", initials: "NP", role: "Admin" },
-  { id: "u10", name: "Marcus Rivera", email: "marcus@example.com", initials: "MR", role: "Guest" },
-  { id: "u11", name: "Sasha Kowalski", email: "sasha@example.com", initials: "SK", role: "Collaborator" },
-  { id: "u12", name: "Tomas Nguyen", email: "tomas@example.com", initials: "TN", role: "Guest" },
-  { id: "u13", name: "Lily Okafor", email: "lily@example.com", initials: "LO", role: "Collaborator" },
-  { id: "u14", name: "James Whitfield", email: "james@example.com", initials: "JW", role: "Admin" },
-  { id: "u15", name: "Rachel Tanaka", email: "rachel@example.com", initials: "RT", role: "Guest" },
-  { id: "u16", name: "Omar Fitzgerald", email: "omar@example.com", initials: "OF", role: "Collaborator" },
-  { id: "u17", name: "Hannah Berg", email: "hannah@example.com", initials: "HB", role: "Collaborator" },
-  { id: "u18", name: "Victor Chang", email: "victor@example.com", initials: "VC", role: "Guest" },
-  { id: "u19", name: "Priya Sharma", email: "priya@example.com", initials: "PS", role: "Admin" },
+  { id: "u1", name: "Bob Jones", email: "bob@company.com", initials: "BJ", role: "Admin" },
+  { id: "u2", name: "Karen Davis", email: "karen@company.com", initials: "KD", role: "Collaborator" },
+  { id: "u3", name: "Grace Martinez", email: "grace@company.com", initials: "GM", role: "Collaborator" },
+  { id: "u4", name: "Eva Chen", email: "eva@vendor.com", initials: "EC", role: "Guest" },
+  { id: "u5", name: "Paul Lee", email: "paul@vendor.com", initials: "PL", role: "Guest" },
+  { id: "u6", name: "Alice Smith", email: "alice@company.com", initials: "AS", role: "Admin" },
+  { id: "u7", name: "Carol Hernandez-White", email: "carol@company.com", initials: "CH", role: "Collaborator" },
+  { id: "u8", name: "David Park", email: "david@company.com", initials: "DP", role: "Collaborator" },
+  { id: "u9", name: "Nina Patel", email: "nina@company.com", initials: "NP", role: "Admin" },
+  { id: "u10", name: "Marcus Rivera", email: "marcus@vendor.com", initials: "MR", role: "Guest" },
+  { id: "u11", name: "Sasha Kowalski", email: "sasha@company.com", initials: "SK", role: "Collaborator" },
+  { id: "u12", name: "Tomas Nguyen", email: "tomas@vendor.com", initials: "TN", role: "Guest" },
+  { id: "u13", name: "Lily Okafor", email: "lily@company.com", initials: "LO", role: "Collaborator" },
+  { id: "u14", name: "James Whitfield", email: "james@company.com", initials: "JW", role: "Admin" },
+  { id: "u15", name: "Rachel Tanaka", email: "rachel@vendor.com", initials: "RT", role: "Guest" },
+  { id: "u16", name: "Omar Fitzgerald", email: "omar@company.com", initials: "OF", role: "Collaborator" },
+  { id: "u17", name: "Hannah Berg", email: "hannah@company.com", initials: "HB", role: "Collaborator" },
+  { id: "u18", name: "Victor Chang", email: "victor@vendor.com", initials: "VC", role: "Guest" },
+  { id: "u19", name: "Priya Sharma", email: "priya@company.com", initials: "PS", role: "Admin" },
 ]
 
 const recentUserIds = ["u1", "u2", "u3", "u4", "u5"]
@@ -449,7 +452,7 @@ function App() {
           <h1 className="font-serif text-[40px] font-medium tracking-tight mb-1.5">
             Birchline UI
           </h1>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-gray-500 text-sm">
             shadcn/ui components reskinned with Birchline design tokens — <code className="font-mono text-[13px] bg-gray-100 px-1.5 py-0.5 rounded-xs">@birchline/ui</code>
           </p>
         </header>
@@ -461,7 +464,7 @@ function App() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="gap-2">
-                  <div className="w-4 h-4 rounded-xs border border-border" style={{ backgroundColor: colorSectionBg }} />
+                  <div className="w-4 h-4 rounded-xs border border-gray-300" style={{ backgroundColor: colorSectionBg }} />
                   <Palette className="h-3.5 w-3.5" />
                 </Button>
               </DropdownMenuTrigger>
@@ -475,14 +478,14 @@ function App() {
                     className="gap-3"
                   >
                     <span className="w-4 shrink-0 flex items-center justify-center">
-                      {colorSectionBg === c.hex && <Check className="h-3.5 w-3.5 text-primary" />}
+                      {colorSectionBg === c.hex && <Check className="h-3.5 w-3.5 text-clay" />}
                     </span>
                     <div
                       className="w-6 h-6 rounded-xs border border-black/10 shrink-0"
                       style={{ backgroundColor: c.hex }}
                     />
                     <span className="flex-1 text-sm">{c.name}</span>
-                    <span className="font-mono text-[11px] text-muted-foreground">{c.hex}</span>
+                    <span className="font-mono text-[11px] text-gray-500">{c.hex}</span>
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
@@ -490,36 +493,36 @@ function App() {
           </div>
           <Separator className="mb-7" />
           <div className="rounded-md p-6 -mx-6 transition-colors" style={{ backgroundColor: colorSectionBg }}>
-            <div className="max-w-[1280px] mx-auto">
-              <div className="mb-7">
-                <div className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground mb-3">Primary</div>
-                <div className="grid grid-cols-[repeat(auto-fill,minmax(96px,1fr))] gap-x-4 gap-y-5">
-                  <ColorSwatch color="#D97757" hex="#D97757" token="--clay" noBorder />
-                  <ColorSwatch color="#141413" hex="#141413" token="--slate" noBorder />
-                  <ColorSwatch color="#FAF9F5" hex="#FAF9F5" token="--ivory" />
+            <div className="max-w-[1280px] mx-auto grid grid-cols-3 gap-10">
+              <div>
+                <div className="font-mono text-sm uppercase tracking-wider text-gray-500 mb-4">Primary</div>
+                <div className="flex flex-col gap-5">
+                  <ColorSwatch color="#D97757" hex="#D97757" token="--clay" semantic="primary, ring" noBorder />
+                  <ColorSwatch color="#141413" hex="#141413" token="--ink" semantic="foreground" noBorder />
+                  <ColorSwatch color="#FAF9F5" hex="#FAF9F5" token="--ivory" semantic="background" />
                   <ColorSwatch color="#E3DACC" hex="#E3DACC" token="--oat" noBorder />
                 </div>
               </div>
-              <div className="mb-7">
-                <div className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground mb-3">Neutral</div>
-                <div className="grid grid-cols-[repeat(auto-fill,minmax(96px,1fr))] gap-x-4 gap-y-5">
-                  <ColorSwatch color="#FFFFFF" hex="#FFFFFF" token="--white" />
-                  <ColorSwatch color="#F0EEE6" hex="#F0EEE6" token="--gray-100" />
-                  <ColorSwatch color="#D1CFC5" hex="#D1CFC5" token="--gray-300" noBorder />
-                  <ColorSwatch color="#87867F" hex="#87867F" token="--gray-500" noBorder />
-                  <ColorSwatch color="#3D3D3A" hex="#3D3D3A" token="--gray-700" noBorder />
+              <div>
+                <div className="font-mono text-sm uppercase tracking-wider text-gray-500 mb-4">Neutral</div>
+                <div className="flex flex-col gap-5">
+                  <ColorSwatch color="#FFFFFF" hex="#FFFFFF" token="--white" semantic="card, popover" />
+                  <ColorSwatch color="#F0EEE6" hex="#F0EEE6" token="--gray-100" semantic="secondary, muted, accent" />
+                  <ColorSwatch color="#D1CFC5" hex="#D1CFC5" token="--gray-300" semantic="border, input" noBorder />
+                  <ColorSwatch color="#87867F" hex="#87867F" token="--gray-500" semantic="muted-foreground" noBorder />
+                  <ColorSwatch color="#3D3D3A" hex="#3D3D3A" token="--gray-700" semantic="secondary-fg, accent-fg" noBorder />
                 </div>
               </div>
               <div>
-                <div className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground mb-3">Semantic</div>
-                <div className="grid grid-cols-[repeat(auto-fill,minmax(96px,1fr))] gap-x-4 gap-y-5">
-                  <ColorSwatch color="#788C5D" hex="#788C5D" token="--success" noBorder />
-                  <ColorSwatch color="#C78E3F" hex="#C78E3F" token="--warning" noBorder />
-                  <ColorSwatch color="#B04A4A" hex="#B04A4A" token="--danger" noBorder />
-                  <ColorSwatch color="#5C7CA3" hex="#5C7CA3" token="--info" noBorder />
-                  <ColorSwatch color="#7B6B8A" hex="#7B6B8A" token="--dusty-plum" noBorder />
-                  <ColorSwatch color="#5B8E8A" hex="#5B8E8A" token="--sea-glass" noBorder />
-                  <ColorSwatch color="#F5E6B8" hex="#F5E6B8" token="--highlight" />
+                <div className="font-mono text-sm uppercase tracking-wider text-gray-500 mb-4">Semantic</div>
+                <div className="flex flex-col gap-5">
+                  <ColorSwatch color="#788C5D" hex="#788C5D" token="--green" semantic="success" noBorder />
+                  <ColorSwatch color="#C78E3F" hex="#C78E3F" token="--orange" semantic="warning" noBorder />
+                  <ColorSwatch color="#B04A4A" hex="#B04A4A" token="--red" semantic="danger, destructive" noBorder />
+                  <ColorSwatch color="#5C7CA3" hex="#5C7CA3" token="--blue" semantic="info" noBorder />
+                  <ColorSwatch color="#F5E6B8" hex="#F5E6B8" token="--light-yellow" semantic="highlight" />
+                  <ColorSwatch color="#7B6B8A" hex="#7B6B8A" token="--plum" noBorder />
+                  <ColorSwatch color="#5B8E8A" hex="#5B8E8A" token="--teal" noBorder />
                 </div>
               </div>
             </div>
@@ -528,24 +531,25 @@ function App() {
 
         {/* ── TYPOGRAPHY ── */}
         <Section id="typography" title="Typography">
-          <div className="border border-border rounded-md bg-card overflow-hidden">
+          <div className="border border-gray-300 rounded-md bg-white overflow-hidden">
             {[
-              { cls: "font-serif text-5xl leading-[1.1] font-medium tracking-tight", name: "Display", meta: "48 / 1.1 / 500" },
-              { cls: "font-serif text-[32px] leading-[1.2] font-medium tracking-tight", name: "Heading 1", meta: "32 / 1.2 / 500" },
-              { cls: "font-serif text-2xl leading-[1.3] font-medium", name: "Heading 2", meta: "24 / 1.3 / 500" },
-              { cls: "font-sans text-base leading-[1.55]", name: "Body", meta: "16 / 1.55 / 430", text: "Review milestones, assign owners, and surface blockers before they cascade." },
-              { cls: "font-sans text-sm leading-[1.5]", name: "Small", meta: "14 / 1.5 / 430", text: "Review milestones, assign owners, and surface blockers before they cascade." },
-              { cls: "font-sans text-[13px] leading-[1.45]", name: "Fine", meta: "13 / 1.45 / 430", text: "Review milestones, assign owners, and surface blockers before they cascade." },
-              { cls: "font-sans text-xs leading-[1.4] font-medium text-muted-foreground", name: "Caption", meta: "12 / 1.4 / 500", text: "UPDATED 2 HOURS AGO" },
-              { cls: "font-mono text-xs leading-[1.4] text-gray-700", name: "Code", meta: "12 / 1.4 / 400", text: "Small type monospaced label" },
+              { cls: "font-serif text-5xl leading-[1.1] font-medium tracking-tight", name: "Display", meta: "48 / 1.1 / 500", color: "text-ink" },
+              { cls: "font-serif text-[32px] leading-[1.2] font-medium tracking-tight", name: "Heading 1", meta: "32 / 1.2 / 500", color: "text-ink" },
+              { cls: "font-serif text-2xl leading-[1.3] font-medium", name: "Heading 2", meta: "24 / 1.3 / 500", color: "text-ink" },
+              { cls: "font-sans text-base leading-[1.55]", name: "Body", meta: "16 / 1.55 / 430", color: "text-ink", text: "Review milestones, assign owners, and surface blockers before they cascade." },
+              { cls: "font-sans text-sm leading-[1.5]", name: "Small", meta: "14 / 1.5 / 430", color: "text-ink", text: "Review milestones, assign owners, and surface blockers before they cascade." },
+              { cls: "font-sans text-[13px] leading-[1.45]", name: "Fine", meta: "13 / 1.45 / 430", color: "text-ink", text: "Review milestones, assign owners, and surface blockers before they cascade." },
+              { cls: "font-sans text-xs leading-[1.4] font-medium text-gray-500", name: "Caption", meta: "12 / 1.4 / 500", color: "text-gray-500", text: "UPDATED 2 HOURS AGO" },
+              { cls: "font-mono text-xs leading-[1.4] text-ink", name: "Code", meta: "12 / 1.4 / 400", color: "text-ink", text: "Small type monospaced label" },
             ].map((row, i, arr) => (
               <div key={row.name} className={`flex items-baseline justify-between gap-6 px-6 py-5 ${i < arr.length - 1 ? "border-b border-gray-100" : ""}`}>
                 <div className={`flex-1 min-w-0 truncate ${row.cls}`}>
                   {row.text ?? "Plan the week ahead"}
                 </div>
-                <div className="font-mono text-xs text-muted-foreground text-right shrink-0">
+                <div className="font-mono text-xs text-gray-500 text-right shrink-0">
                   <span className="text-gray-700 block mb-0.5">{row.name}</span>
-                  {row.meta}
+                  <span className="block">{row.meta}</span>
+                  <span className="block">{row.color}</span>
                 </div>
               </div>
             ))}
@@ -554,7 +558,7 @@ function App() {
 
         {/* ── SPACING ── */}
         <Section id="spacing" title="Spacing">
-          <div className="flex items-end gap-7 p-7 bg-card border border-border rounded-md overflow-x-auto">
+          <div className="flex items-end gap-7 p-7 bg-white border border-gray-300 rounded-md overflow-x-auto">
             {[
               { px: 4, token: "--sp-1" },
               { px: 8, token: "--sp-2" },
@@ -568,7 +572,7 @@ function App() {
               <div key={s.token} className="flex flex-col items-center gap-2.5 shrink-0">
                 <div className="bg-clay rounded-[3px] h-3.5" style={{ width: s.px }} />
                 <div className="font-mono text-[11px] text-gray-700 text-center">
-                  {s.px}<span className="block text-muted-foreground">{s.token}</span>
+                  {s.px}<span className="block text-gray-500">{s.token}</span>
                 </div>
               </div>
             ))}
@@ -586,11 +590,11 @@ function App() {
             ].map((item) => (
               <div
                 key={item.token}
-                className="w-[120px] h-[88px] bg-oat border border-border flex items-end p-3"
+                className="w-[120px] h-[88px] bg-oat border border-gray-300 flex items-end p-3"
                 style={{ borderRadius: item.r }}
               >
                 <div className="font-mono text-[11px] text-gray-700">
-                  {item.r}<span className="block text-muted-foreground">{item.token}</span>
+                  {item.r}<span className="block text-gray-500">{item.token}</span>
                 </div>
               </div>
             ))}
@@ -603,11 +607,11 @@ function App() {
             ].map((item) => (
               <div
                 key={item.token}
-                className="w-40 h-24 bg-card rounded-md flex items-end p-3.5"
+                className="w-40 h-24 bg-white rounded-md flex items-end p-3.5"
                 style={{ boxShadow: item.shadow }}
               >
                 <div className="font-mono text-[11px] text-gray-700">
-                  {item.token}<span className="block text-muted-foreground">{item.meta}</span>
+                  {item.token}<span className="block text-gray-500">{item.meta}</span>
                 </div>
               </div>
             ))}
@@ -640,7 +644,7 @@ function App() {
             </LabeledItem>
             <LabeledItem label="With icon">
               <div className="w-[260px] relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground z-10" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 z-10" />
                 <Input className="pl-9" placeholder="Search…" />
               </div>
             </LabeledItem>
@@ -689,7 +693,7 @@ function App() {
           </ComponentBlock>
 
           <ComponentBlock name="UserSelector" align="start" gap="gap-16">
-            <LabeledItem label="No assignee">
+            <LabeledItem label="Single Select - Basic" subtitle="No selection">
               <UserSelector
                 users={sampleUsers}
                 recentIds={recentUserIds}
@@ -699,7 +703,7 @@ function App() {
                 noAssigneeLabel="Select User"
               />
             </LabeledItem>
-            <LabeledItem label="With selection">
+            <LabeledItem label="Single Select - Basic" subtitle="With selection">
               <UserSelector
                 users={sampleUsers}
                 recentIds={recentUserIds}
@@ -708,12 +712,12 @@ function App() {
                 onInvite={() => toast("Invite user flow triggered")}
               />
             </LabeledItem>
-            <LabeledItem label="No selection">
+            <LabeledItem label="Multi-Select - Basic" subtitle="With selection">
               <UserSelector
                 users={sampleUsers}
                 recentIds={recentUserIds}
-                value={undefined}
-                onSelect={() => {}}
+                value={selectedUserId}
+                onSelect={setSelectedUserId}
                 onInvite={() => toast("Invite user flow triggered")}
               />
             </LabeledItem>
@@ -734,7 +738,7 @@ function App() {
                   <DropdownMenuItem><Copy className="mr-2 h-4 w-4" /> Duplicate</DropdownMenuItem>
                   <DropdownMenuItem><ArrowRight className="mr-2 h-4 w-4" /> Move to…</DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem className="text-destructive focus:text-destructive">
+                  <DropdownMenuItem className="text-danger focus:text-danger">
                     <Trash2 className="mr-2 h-4 w-4" /> Delete
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -931,7 +935,7 @@ function App() {
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-danger-hover">
+                  <AlertDialogAction className="bg-danger text-white hover:bg-danger-hover">
                     Delete
                   </AlertDialogAction>
                 </AlertDialogFooter>
@@ -981,7 +985,7 @@ function App() {
 
           <ComponentBlock name="Table" align="start" headerRight={
             <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">Row density</span>
+              <span className="text-sm text-gray-500">Row density</span>
               <Select value={tableDensity} onValueChange={(v) => setTableDensity(v as TableDensity)}>
                 <SelectTrigger className="w-[140px] h-7 text-xs">
                   <SelectValue />
@@ -1011,7 +1015,7 @@ function App() {
                   )}
                 </div>
                 <div className="relative w-[200px]">
-                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground z-10" />
+                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-500 z-10" />
                   <Input
                     placeholder="Filter tasks…"
                     value={globalFilter}
@@ -1021,14 +1025,14 @@ function App() {
                   {globalFilter && (
                     <button
                       onClick={() => setGlobalFilter("")}
-                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-ink"
                     >
                       <X className="h-3.5 w-3.5" />
                     </button>
                   )}
                 </div>
               </div>
-              <div className="border border-border rounded-md overflow-hidden">
+              <div className="border border-gray-300 rounded-md overflow-hidden">
               <Table ref={tableRef} density={tableDensity} className="w-full" style={{ tableLayout: "fixed" }}>
                 <DndContext
                   sensors={sensors}
@@ -1067,7 +1071,7 @@ function App() {
                               key={cell.id}
                               style={{ width: cell.column.getSize() }}
                               className={cn(
-                                colId === "id" && "font-mono text-xs text-muted-foreground",
+                                colId === "id" && "font-mono text-xs text-gray-500",
                                 colId === "title" && "font-medium",
                                 colId === "priority" && "text-sm",
                               )}
@@ -1094,7 +1098,7 @@ function App() {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={columnOrder.length} className="h-24 text-center text-muted-foreground">
+                      <TableCell colSpan={columnOrder.length} className="h-24 text-center text-gray-500">
                         No tasks found.
                       </TableCell>
                     </TableRow>
@@ -1103,7 +1107,7 @@ function App() {
               </Table>
               </div>
               <div className="mt-3">
-                <span className="text-xs text-muted-foreground">
+                <span className="text-xs text-gray-500">
                   {table.getFilteredRowModel().rows.length} of {tasks.length} task(s)
                 </span>
               </div>
@@ -1118,13 +1122,13 @@ function App() {
                   <TabsTrigger value="tasks">Tasks</TabsTrigger>
                   <TabsTrigger value="settings">Settings</TabsTrigger>
                 </TabsList>
-                <TabsContent value="overview" className="p-4 text-sm text-muted-foreground">
+                <TabsContent value="overview" className="p-4 text-sm text-gray-500">
                   Project overview content goes here.
                 </TabsContent>
-                <TabsContent value="tasks" className="p-4 text-sm text-muted-foreground">
+                <TabsContent value="tasks" className="p-4 text-sm text-gray-500">
                   Task list content goes here.
                 </TabsContent>
-                <TabsContent value="settings" className="p-4 text-sm text-muted-foreground">
+                <TabsContent value="settings" className="p-4 text-sm text-gray-500">
                   Settings content goes here.
                 </TabsContent>
               </Tabs>
@@ -1162,7 +1166,7 @@ function App() {
         <Section id="medium" title="Extended Components">
           <ComponentBlock name="Command">
             <LabeledItem label="Inline palette">
-              <Command className="rounded-md border border-border shadow-sm w-[350px]">
+              <Command className="rounded-md border border-gray-300 shadow-sm w-[350px]">
                 <CommandInput placeholder="Type a command or search…" />
                 <CommandList>
                   <CommandEmpty>No results found.</CommandEmpty>
@@ -1191,7 +1195,7 @@ function App() {
                   <div className="grid gap-4">
                     <div className="space-y-2">
                       <h4 className="font-medium leading-none">Filter tasks</h4>
-                      <p className="text-sm text-muted-foreground">Narrow down your task list.</p>
+                      <p className="text-sm text-gray-500">Narrow down your task list.</p>
                     </div>
                     <div className="grid gap-2">
                       <div className="grid grid-cols-3 items-center gap-4">
@@ -1228,7 +1232,7 @@ function App() {
             </LabeledItem>
             <div className="w-16" />
             <LabeledItem label="Inline calendar">
-              <div className="border border-border rounded-md bg-card">
+              <div className="border border-gray-300 rounded-md bg-white">
                 <Calendar mode="single" className="rounded-md" />
               </div>
             </LabeledItem>
@@ -1376,7 +1380,7 @@ function App() {
 
           <ComponentBlock name="Sidebar" align="start">
             <LabeledItem label="App sidebar">
-              <Sidebar className="rounded-md border border-border">
+              <Sidebar className="rounded-md border border-gray-300">
                 <SidebarHeader>
                   <span className="font-serif text-lg font-medium">Range</span>
                 </SidebarHeader>
@@ -1406,7 +1410,7 @@ function App() {
               </Sidebar>
             </LabeledItem>
             <LabeledItem label="App sidebar (v2)">
-              <Sidebar className="rounded-md border border-border">
+              <Sidebar className="rounded-md border border-gray-300">
                 <SidebarHeader>
                   <span className="font-serif text-lg font-medium">Range</span>
                 </SidebarHeader>

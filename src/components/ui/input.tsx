@@ -49,9 +49,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         <input
           type={type}
           className={cn(
-            "flex h-[38px] w-full rounded-sm border border-input bg-white px-3 text-sm text-foreground transition-colors",
-            "placeholder:text-muted-foreground",
-            "focus:border-primary focus:ring-[3px] focus:ring-primary/15 focus:outline-none",
+            "flex h-[38px] w-full rounded-sm border border-gray-300 bg-white px-3 text-sm text-ink transition-colors",
+            "placeholder:text-gray-500",
+            "focus:border-clay focus:ring-[3px] focus:ring-clay/15 focus:outline-none",
             "disabled:cursor-not-allowed disabled:opacity-50",
             hasValue && "pr-8",
             className
@@ -66,7 +66,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             type="button"
             onClick={handleClear}
             tabIndex={-1}
-            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-ink"
           >
             <X className="h-3.5 w-3.5" />
           </button>

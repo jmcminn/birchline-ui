@@ -6,6 +6,23 @@ import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, Command
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 
+function HighlightMatch({ text, query }: { text: string; query: string }) {
+  if (!query || query.length < 1) return <>{text}</>
+  const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "gi")
+  const parts = text.split(regex)
+  return (
+    <>
+      {parts.map((part, i) =>
+        regex.test(part) ? (
+          <mark key={i} className="bg-highlight text-ink rounded-xs px-0.5">{part}</mark>
+        ) : (
+          part
+        )
+      )}
+    </>
+  )
+}
+
 export type UserRole = "Admin" | "Collaborator" | "Guest"
 
 export interface User {
@@ -27,36 +44,26 @@ interface UserSelectorProps {
   className?: string
 }
 
-const roleBadgeVariant: Record<UserRole, "info" | "accent" | "warning"> = {
-  Admin: "info",
+const roleBadgeVariant: Record<UserRole, "accent" | "muted"> = {
+  Admin: "accent",
   Collaborator: "accent",
-  Guest: "warning",
+  Guest: "muted",
 }
 
-function getInitialsColor(initials: string) {
-  const colors = [
-    "bg-olive text-white",
-    "bg-sea-glass text-white",
-    "bg-dusty-plum text-white",
-    "bg-info text-white",
-    "bg-clay text-white",
-    "bg-gray-500 text-white",
-  ]
-  let hash = 0
-  for (let i = 0; i < initials.length; i++) {
-    hash = initials.charCodeAt(i) + ((hash << 5) - hash)
-  }
-  return colors[Math.abs(hash) % colors.length]
+function getRoleAvatarColor(role: UserRole) {
+  return role === "Guest" ? "bg-gray-500 text-white" : "bg-clay text-white"
 }
 
 function UserRow({
   user,
   selected,
   onSelect,
+  search,
 }: {
   user: User
   selected: boolean
   onSelect: () => void
+  search?: string
 }) {
   return (
     <CommandItem
@@ -65,21 +72,21 @@ function UserRow({
       className="flex items-center gap-3 px-3 py-2.5"
     >
       <span className="w-5 shrink-0 flex items-center justify-center">
-        {selected && <Check className="h-4 w-4 text-foreground" />}
+        {selected && <Check className="h-4 w-4 text-ink" />}
       </span>
-      <Avatar className="h-9 w-9 shrink-0">
-        <AvatarFallback className={cn("text-xs font-medium", getInitialsColor(user.initials))}>
+      <Avatar className="h-8 w-8 shrink-0">
+        <AvatarFallback className={cn("text-xs font-medium", getRoleAvatarColor(user.role))}>
           {user.initials}
         </AvatarFallback>
       </Avatar>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium truncate">{user.name}</span>
-          <Badge variant={roleBadgeVariant[user.role]} className="text-[10px] px-1.5 py-0 h-5 shrink-0">
+          <span className="text-sm font-medium truncate"><HighlightMatch text={user.name} query={search ?? ""} /></span>
+          <Badge variant={roleBadgeVariant[user.role]} className="text-[11px] px-1.5 py-0 h-5 shrink-0">
             {user.role}
           </Badge>
         </div>
-        <div className="text-xs text-muted-foreground truncate">{user.email}</div>
+        <div className="text-xs text-gray-500 truncate"><HighlightMatch text={user.email} query={search ?? ""} /></div>
       </div>
     </CommandItem>
   )
@@ -124,16 +131,16 @@ function UserSelector({
       <PopoverTrigger asChild>
         <button
           className={cn(
-            "flex items-center gap-2.5 h-10 px-3 rounded-sm border border-input bg-white text-sm",
+            "flex items-center gap-2.5 h-10 px-3 rounded-sm border border-gray-300 bg-white text-sm",
             "hover:bg-gray-100 transition-colors",
-            "focus:border-primary focus:ring-[3px] focus:ring-primary/15 focus:outline-none",
+            "focus:border-clay focus:ring-[3px] focus:ring-clay/15 focus:outline-none",
             className
           )}
         >
           {selectedUser ? (
             <>
               <Avatar className="h-6 w-6">
-                <AvatarFallback className={cn("text-[10px] font-medium", getInitialsColor(selectedUser.initials))}>
+                <AvatarFallback className={cn("text-[10px] font-medium", getRoleAvatarColor(selectedUser.role))}>
                   {selectedUser.initials}
                 </AvatarFallback>
               </Avatar>
@@ -144,19 +151,23 @@ function UserSelector({
               <div className="h-6 w-6 rounded-full border-[1.5px] border-dashed border-gray-300 flex items-center justify-center shrink-0">
                 <UserRound className="h-3 w-3 text-gray-300" />
               </div>
-              <span className="text-muted-foreground">{noAssigneeLabel}</span>
+              <span className="text-gray-500">{noAssigneeLabel}</span>
             </>
           ) : (
-            <span className="text-muted-foreground">{placeholder}</span>
+            <span className="text-gray-500">{placeholder}</span>
           )}
         </button>
       </PopoverTrigger>
       <PopoverContent
         className="w-fit min-w-[280px] max-w-[400px] p-0"
         align="start"
+        side="bottom"
         collisionPadding={16}
+        sticky="always"
       >
-        <Command>
+        <Command filter={(value, search) => {
+            return value.toLowerCase().includes(search.toLowerCase()) ? 1 : 0
+          }}>
           <div className="relative">
             <CommandInput
               placeholder="Search users"
@@ -166,7 +177,7 @@ function UserSelector({
             {search.length > 0 && (
               <button
                 onClick={() => setSearch("")}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-ink"
               >
                 <X className="h-3.5 w-3.5" />
               </button>
@@ -174,21 +185,23 @@ function UserSelector({
           </div>
           <CommandList className="max-h-[calc(var(--radix-popover-content-available-height,50vh)-64px-44px)] overflow-y-auto">
             <CommandEmpty>No users found.</CommandEmpty>
-            <CommandGroup>
-              <CommandItem
-                value="no-assignee"
-                onSelect={() => handleSelect(null)}
-                className="flex items-center gap-3 px-3 py-2.5"
-              >
-                <span className="w-5 shrink-0 flex items-center justify-center">
-                  {value === null && <Check className="h-4 w-4 text-foreground" />}
-                </span>
-                <div className="h-9 w-9 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center shrink-0">
-                  <UserRound className="h-4 w-4 text-gray-300" />
-                </div>
-                <span className="text-sm font-medium">No Assignee</span>
-              </CommandItem>
-            </CommandGroup>
+            {!search && (
+              <CommandGroup>
+                <CommandItem
+                  value="no-assignee"
+                  onSelect={() => handleSelect(null)}
+                  className="flex items-center gap-3 px-3 py-2.5"
+                >
+                  <span className="w-5 shrink-0 flex items-center justify-center">
+                    {value === null && <Check className="h-4 w-4 text-ink" />}
+                  </span>
+                  <div className="h-8 w-8 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center shrink-0">
+                    <UserRound className="h-4 w-4 text-gray-300" />
+                  </div>
+                  <span className="text-sm font-medium">No Assignee</span>
+                </CommandItem>
+              </CommandGroup>
+            )}
             {recentUsers.length > 0 && (
               <>
                 <CommandSeparator />
@@ -199,6 +212,7 @@ function UserSelector({
                       user={user}
                       selected={value === user.id}
                       onSelect={() => handleSelect(user.id)}
+                      search={search}
                     />
                   ))}
                 </CommandGroup>
@@ -214,27 +228,29 @@ function UserSelector({
                       user={user}
                       selected={value === user.id}
                       onSelect={() => handleSelect(user.id)}
+                      search={search}
                     />
                   ))}
                 </CommandGroup>
               </>
             )}
-            {onInvite && (
-              <>
-                <CommandSeparator />
-                <CommandGroup>
-                  <CommandItem
-                    onSelect={() => { onInvite(); setOpen(false) }}
-                    className="flex items-center gap-3 px-3 py-2.5"
-                  >
-                    <span className="w-5 shrink-0" />
-                    <UserPlus className="h-4 w-4 text-muted-foreground shrink-0" />
-                    <span className="text-sm">Invite User</span>
-                  </CommandItem>
-                </CommandGroup>
-              </>
-            )}
           </CommandList>
+          {onInvite && !search && (
+            <div className="border-t border-gray-300">
+              <CommandGroup>
+                <CommandItem
+                  onSelect={() => { onInvite(); setOpen(false) }}
+                  className="flex items-center gap-3 px-3 py-1"
+                >
+                  <span className="w-5 shrink-0" />
+                  <div className="h-8 w-8 flex items-center justify-center shrink-0">
+                    <UserPlus className="h-4 w-4 text-gray-500" />
+                  </div>
+                  <span className="text-sm">Invite User</span>
+                </CommandItem>
+              </CommandGroup>
+            </div>
+          )}
         </Command>
       </PopoverContent>
     </Popover>

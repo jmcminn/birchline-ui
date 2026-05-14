@@ -3,13 +3,18 @@
 @theme {
   /* ── Birchline Color Tokens ── */
   --color-ivory: #FAF9F5;
-  --color-slate: #141413;
   --color-clay: #D97757;
   --color-clay-hover: #C7684C;
+  --color-ink: #141413;
   --color-oat: #E3DACC;
-  --color-olive: #788C5D;
-  --color-dusty-plum: #7B6B8A;
-  --color-sea-glass: #5B8E8A;
+  --color-green: #788C5D;
+  --color-orange: #C78E3F;
+  --color-red: #B04A4A;
+  --color-red-hover: #9A3F3F;
+  --color-plum: #7B6B8A;
+  --color-teal: #5B8E8A;
+  --color-blue: #5C7CA3;
+  --color-light-yellow: #F5E6B8;
 
   --color-white: #FFFFFF;
   --color-gray-100: #F0EEE6;
@@ -17,41 +22,18 @@
   --color-gray-500: #87867F;
   --color-gray-700: #3D3D3A;
 
-  --color-success: #788C5D;
-  --color-warning: #C78E3F;
-  --color-danger: #B04A4A;
-  --color-danger-hover: #9A3F3F;
-  --color-info: #5C7CA3;
-  --color-highlight: #F5E6B8;
+  --color-success: var(--color-green);
+  --color-warning: var(--color-orange);
+  --color-danger: var(--color-red);
+  --color-danger-hover: var(--color-red-hover);
+  --color-info: var(--color-blue);
+  --color-highlight: var(--color-light-yellow);
 
-  /* ── Semantic mappings (shadcn convention) ── */
-  --color-background: #FAF9F5;
-  --color-foreground: #141413;
-
-  --color-card: #FFFFFF;
-  --color-card-foreground: #141413;
-
-  --color-popover: #FFFFFF;
-  --color-popover-foreground: #141413;
-
-  --color-primary: #D97757;
-  --color-primary-foreground: #FFFFFF;
-
-  --color-secondary: #F0EEE6;
-  --color-secondary-foreground: #3D3D3A;
-
-  --color-muted: #F0EEE6;
-  --color-muted-foreground: #87867F;
-
-  --color-accent: #F0EEE6;
-  --color-accent-foreground: #3D3D3A;
-
-  --color-destructive: #B04A4A;
-  --color-destructive-foreground: #FFFFFF;
-
-  --color-border: #D1CFC5;
-  --color-input: #D1CFC5;
-  --color-ring: #D97757;
+  /* ── Semantic mappings (point to Birchline tokens) ── */
+  --color-background: var(--color-ivory);
+  --color-foreground: var(--color-ink);
+  --color-border: var(--color-gray-300);
+  --color-ring: var(--color-clay);
 
   /* ── Typography ── */
   --font-serif: ui-serif, Georgia, serif;
