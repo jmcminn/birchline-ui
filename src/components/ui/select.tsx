@@ -39,7 +39,7 @@ const SelectContent = React.forwardRef<
     <SelectPrimitive.Content
       ref={ref}
       className={cn(
-        "relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border border-gray-300 bg-white text-ink shadow-md",
+        "relative z-50 max-h-96 min-w-[8rem] max-w-[400px] w-fit overflow-hidden rounded-md border border-gray-300 bg-white text-ink shadow-md",
         "data-[state=open]:animate-in data-[state=closed]:animate-out",
         "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
         "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
@@ -77,7 +77,7 @@ const SelectItem = React.forwardRef<
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex w-full cursor-pointer select-none items-center rounded-xs py-2 pl-8 pr-2 text-sm outline-none",
+      "relative flex w-full cursor-pointer select-none items-center rounded-xs py-2 pl-8 pr-2 text-sm outline-none whitespace-nowrap overflow-hidden text-ellipsis",
       "focus:bg-gray-100 focus:text-ink",
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       className

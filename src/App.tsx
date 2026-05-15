@@ -269,9 +269,9 @@ function DatePickerDemo() {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" className={cn("w-[260px] justify-start text-left font-normal", !date && "text-gray-500")}>
+        <Button variant="outline" className={cn("w-auto justify-start text-left font-normal", !date && "text-gray-500")}>
           <CalendarDays className="mr-2 h-4 w-4" />
-          {date ? format(date, "PPP") : "Pick a date"}
+          {date ? format(date, "MMM dd, yyyy") : "Pick a date"}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
@@ -392,7 +392,11 @@ function App() {
   const [switchOn, setSwitchOn] = useState(true)
   const [tableDensity, setTableDensity] = useState<TableDensity>("default")
   const [colorSectionBg, setColorSectionBg] = useState("#FAF9F5")
+  const [typeSectionBg, setTypeSectionBg] = useState("#FAF9F5")
+  const [separatorColor, setSeparatorColor] = useState("#D1CFC5")
+  const [separatorBg, setSeparatorBg] = useState("#FFFFFF")
   const [selectedUserId, setSelectedUserId] = useState<string | null>("u7")
+  const [multiSelectedUserIds, setMultiSelectedUserIds] = useState<string[]>(["u7", "u3"])
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [globalFilter, setGlobalFilter] = useState("")
@@ -400,6 +404,8 @@ function App() {
     taskColumns.map((c) => (c as { accessorKey: string }).accessorKey)
   )
   const [draggingColumnId, setDraggingColumnId] = useState<string | null>(null)
+  const [multiSelectValues, setMultiSelectValues] = useState<string[]>(["floor-1", "floor-2"])
+  const [multiSelectOpen, setMultiSelectOpen] = useState(false)
   const tableRef = useRef<HTMLTableElement>(null)
 
   const columns = useMemo(() => taskColumns, [])
@@ -530,8 +536,42 @@ function App() {
         </section>
 
         {/* ── TYPOGRAPHY ── */}
-        <Section id="typography" title="Typography">
-          <div className="border border-gray-300 rounded-md bg-white overflow-hidden">
+        <section id="typography" className="mb-16">
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="font-serif text-[26px] font-medium tracking-tight">Typography</h2>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="gap-2">
+                  <div className="w-4 h-4 rounded-xs border border-gray-300" style={{ backgroundColor: typeSectionBg }} />
+                  <Palette className="h-3.5 w-3.5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-[280px]">
+                <DropdownMenuLabel>Background color</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {birchlineColors.map((c) => (
+                  <DropdownMenuItem
+                    key={c.hex}
+                    onClick={() => setTypeSectionBg(c.hex)}
+                    className="gap-3"
+                  >
+                    <span className="w-4 shrink-0 flex items-center justify-center">
+                      {typeSectionBg === c.hex && <Check className="h-3.5 w-3.5 text-clay" />}
+                    </span>
+                    <div
+                      className="w-6 h-6 rounded-xs border border-black/10 shrink-0"
+                      style={{ backgroundColor: c.hex }}
+                    />
+                    <span className="flex-1 text-sm">{c.name}</span>
+                    <span className="font-mono text-[11px] text-gray-500">{c.hex}</span>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+          <Separator className="mb-7" />
+          <div className="rounded-md p-6 -mx-6 transition-colors">
+          <div className="border border-gray-300 rounded-md overflow-hidden transition-colors" style={{ backgroundColor: typeSectionBg }}>
             {[
               { cls: "font-serif text-5xl leading-[1.1] font-medium tracking-tight", name: "Display", meta: "48 / 1.1 / 500", color: "text-ink" },
               { cls: "font-serif text-[32px] leading-[1.2] font-medium tracking-tight", name: "Heading 1", meta: "32 / 1.2 / 500", color: "text-ink" },
@@ -554,7 +594,8 @@ function App() {
               </div>
             ))}
           </div>
-        </Section>
+          </div>
+        </section>
 
         {/* ── SPACING ── */}
         <Section id="spacing" title="Spacing">
@@ -677,7 +718,7 @@ function App() {
                 </SelectContent>
               </Select>
             </LabeledItem>
-            <LabeledItem label="Pre-selected">
+            <LabeledItem label="Single Select">
               <Select defaultValue="review">
                 <SelectTrigger>
                   <SelectValue />
@@ -690,35 +731,76 @@ function App() {
                 </SelectContent>
               </Select>
             </LabeledItem>
+            <LabeledItem label="Multi-Select">
+              <Popover open={multiSelectOpen} onOpenChange={setMultiSelectOpen}>
+                <PopoverTrigger asChild>
+                  <button className="flex h-10 w-[200px] items-center justify-between rounded-sm border border-gray-300 bg-white px-3 py-2 text-sm hover:bg-gray-100 transition-colors focus:border-clay focus:ring-[3px] focus:ring-clay/15 focus:outline-none">
+                    <span className={multiSelectValues.length > 0 ? "text-ink truncate" : "text-gray-500"}>
+                      {multiSelectValues.length > 0
+                        ? multiSelectValues.map(v => {
+                            const labels: Record<string, string> = { "site-plan": "Site Plan", "floor-1": "Floor 1", "floor-2": "Floor 2", "roof": "Roof", "electrical": "Electrical", "plumbing": "Plumbing", "window-schedule": "Window Schedule" }
+                            return labels[v] ?? v
+                          }).join(", ")
+                        : "Choose sheets…"}
+                    </span>
+                    <ChevronRight className="h-4 w-4 text-gray-500 rotate-90" />
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent className="w-fit max-w-[400px] p-1" align="start">
+                  {[
+                    { value: "site-plan", label: "01 - Site Plan" },
+                    { value: "floor-1", label: "02 - Floor 1" },
+                    { value: "floor-2", label: "03 - Floor 2" },
+                    { value: "roof", label: "04 - Roof" },
+                    { value: "electrical", label: "05 - Electrical" },
+                    { value: "plumbing", label: "06 - Plumbing" },
+                    { value: "window-schedule", label: "07 - Window Schedule" },
+                  ].map((item) => (
+                    <label
+                      key={item.value}
+                      className="flex cursor-pointer items-center gap-2.5 rounded-xs px-3 py-2 text-sm hover:bg-gray-100 transition-colors whitespace-nowrap overflow-hidden text-ellipsis"
+                    >
+                      <Checkbox
+                        checked={multiSelectValues.includes(item.value)}
+                        onCheckedChange={(checked) => {
+                          setMultiSelectValues(prev =>
+                            checked
+                              ? [...prev, item.value]
+                              : prev.filter(v => v !== item.value)
+                          )
+                        }}
+                      />
+                      {item.label}
+                    </label>
+                  ))}
+                </PopoverContent>
+              </Popover>
+            </LabeledItem>
           </ComponentBlock>
 
           <ComponentBlock name="UserSelector" align="start" gap="gap-16">
-            <LabeledItem label="Single Select - Basic" subtitle="No selection">
+            <LabeledItem label="Basic - Single Select" subtitle="With selection">
               <UserSelector
                 users={sampleUsers}
                 recentIds={recentUserIds}
-                value={null}
-                onSelect={() => {}}
+                value={selectedUserId}
+                onSelect={setSelectedUserId}
                 onInvite={() => toast("Invite user flow triggered")}
+                showNoAssignee={false}
+                clearable
                 noAssigneeLabel="Select User"
               />
             </LabeledItem>
-            <LabeledItem label="Single Select - Basic" subtitle="With selection">
+            <LabeledItem label="Basic - Multi-Select" subtitle="With selection">
               <UserSelector
                 users={sampleUsers}
                 recentIds={recentUserIds}
-                value={selectedUserId}
-                onSelect={setSelectedUserId}
+                multiSelect
+                values={multiSelectedUserIds}
+                onValuesChange={setMultiSelectedUserIds}
                 onInvite={() => toast("Invite user flow triggered")}
-              />
-            </LabeledItem>
-            <LabeledItem label="Multi-Select - Basic" subtitle="With selection">
-              <UserSelector
-                users={sampleUsers}
-                recentIds={recentUserIds}
-                value={selectedUserId}
-                onSelect={setSelectedUserId}
-                onInvite={() => toast("Invite user flow triggered")}
+                clearable
+                noAssigneeLabel="Select Assignee"
               />
             </LabeledItem>
           </ComponentBlock>
@@ -1409,38 +1491,98 @@ function App() {
                 </SidebarFooter>
               </Sidebar>
             </LabeledItem>
-            <LabeledItem label="App sidebar (v2)">
-              <Sidebar className="rounded-md border border-gray-300">
-                <SidebarHeader>
-                  <span className="font-serif text-lg font-medium">Range</span>
-                </SidebarHeader>
-                <SidebarContent>
-                  <SidebarGroup>
-                    <SidebarGroupLabel>Navigation</SidebarGroupLabel>
-                    <SidebarItem active className="text-base gap-2.5"><Home className="h-5 w-5" /> Dashboard</SidebarItem>
-                    <SidebarItem className="text-base gap-2.5"><Inbox className="h-5 w-5" /> Inbox</SidebarItem>
-                    <SidebarItem className="text-base gap-2.5"><FileText className="h-5 w-5" /> Tasks</SidebarItem>
-                    <SidebarItem className="text-base gap-2.5"><BarChart3 className="h-5 w-5" /> Reports</SidebarItem>
-                  </SidebarGroup>
-                  <SidebarGroup>
-                    <SidebarGroupLabel>Projects</SidebarGroupLabel>
-                    <SidebarItem className="text-base gap-2.5"><ChevronRight className="h-5 w-5" /> Q3 Roadmap</SidebarItem>
-                    <SidebarItem className="text-base gap-2.5"><ChevronRight className="h-5 w-5" /> Design System</SidebarItem>
-                    <SidebarItem className="text-base gap-2.5"><ChevronRight className="h-5 w-5" /> API Migration</SidebarItem>
-                  </SidebarGroup>
-                </SidebarContent>
-                <SidebarFooter>
-                  <div className="flex items-center gap-2">
-                    <Avatar className="h-7 w-7">
-                      <AvatarFallback className="text-[10px]">JM</AvatarFallback>
-                    </Avatar>
-                    <span className="text-sm">Jason McMinn</span>
-                  </div>
-                </SidebarFooter>
-              </Sidebar>
-            </LabeledItem>
           </ComponentBlock>
         </Section>
+
+        {/* ── Dividers ── */}
+        <section id="dividers" className="mb-16">
+          <div className="mb-3">
+            <div className="flex items-center justify-between">
+              <div className="font-mono text-base text-gray-500">&lt;Separator /&gt;</div>
+              <div className="flex items-center gap-2">
+                {/* Separator color menu */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm" className="gap-2">
+                      <div className="w-4 h-4 rounded-xs border border-gray-300" style={{ backgroundColor: separatorColor }} />
+                      <span className="text-xs text-gray-500">Separator</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-[280px]">
+                    <DropdownMenuLabel>Separator color</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    {birchlineColors.map((c) => (
+                      <DropdownMenuItem
+                        key={c.hex}
+                        onClick={() => setSeparatorColor(c.hex)}
+                        className="gap-3"
+                      >
+                        <span className="w-4 shrink-0 flex items-center justify-center">
+                          {separatorColor === c.hex && <Check className="h-3.5 w-3.5 text-clay" />}
+                        </span>
+                        <div
+                          className="w-6 h-6 rounded-xs border border-black/10 shrink-0"
+                          style={{ backgroundColor: c.hex }}
+                        />
+                        <span className="flex-1 text-sm">{c.name}</span>
+                        <span className="font-mono text-[11px] text-gray-500">{c.hex}</span>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                {/* Background color menu */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm" className="gap-2">
+                      <div className="w-4 h-4 rounded-xs border border-gray-300" style={{ backgroundColor: separatorBg }} />
+                      <span className="text-xs text-gray-500">Background</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-[280px]">
+                    <DropdownMenuLabel>Background color</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    {birchlineColors.map((c) => (
+                      <DropdownMenuItem
+                        key={c.hex}
+                        onClick={() => setSeparatorBg(c.hex)}
+                        className="gap-3"
+                      >
+                        <span className="w-4 shrink-0 flex items-center justify-center">
+                          {separatorBg === c.hex && <Check className="h-3.5 w-3.5 text-clay" />}
+                        </span>
+                        <div
+                          className="w-6 h-6 rounded-xs border border-black/10 shrink-0"
+                          style={{ backgroundColor: c.hex }}
+                        />
+                        <span className="flex-1 text-sm">{c.name}</span>
+                        <span className="font-mono text-[11px] text-gray-500">{c.hex}</span>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </div>
+          </div>
+          <div
+            className="flex w-full gap-6 p-6 border border-gray-300 rounded-md transition-colors"
+            style={{ backgroundColor: separatorBg }}
+          >
+            {/* Horizontal dividers */}
+            <div className="flex-1 flex flex-col justify-between py-8" style={{ gap: "128px" }}>
+              <Separator style={{ backgroundColor: separatorColor }} />
+              <Separator style={{ backgroundColor: separatorColor }} />
+              <Separator className="h-[2px]" style={{ backgroundColor: separatorColor }} />
+              <Separator className="h-[2px]" style={{ backgroundColor: separatorColor }} />
+            </div>
+            {/* Vertical dividers */}
+            <div className="flex-1 flex justify-between px-8" style={{ height: "600px" }}>
+              <Separator orientation="vertical" style={{ backgroundColor: separatorColor }} />
+              <Separator orientation="vertical" style={{ backgroundColor: separatorColor }} />
+              <Separator orientation="vertical" className="w-[2px]" style={{ backgroundColor: separatorColor }} />
+              <Separator orientation="vertical" className="w-[2px]" style={{ backgroundColor: separatorColor }} />
+            </div>
+          </div>
+        </section>
       </div>
     </TooltipProvider>
   )

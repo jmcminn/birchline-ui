@@ -5,6 +5,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem, CommandSeparator } from "@/components/ui/command"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
+import { Checkbox } from "@/components/ui/checkbox"
 
 function HighlightMatch({ text, query }: { text: string; query: string }) {
   if (!query || query.length < 1) return <>{text}</>
@@ -38,9 +39,14 @@ interface UserSelectorProps {
   recentIds?: string[]
   value?: string | null
   onSelect?: (userId: string | null) => void
+  multiSelect?: boolean
+  values?: string[]
+  onValuesChange?: (userIds: string[]) => void
   onInvite?: () => void
   placeholder?: string
   noAssigneeLabel?: string
+  showNoAssignee?: boolean
+  clearable?: boolean
   className?: string
 }
 
@@ -59,11 +65,13 @@ function UserRow({
   selected,
   onSelect,
   search,
+  multiSelect,
 }: {
   user: User
   selected: boolean
   onSelect: () => void
   search?: string
+  multiSelect?: boolean
 }) {
   return (
     <CommandItem
@@ -72,7 +80,11 @@ function UserRow({
       className="flex items-center gap-3 px-3 py-2.5"
     >
       <span className="w-5 shrink-0 flex items-center justify-center">
-        {selected && <Check className="h-4 w-4 text-ink" />}
+        {multiSelect ? (
+          <Checkbox checked={selected} tabIndex={-1} className="pointer-events-none" />
+        ) : (
+          selected && <Check className="h-4 w-4 text-ink" />
+        )}
       </span>
       <Avatar className="h-8 w-8 shrink-0">
         <AvatarFallback className={cn("text-xs font-medium", getRoleAvatarColor(user.role))}>
@@ -97,9 +109,14 @@ function UserSelector({
   recentIds = [],
   value,
   onSelect,
+  multiSelect = false,
+  values = [],
+  onValuesChange,
   onInvite,
   placeholder = "Select user…",
   noAssigneeLabel = "No Assignee",
+  showNoAssignee = true,
+  clearable = false,
   className,
 }: UserSelectorProps) {
   const [open, setOpen] = useState(false)
@@ -108,6 +125,11 @@ function UserSelector({
   const selectedUser = useMemo(
     () => users.find((u) => u.id === value) ?? null,
     [users, value]
+  )
+
+  const selectedUsers = useMemo(
+    () => users.filter((u) => values.includes(u.id)),
+    [users, values]
   )
 
   const recentUsers = useMemo(
@@ -126,6 +148,13 @@ function UserSelector({
     setSearch("")
   }
 
+  function handleMultiToggle(userId: string) {
+    const next = values.includes(userId)
+      ? values.filter((id) => id !== userId)
+      : [...values, userId]
+    onValuesChange?.(next)
+  }
+
   return (
     <Popover open={open} onOpenChange={(v) => { setOpen(v); if (!v) setSearch("") }}>
       <PopoverTrigger asChild>
@@ -137,7 +166,40 @@ function UserSelector({
             className
           )}
         >
-          {selectedUser ? (
+          {multiSelect ? (
+            selectedUsers.length > 0 ? (
+              <>
+                <div className="flex items-center -space-x-1.5">
+                  {selectedUsers.slice(0, 3).map((u) => (
+                    <Avatar key={u.id} className="h-6 w-6 border-2 border-white">
+                      <AvatarFallback className={cn("text-[10px] font-medium", getRoleAvatarColor(u.role))}>
+                        {u.initials}
+                      </AvatarFallback>
+                    </Avatar>
+                  ))}
+                </div>
+                <span className="font-medium">
+                  {selectedUsers.length === 1 ? selectedUsers[0].name : `${selectedUsers.length} users`}
+                </span>
+                {clearable && (
+                  <span
+                    role="button"
+                    onClick={(e) => { e.stopPropagation(); onValuesChange?.([]) }}
+                    className="ml-auto text-gray-500 hover:text-ink transition-colors"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </span>
+                )}
+              </>
+            ) : (
+              <>
+                <div className="h-6 w-6 rounded-full border-[1.5px] border-dashed border-gray-300 flex items-center justify-center shrink-0">
+                  <UserRound className="h-3 w-3 text-gray-300" />
+                </div>
+                <span className="text-gray-500">{noAssigneeLabel}</span>
+              </>
+            )
+          ) : selectedUser ? (
             <>
               <Avatar className="h-6 w-6">
                 <AvatarFallback className={cn("text-[10px] font-medium", getRoleAvatarColor(selectedUser.role))}>
@@ -145,6 +207,15 @@ function UserSelector({
                 </AvatarFallback>
               </Avatar>
               <span className="font-medium">{selectedUser.name}</span>
+              {clearable && (
+                <span
+                  role="button"
+                  onClick={(e) => { e.stopPropagation(); onSelect?.(null) }}
+                  className="ml-auto text-gray-500 hover:text-ink transition-colors"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </span>
+              )}
             </>
           ) : value === null ? (
             <>
@@ -185,11 +256,11 @@ function UserSelector({
           </div>
           <CommandList className="max-h-[calc(var(--radix-popover-content-available-height,50vh)-64px-44px)] overflow-y-auto">
             <CommandEmpty>No users found.</CommandEmpty>
-            {!search && (
+            {!search && showNoAssignee && (
               <CommandGroup>
                 <CommandItem
                   value="no-assignee"
-                  onSelect={() => handleSelect(null)}
+                  onSelect={() => { if (multiSelect) { onValuesChange?.([]); setOpen(false); setSearch("") } else { handleSelect(null) } }}
                   className="flex items-center gap-3 px-3 py-2.5"
                 >
                   <span className="w-5 shrink-0 flex items-center justify-center">
@@ -210,9 +281,10 @@ function UserSelector({
                     <UserRow
                       key={user.id}
                       user={user}
-                      selected={value === user.id}
-                      onSelect={() => handleSelect(user.id)}
+                      selected={multiSelect ? values.includes(user.id) : value === user.id}
+                      onSelect={() => multiSelect ? handleMultiToggle(user.id) : handleSelect(user.id)}
                       search={search}
+                      multiSelect={multiSelect}
                     />
                   ))}
                 </CommandGroup>
@@ -226,9 +298,10 @@ function UserSelector({
                     <UserRow
                       key={user.id}
                       user={user}
-                      selected={value === user.id}
-                      onSelect={() => handleSelect(user.id)}
+                      selected={multiSelect ? values.includes(user.id) : value === user.id}
+                      onSelect={() => multiSelect ? handleMultiToggle(user.id) : handleSelect(user.id)}
                       search={search}
+                      multiSelect={multiSelect}
                     />
                   ))}
                 </CommandGroup>
