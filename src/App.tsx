@@ -573,14 +573,15 @@ function App() {
           <div className="rounded-md p-6 -mx-6 transition-colors">
           <div className="border border-gray-300 rounded-md overflow-hidden transition-colors" style={{ backgroundColor: typeSectionBg }}>
             {[
-              { cls: "font-serif text-5xl leading-[1.1] font-medium tracking-tight", name: "Display", meta: "48 / 1.1 / 500", color: "text-ink" },
-              { cls: "font-serif text-[32px] leading-[1.2] font-medium tracking-tight", name: "Heading 1", meta: "32 / 1.2 / 500", color: "text-ink" },
-              { cls: "font-serif text-2xl leading-[1.3] font-medium", name: "Heading 2", meta: "24 / 1.3 / 500", color: "text-ink" },
-              { cls: "font-sans text-base leading-[1.55]", name: "Body", meta: "16 / 1.55 / 430", color: "text-ink", text: "Review milestones, assign owners, and surface blockers before they cascade." },
-              { cls: "font-sans text-sm leading-[1.5]", name: "Small", meta: "14 / 1.5 / 430", color: "text-ink", text: "Review milestones, assign owners, and surface blockers before they cascade." },
-              { cls: "font-sans text-[13px] leading-[1.45]", name: "Fine", meta: "13 / 1.45 / 430", color: "text-ink", text: "Review milestones, assign owners, and surface blockers before they cascade." },
-              { cls: "font-sans text-xs leading-[1.4] font-medium text-gray-500", name: "Caption", meta: "12 / 1.4 / 500", color: "text-gray-500", text: "UPDATED 2 HOURS AGO" },
-              { cls: "font-mono text-xs leading-[1.4] text-ink", name: "Code", meta: "12 / 1.4 / 400", color: "text-ink", text: "Small type monospaced label" },
+              { cls: "font-serif text-5xl leading-[1.1] font-medium tracking-tight", name: "Display", face: "Georgia", meta: "48 / 1.1 / 500 (Medium)", color: "text-ink" },
+              { cls: "font-serif text-[32px] leading-[1.2] font-medium tracking-tight", name: "Heading 1", face: "Georgia", meta: "32 / 1.2 / 500 (Medium)", color: "text-ink" },
+              { cls: "font-serif text-2xl leading-[1.3] font-medium", name: "Heading 2", face: "Georgia", meta: "24 / 1.3 / 500 (Medium)", color: "text-ink" },
+              { cls: "font-serif text-[20px] leading-[1.3] font-normal", name: "Heading 3", face: "Georgia", meta: "20 / 1.3 / 400 (Regular)", color: "text-ink" },
+              { cls: "font-sans text-base leading-[1.55]", name: "Body", face: "Inter", meta: "16 / 1.55 / 430 (Regular)", color: "text-ink", text: "Review milestones, assign owners, and surface blockers before they cascade." },
+              { cls: "font-sans text-sm leading-[1.5]", name: "Small", face: "Inter", meta: "14 / 1.5 / 430 (Regular)", color: "text-ink", text: "Review milestones, assign owners, and surface blockers before they cascade." },
+              { cls: "font-sans text-[13px] leading-[1.45]", name: "Fine", face: "Inter", meta: "13 / 1.45 / 430 (Regular)", color: "text-ink", text: "Review milestones, assign owners, and surface blockers before they cascade." },
+              { cls: "font-sans text-xs leading-[1.4] font-medium text-gray-500", name: "Caption", face: "Inter", meta: "12 / 1.4 / 500 (Medium)", color: "text-gray-500", text: "UPDATED 2 HOURS AGO" },
+              { cls: "font-mono text-xs leading-[1.4] text-ink", name: "Code", face: "JetBrains Mono", meta: "12 / 1.4 / 400 (Regular)", color: "text-ink", text: "Small type monospaced label" },
             ].map((row, i, arr) => (
               <div key={row.name} className={`flex items-baseline justify-between gap-6 px-6 py-5 ${i < arr.length - 1 ? "border-b border-gray-100" : ""}`}>
                 <div className={`flex-1 min-w-0 truncate ${row.cls}`}>
@@ -588,6 +589,7 @@ function App() {
                 </div>
                 <div className="font-mono text-xs text-gray-500 text-right shrink-0">
                   <span className="text-gray-700 block mb-0.5">{row.name}</span>
+                  <span className="block mb-0.5">{row.face}</span>
                   <span className="block">{row.meta}</span>
                   <span className="block">{row.color}</span>
                 </div>
@@ -736,11 +738,10 @@ function App() {
                 <PopoverTrigger asChild>
                   <button className="flex h-10 w-[200px] items-center justify-between rounded-sm border border-gray-300 bg-white px-3 py-2 text-sm hover:bg-gray-100 transition-colors focus:border-clay focus:ring-[3px] focus:ring-clay/15 focus:outline-none">
                     <span className={multiSelectValues.length > 0 ? "text-ink truncate" : "text-gray-500"}>
-                      {multiSelectValues.length > 0
-                        ? multiSelectValues.map(v => {
-                            const labels: Record<string, string> = { "site-plan": "Site Plan", "floor-1": "Floor 1", "floor-2": "Floor 2", "roof": "Roof", "electrical": "Electrical", "plumbing": "Plumbing", "window-schedule": "Window Schedule" }
-                            return labels[v] ?? v
-                          }).join(", ")
+                      {multiSelectValues.length > 1
+                        ? `Sheets (${multiSelectValues.length})`
+                        : multiSelectValues.length === 1
+                          ? (() => { const labels: Record<string, string> = { "site-plan": "Site Plan", "floor-1": "Floor 1", "floor-2": "Floor 2", "roof": "Roof", "electrical": "Electrical", "plumbing": "Plumbing", "window-schedule": "Window Schedule" }; return labels[multiSelectValues[0]] ?? multiSelectValues[0] })()
                         : "Choose sheets…"}
                     </span>
                     <ChevronRight className="h-4 w-4 text-gray-500 rotate-90" />
