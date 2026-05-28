@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from "react"
+import { useState, useMemo, useRef, useEffect, useCallback } from "react"
 import { format } from "date-fns"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
@@ -57,6 +57,9 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem, CommandShortcut, CommandSeparator } from "@/components/ui/command"
@@ -385,6 +388,444 @@ const sampleUsers: User[] = [
 ]
 
 const recentUserIds = ["u1", "u2", "u3", "u4", "u5"]
+
+/* ── Border Chase Animation (web port) ──────────────────────────────── */
+
+const CHASE_DEFAULTS = {
+  strokeWidth: 3,
+  segmentPercent: 39,
+  laps: 1.5,
+  duration: 2000,
+  fadeSteps: 8,
+  fadePx: 64,
+  glowDepth: 24,
+  glowRings: 10,
+  borderRadius: 28,
+  glowOpacity: 0.18,
+  colors: ["#4285F4", "#EA4335", "#FBBC04", "#34A853", "#4285F4"],
+};
+
+function BorderChaseCard({
+  strokeWidth = CHASE_DEFAULTS.strokeWidth,
+  segmentPercent = CHASE_DEFAULTS.segmentPercent,
+  laps = CHASE_DEFAULTS.laps,
+  duration = CHASE_DEFAULTS.duration,
+  fadeSteps = CHASE_DEFAULTS.fadeSteps,
+  fadePx = CHASE_DEFAULTS.fadePx,
+  glowDepth = CHASE_DEFAULTS.glowDepth,
+  glowRings = CHASE_DEFAULTS.glowRings,
+  borderRadius = CHASE_DEFAULTS.borderRadius,
+  glowOpacity = CHASE_DEFAULTS.glowOpacity,
+  colors = CHASE_DEFAULTS.colors,
+  playing,
+  onAnimationEnd,
+}: {
+  strokeWidth?: number;
+  segmentPercent?: number;
+  laps?: number;
+  duration?: number;
+  fadeSteps?: number;
+  fadePx?: number;
+  glowDepth?: number;
+  glowRings?: number;
+  borderRadius?: number;
+  glowOpacity?: number;
+  colors?: string[];
+  playing: boolean;
+  onAnimationEnd?: () => void;
+}) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [dims, setDims] = useState({ w: 0, h: 0 });
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const ro = new ResizeObserver(([entry]) => {
+      const { width, height } = entry.contentRect;
+      setDims({ w: width, h: height });
+    });
+    ro.observe(containerRef.current);
+    return () => ro.disconnect();
+  }, []);
+
+  const { w, h } = dims;
+  const sw = strokeWidth;
+  const r = Math.max(0, borderRadius - sw / 2);
+  const half = sw / 2;
+  const pw = Math.max(0, w - sw);
+  const ph = Math.max(0, h - sw);
+
+  const straightH = Math.max(0, pw - 2 * r);
+  const straightV = Math.max(0, ph - 2 * r);
+  const perimeter = 2 * straightH + 2 * straightV + 2 * Math.PI * r;
+  const segmentLength = perimeter * (segmentPercent / 100);
+
+  const path = useMemo(() => {
+    if (w <= 0 || h <= 0) return "";
+    return [
+      `M ${half + r} ${half}`,
+      `L ${half + pw - r} ${half}`,
+      `A ${r} ${r} 0 0 1 ${half + pw} ${half + r}`,
+      `L ${half + pw} ${half + ph - r}`,
+      `A ${r} ${r} 0 0 1 ${half + pw - r} ${half + ph}`,
+      `L ${half + r} ${half + ph}`,
+      `A ${r} ${r} 0 0 1 ${half} ${half + ph - r}`,
+      `L ${half} ${half + r}`,
+      `A ${r} ${r} 0 0 1 ${half + r} ${half}`,
+    ].join(" ");
+  }, [w, h, r, half, pw, ph]);
+
+  // Build gradient stops from colors
+  const gradientStops = colors.map((c, i) => ({
+    offset: `${(i / (colors.length - 1)) * 100}%`,
+    color: c,
+  }));
+
+  // Build glow ring specs
+  const rings = useMemo(() => {
+    const result: { strokeWidth: number; opacity: number }[] = [];
+    for (let i = 0; i < glowRings; i++) {
+      const t = i / (glowRings - 1); // 0 = nearest, 1 = deepest
+      const ringSw = sw + 2 + (glowDepth - sw - 2) * (1 - t);
+      const opacity = (0.01 + 0.19 * Math.pow(1 - t, 2)) * glowOpacity;
+      result.push({ strokeWidth: ringSw, opacity: Math.min(1, opacity) });
+    }
+    return result.reverse(); // widest/faintest first
+  }, [sw, glowDepth, glowRings, glowOpacity]);
+
+  // Build fade mask layers
+  const stepPx = fadeSteps > 0 ? fadePx / fadeSteps : 0;
+  const fadeLayers = useMemo(() => {
+    const layers: { len: number; offset: number }[] = [];
+    for (let i = 0; i < fadeSteps; i++) {
+      layers.push({
+        len: Math.max(1, segmentLength - stepPx * 2 * i),
+        offset: stepPx * i,
+      });
+    }
+    return layers;
+  }, [segmentLength, fadeSteps, stepPx]);
+
+  // CSS animation via keyframes
+  const animId = useRef(0);
+  const [animKey, setAnimKey] = useState(0);
+
+  useEffect(() => {
+    if (playing && perimeter > 0) {
+      animId.current += 1;
+      setAnimKey(animId.current);
+      const timer = setTimeout(() => {
+        onAnimationEnd?.();
+      }, duration + 300);
+      return () => clearTimeout(timer);
+    }
+  }, [playing, perimeter, duration, onAnimationEnd]);
+
+  const totalTravel = perimeter * laps;
+
+  // CSS keyframes — one per fade layer (each starts at a different offset)
+  const keyframesCSS = useMemo(() => {
+    if (!playing || animKey === 0 || perimeter === 0) return "";
+    let css = `
+      @keyframes chase-dash-${animKey} {
+        from { stroke-dashoffset: 0; }
+        to { stroke-dashoffset: ${-totalTravel}; }
+      }
+      @keyframes chase-fade-in-${animKey} {
+        0% { opacity: 0; }
+        5% { opacity: 1; }
+        85% { opacity: 1; }
+        100% { opacity: 0; }
+      }
+    `;
+    fadeLayers.forEach((layer, i) => {
+      css += `
+        @keyframes chase-fade-layer-${animKey}-${i} {
+          from { stroke-dashoffset: ${-layer.offset}; }
+          to { stroke-dashoffset: ${-totalTravel - layer.offset}; }
+        }
+      `;
+    });
+    return css;
+  }, [playing, animKey, totalTravel, perimeter, fadeLayers]);
+
+  const containerAnimStyle: React.CSSProperties = playing && animKey > 0
+    ? { animation: `chase-fade-in-${animKey} ${duration + 300}ms ease forwards` }
+    : { opacity: 0 };
+
+  return (
+    <div ref={containerRef} className="relative w-full h-full">
+      {playing && animKey > 0 && <style>{keyframesCSS}</style>}
+      <Card className="w-full h-full">
+        <CardHeader>
+          <CardTitle>Border Chase</CardTitle>
+          <CardDescription>Multi-color animated border with inner glow diffusion.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-center h-20 text-sm text-gray-500">
+            Tap Play to preview
+          </div>
+        </CardContent>
+      </Card>
+      {w > 0 && h > 0 && (
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={containerAnimStyle}
+        >
+          <svg width={w} height={h} className="absolute inset-0">
+            <defs>
+              <linearGradient id={`chase-grad-${animKey}`} x1="0%" y1="0%" x2="100%" y2="0%">
+                {gradientStops.map((s, i) => (
+                  <stop key={i} offset={s.offset} stopColor={s.color} />
+                ))}
+              </linearGradient>
+              <clipPath id={`pill-clip-${animKey}`}>
+                <rect x={0} y={0} width={w} height={h} rx={borderRadius} ry={borderRadius} />
+              </clipPath>
+              <mask id={`fade-mask-${animKey}`} maskUnits="userSpaceOnUse" x={-2} y={-2} width={w + 4} height={h + 4}>
+                {fadeLayers.map((layer, i) => (
+                  <path
+                    key={i}
+                    d={path}
+                    stroke="white"
+                    strokeWidth={40}
+                    fill="none"
+                    strokeLinecap="butt"
+                    opacity={1 / fadeSteps}
+                    strokeDasharray={`${layer.len} ${Math.max(1, perimeter - layer.len)}`}
+                    style={
+                      playing && animKey > 0
+                        ? { animation: `chase-fade-layer-${animKey}-${i} ${duration}ms linear forwards` }
+                        : { strokeDashoffset: -layer.offset }
+                    }
+                  />
+                ))}
+              </mask>
+            </defs>
+            <g mask={`url(#fade-mask-${animKey})`}>
+              <g clipPath={`url(#pill-clip-${animKey})`}>
+                {rings.map((ring, i) => (
+                  <path
+                    key={i}
+                    d={path}
+                    stroke={`url(#chase-grad-${animKey})`}
+                    strokeWidth={ring.strokeWidth}
+                    fill="none"
+                    opacity={ring.opacity}
+                  />
+                ))}
+              </g>
+              <path
+                d={path}
+                stroke={`url(#chase-grad-${animKey})`}
+                strokeWidth={sw}
+                fill="none"
+              />
+            </g>
+          </svg>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ── Chase palette definitions ──────────────────────────────────────── */
+
+const CHASE_PALETTES = {
+  default: {
+    label: "Default",
+    colors: ["#4285F4", "#EA4335", "#FBBC04", "#34A853", "#4285F4"],
+    swatches: [
+      { name: "Blue", hex: "#4285F4" },
+      { name: "Red", hex: "#EA4335" },
+      { name: "Yellow", hex: "#FBBC04" },
+      { name: "Green", hex: "#34A853" },
+    ],
+  },
+  birchline: {
+    label: "Birchline UI",
+    colors: ["#D97757", "#788C5D", "#5B8E8A", "#7B6B8A", "#D97757"],
+    swatches: [
+      { name: "Clay", hex: "#D97757" },
+      { name: "Green", hex: "#788C5D" },
+      { name: "Teal", hex: "#5B8E8A" },
+      { name: "Plum", hex: "#7B6B8A" },
+    ],
+  },
+} as const;
+
+type ChasePaletteKey = keyof typeof CHASE_PALETTES;
+
+function BorderChaseDemo() {
+  const [strokeWidth, setStrokeWidth] = useState(CHASE_DEFAULTS.strokeWidth);
+  const [segmentPercent, setSegmentPercent] = useState(CHASE_DEFAULTS.segmentPercent);
+  const [laps, setLaps] = useState(CHASE_DEFAULTS.laps);
+  const [speed, setSpeed] = useState(CHASE_DEFAULTS.duration / 1000);
+  const duration = speed * 1000;
+  const [fadeSteps, setFadeSteps] = useState(CHASE_DEFAULTS.fadeSteps);
+  const [fadePx, setFadePx] = useState(CHASE_DEFAULTS.fadePx);
+  const [glowDepth, setGlowDepth] = useState(CHASE_DEFAULTS.glowDepth);
+  const [glowRings, setGlowRings] = useState(CHASE_DEFAULTS.glowRings);
+  const [borderRadius, setBorderRadius] = useState(CHASE_DEFAULTS.borderRadius);
+  const [glowOpacity, setGlowOpacity] = useState(CHASE_DEFAULTS.glowOpacity);
+  const [paletteKey, setPaletteKey] = useState<ChasePaletteKey>("default");
+  const [playing, setPlaying] = useState(false);
+  const activePalette = CHASE_PALETTES[paletteKey];
+
+  const handlePlay = useCallback(() => setPlaying(true), []);
+  const handleEnd = useCallback(() => setPlaying(false), []);
+
+  const controls: { label: string; value: number; set: (v: number) => void; min: number; max: number; step: number; unit?: string }[] = [
+    { label: "Stroke Width", value: strokeWidth, set: setStrokeWidth, min: 1, max: 8, step: 0.5, unit: "px" },
+    { label: "Segment Length", value: segmentPercent, set: setSegmentPercent, min: 10, max: 80, step: 1, unit: "%" },
+    { label: "Laps", value: laps, set: setLaps, min: 0.5, max: 4, step: 0.25 },
+    { label: "Speed", value: speed, set: setSpeed, min: 1, max: 5, step: 0.25, unit: "s" },
+    { label: "Start / End Fade Steps", value: fadeSteps, set: setFadeSteps, min: 2, max: 30, step: 1 },
+    { label: "Start / End Fade Distance", value: fadePx, set: setFadePx, min: 8, max: 120, step: 4, unit: "px" },
+    { label: "Glow Depth", value: glowDepth, set: setGlowDepth, min: 4, max: 48, step: 2, unit: "px" },
+    { label: "Glow Rings", value: glowRings, set: setGlowRings, min: 2, max: 16, step: 1 },
+    { label: "Border Radius", value: borderRadius, set: setBorderRadius, min: 0, max: 32, step: 1, unit: "px" },
+    { label: "Glow Opacity", value: glowOpacity, set: setGlowOpacity, min: 0.02, max: 0.34, step: 0.02, unit: "×" },
+  ];
+
+  const paletteDropdown = (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" size="sm" className="gap-2">
+          <div className="flex -space-x-1">
+            {activePalette.swatches.slice(0, 4).map((s) => (
+              <div
+                key={s.hex}
+                className="w-3.5 h-3.5 rounded-full border border-black/10"
+                style={{ backgroundColor: s.hex }}
+              />
+            ))}
+          </div>
+          <Palette className="h-3.5 w-3.5" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-[280px]">
+        <DropdownMenuLabel>Color palette</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        {(Object.keys(CHASE_PALETTES) as ChasePaletteKey[]).map((key) => {
+          const palette = CHASE_PALETTES[key];
+          const isActive = paletteKey === key;
+          return (
+            <DropdownMenuSub key={key}>
+              <DropdownMenuSubTrigger
+                className="gap-3"
+                onClick={() => setPaletteKey(key)}
+              >
+                <span className="w-4 shrink-0 flex items-center justify-center">
+                  {isActive && <Check className="h-3.5 w-3.5 text-clay" />}
+                </span>
+                <div className="flex -space-x-1 shrink-0">
+                  {palette.swatches.slice(0, 4).map((s) => (
+                    <div
+                      key={s.hex}
+                      className="w-4 h-4 rounded-full border border-black/10"
+                      style={{ backgroundColor: s.hex }}
+                    />
+                  ))}
+                </div>
+                <span className="flex-1 text-sm">{palette.label}</span>
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent className="w-[200px]">
+                <DropdownMenuLabel className="text-[11px] text-gray-500">Colors</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {palette.swatches.map((s) => (
+                  <DropdownMenuItem key={s.hex} className="gap-3 pointer-events-none opacity-100">
+                    <div
+                      className="w-5 h-5 rounded-xs border border-black/10 shrink-0"
+                      style={{ backgroundColor: s.hex }}
+                    />
+                    <span className="flex-1 text-sm">{s.name}</span>
+                    <span className="font-mono text-[11px] text-gray-500">{s.hex}</span>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+          );
+        })}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+
+  return (
+    <ComponentBlock name="BorderChase" align="start" headerRight={paletteDropdown}>
+      <div className="flex flex-col gap-6 w-full">
+        <div className="flex gap-6 items-start">
+          {/* Preview card */}
+          <div className="w-[350px] h-[220px] shrink-0">
+            <BorderChaseCard
+              strokeWidth={strokeWidth}
+              segmentPercent={segmentPercent}
+              laps={laps}
+              duration={duration}
+              fadeSteps={fadeSteps}
+              fadePx={fadePx}
+              glowDepth={glowDepth}
+              glowRings={glowRings}
+              borderRadius={borderRadius}
+              glowOpacity={glowOpacity}
+              colors={[...activePalette.colors]}
+              playing={playing}
+              onAnimationEnd={handleEnd}
+            />
+          </div>
+
+          {/* Controls */}
+          <div className="flex-1 grid grid-cols-2 gap-x-6 gap-y-4 min-w-[400px]">
+            {controls.map((c) => (
+              <div key={c.label} className="flex flex-col gap-1.5">
+                <div className="flex items-center justify-between">
+                  <Label className="text-xs">{c.label}</Label>
+                  <span className="font-mono text-[11px] text-gray-500">
+                    {c.value}{c.unit ?? ""}
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min={c.min}
+                  max={c.max}
+                  step={c.step}
+                  value={c.value}
+                  onChange={(e) => c.set(Number(e.target.value))}
+                  className="w-full h-1.5 bg-gray-100 rounded-full appearance-none cursor-pointer accent-clay"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex gap-3">
+          <Button size="sm" onClick={handlePlay} disabled={playing}>
+            {playing ? "Playing…" : "Play"}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setStrokeWidth(CHASE_DEFAULTS.strokeWidth);
+              setSegmentPercent(CHASE_DEFAULTS.segmentPercent);
+              setLaps(CHASE_DEFAULTS.laps);
+              setSpeed(CHASE_DEFAULTS.duration / 1000);
+              setFadeSteps(CHASE_DEFAULTS.fadeSteps);
+              setFadePx(CHASE_DEFAULTS.fadePx);
+              setGlowDepth(CHASE_DEFAULTS.glowDepth);
+              setGlowRings(CHASE_DEFAULTS.glowRings);
+              setBorderRadius(CHASE_DEFAULTS.borderRadius);
+              setGlowOpacity(CHASE_DEFAULTS.glowOpacity);
+            }}
+          >
+            Reset
+          </Button>
+        </div>
+      </div>
+    </ComponentBlock>
+  );
+}
+
+/* ── Main App ──────────────────────────────────────────────────────── */
 
 function App() {
   const [checked1, setChecked1] = useState(false)
@@ -1584,6 +2025,11 @@ function App() {
             </div>
           </div>
         </section>
+
+        {/* ── ANIMATION ── */}
+        <Section id="animation" title="Animation">
+          <BorderChaseDemo />
+        </Section>
       </div>
     </TooltipProvider>
   )
