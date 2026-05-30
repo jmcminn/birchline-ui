@@ -1309,6 +1309,15 @@ function App() {
             <LabeledItem label="Info"><Badge variant="info">Info</Badge></LabeledItem>
           </ComponentBlock>
 
+          <ComponentBlock name="Badge — Removable">
+            <LabeledItem label="Default"><Badge variant="default" onRemove={() => {}} removeLabel="Remove Draft">Draft</Badge></LabeledItem>
+            <LabeledItem label="Accent"><Badge variant="accent" onRemove={() => {}} removeLabel="Remove In review">In review</Badge></LabeledItem>
+            <LabeledItem label="Success"><Badge variant="success" onRemove={() => {}} removeLabel="Remove Done">Done</Badge></LabeledItem>
+            <LabeledItem label="Warning"><Badge variant="warning" onRemove={() => {}} removeLabel="Remove Overdue">Overdue</Badge></LabeledItem>
+            <LabeledItem label="Destructive"><Badge variant="destructive" onRemove={() => {}} removeLabel="Remove Failed">Failed</Badge></LabeledItem>
+            <LabeledItem label="Info"><Badge variant="info" onRemove={() => {}} removeLabel="Remove Info">Info</Badge></LabeledItem>
+          </ComponentBlock>
+
           <ComponentBlock name="Avatar" gap="gap-16" align="end">
             <LabeledItem label="Image" subtitle="40px">
               <Avatar>
