@@ -1,4 +1,5 @@
 import * as React from "react"
+import { X } from "lucide-react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
@@ -24,11 +25,54 @@ const badgeVariants = cva(
 
 export interface BadgeProps
   extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof badgeVariants> {}
+    VariantProps<typeof badgeVariants> {
+  /**
+   * When provided, renders a trailing remove (×) button. The badge itself
+   * stays non-interactive; only the × is a button.
+   */
+  onRemove?: (event: React.MouseEvent<HTMLButtonElement>) => void
+  /**
+   * Accessible label for the remove button. Defaults to "Remove".
+   * Recommended: pass the badge's text content for clarity, e.g. "Remove In review".
+   */
+  removeLabel?: string
+}
 
-function Badge({ className, variant, ...props }: BadgeProps) {
+function Badge({
+  className,
+  variant,
+  onRemove,
+  removeLabel,
+  children,
+  ...props
+}: BadgeProps) {
+  const removable = typeof onRemove === "function"
   return (
-    <div className={cn(badgeVariants({ variant }), className)} {...props} />
+    <div
+      className={cn(
+        badgeVariants({ variant }),
+        removable && "gap-1 pr-1",
+        className
+      )}
+      {...props}
+    >
+      <span>{children}</span>
+      {removable && (
+        <button
+          type="button"
+          aria-label={removeLabel ?? "Remove"}
+          onClick={onRemove}
+          className={cn(
+            "inline-flex h-3.5 w-3.5 items-center justify-center rounded-full",
+            "opacity-70 hover:opacity-100 hover:bg-current/10",
+            "focus:outline-none focus-visible:ring-1 focus-visible:ring-current",
+            "transition-opacity"
+          )}
+        >
+          <X className="h-3 w-3" strokeWidth={2.5} />
+        </button>
+      )}
+    </div>
   )
 }
 
