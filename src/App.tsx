@@ -461,7 +461,7 @@ const CHASE_DEFAULTS = {
   fadePx: 64,
   glowDepth: 24,
   glowRings: 10,
-  borderRadius: 28,
+  borderRadius: 12,
   glowOpacity: 0.18,
   colors: ["#4285F4", "#EA4335", "#FBBC04", "#34A853", "#4285F4"],
 };
@@ -737,13 +737,13 @@ function BorderChaseDemo() {
 
   const controls: { label: string; value: number; set: (v: number) => void; min: number; max: number; step: number; unit?: string }[] = [
     { label: "Stroke Width", value: strokeWidth, set: setStrokeWidth, min: 1, max: 8, step: 0.5, unit: "px" },
-    { label: "Segment Length", value: segmentPercent, set: setSegmentPercent, min: 10, max: 80, step: 1, unit: "%" },
-    { label: "Laps", value: laps, set: setLaps, min: 0.5, max: 4, step: 0.25 },
-    { label: "Speed", value: speed, set: setSpeed, min: 1, max: 5, step: 0.25, unit: "s" },
+    { label: "Chase Line Length", value: segmentPercent, set: setSegmentPercent, min: 10, max: 80, step: 1, unit: "%" },
+    { label: "Chase Laps", value: laps, set: setLaps, min: 0.5, max: 4, step: 0.25 },
+    { label: "Chase Line Speed", value: speed, set: setSpeed, min: 1, max: 5, step: 0.25, unit: "s" },
     { label: "Start / End Fade Steps", value: fadeSteps, set: setFadeSteps, min: 2, max: 30, step: 1 },
-    { label: "Start / End Fade Distance", value: fadePx, set: setFadePx, min: 8, max: 120, step: 4, unit: "px" },
-    { label: "Glow Depth", value: glowDepth, set: setGlowDepth, min: 4, max: 48, step: 2, unit: "px" },
-    { label: "Glow Rings", value: glowRings, set: setGlowRings, min: 2, max: 16, step: 1 },
+    { label: "Start / End Line Fade Distance", value: fadePx, set: setFadePx, min: 8, max: 120, step: 4, unit: "px" },
+    { label: "Inner Glow Depth", value: glowDepth, set: setGlowDepth, min: 4, max: 48, step: 2, unit: "px" },
+    { label: "Inner Glow Rings", value: glowRings, set: setGlowRings, min: 2, max: 16, step: 1 },
     { label: "Border Radius", value: borderRadius, set: setBorderRadius, min: 0, max: 32, step: 1, unit: "px" },
     { label: "Glow Opacity", value: glowOpacity, set: setGlowOpacity, min: 0.02, max: 0.34, step: 0.02, unit: "×" },
   ];
