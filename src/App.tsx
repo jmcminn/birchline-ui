@@ -961,7 +961,10 @@ function App() {
             Birchline UI
           </h1>
           <p className="text-gray-500 text-sm">
-            shadcn/ui components reskinned with Birchline design tokens — <code className="font-mono text-[13px] bg-gray-100 px-1.5 py-0.5 rounded-xs">@birchline/ui</code>
+            Birchline UI design system is a reskin of shadcn/ui components by{" "}
+            <a href="https://x.com/jasonmcminn" target="_blank" rel="noreferrer" className="text-clay hover:underline">Jason McMinn</a>. It was replicated from{" "}
+            <a href="https://x.com/trq212" target="_blank" rel="noreferrer" className="text-clay hover:underline">Thariq's</a> original{" "}
+            <a href="https://thariqs.github.io/html-effectiveness/05-design-system.html" target="_blank" rel="noreferrer" className="text-clay hover:underline">Birchline design system</a>.
           </p>
         </header>
 
