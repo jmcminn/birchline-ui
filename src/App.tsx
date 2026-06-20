@@ -284,6 +284,67 @@ function DatePickerDemo() {
   )
 }
 
+function DatePickerTasksDemo() {
+  const [date, setDate] = useState<Date>()
+  const [month, setMonth] = useState<Date>(new Date())
+  const [open, setOpen] = useState(false)
+  const [hadDateOnOpen, setHadDateOnOpen] = useState(false)
+  const pickRelative = (days: number) => {
+    const d = new Date()
+    d.setHours(0, 0, 0, 0)
+    d.setDate(d.getDate() + days)
+    setDate(d)
+    setMonth(d)
+  }
+  const quickBtn = "h-7 px-2.5 text-xs bg-transparent"
+  return (
+    <Popover
+      open={open}
+      onOpenChange={(o) => {
+        if (o) setHadDateOnOpen(!!date)
+        setOpen(o)
+      }}
+    >
+      <PopoverTrigger asChild>
+        <Button variant="outline" className={cn("w-auto justify-start text-left font-normal", !date && "text-gray-500")}>
+          <CalendarDays className="mr-2 h-4 w-4" />
+          {date ? format(date, "MMM dd, yyyy") : "Pick a date"}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-0" align="start">
+        <Calendar
+          mode="single"
+          selected={date}
+          onSelect={setDate}
+          month={month}
+          onMonthChange={setMonth}
+          footer={
+            <div className="flex flex-col items-center gap-2 mt-2 pt-3 border-t border-gray-200">
+              <div className="flex justify-center gap-2">
+                <Button variant="outline" className={quickBtn} onClick={() => pickRelative(0)}>Today</Button>
+                <Button variant="outline" className={quickBtn} onClick={() => pickRelative(1)}>Tomorrow</Button>
+                <Button variant="outline" className={quickBtn} onClick={() => pickRelative(3)}>In 3 Days</Button>
+              </div>
+              {hadDateOnOpen && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setDate(undefined)
+                    setOpen(false)
+                  }}
+                  className="text-xs font-medium text-danger hover:underline"
+                >
+                  Clear Selected Date
+                </button>
+              )}
+            </div>
+          }
+        />
+      </PopoverContent>
+    </Popover>
+  )
+}
+
 const birchlineColors = [
   { name: "Ivory", hex: "#FAF9F5" },
   { name: "White", hex: "#FFFFFF" },
@@ -1761,7 +1822,7 @@ function App() {
             </LabeledItem>
             <div className="w-16" />
             <LabeledItem label="Date picker - tasks">
-              <DatePickerDemo />
+              <DatePickerTasksDemo />
             </LabeledItem>
             <div className="w-16" />
             <LabeledItem label="Inline calendar">
