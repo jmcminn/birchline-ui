@@ -962,9 +962,9 @@ function App() {
           </h1>
           <p className="text-gray-500 text-sm">
             Birchline UI design system is a reskin of shadcn/ui components by{" "}
-            <a href="https://x.com/jasonmcminn" target="_blank" rel="noreferrer" className="text-clay hover:underline">Jason McMinn</a>. It was replicated from{" "}
-            <a href="https://x.com/trq212" target="_blank" rel="noreferrer" className="text-clay hover:underline">Thariq's</a> original{" "}
-            <a href="https://thariqs.github.io/html-effectiveness/05-design-system.html" target="_blank" rel="noreferrer" className="text-clay hover:underline">Birchline design system</a>.
+            <a href="https://x.com/jasonmcminn" target="_blank" rel="noreferrer" className="text-clay hover:underline">Jason McMinn</a>. It is a fork of{" "}
+            <a href="https://x.com/trq212" target="_blank" rel="noreferrer" className="text-clay hover:underline">Thariq’s</a> original{" "}
+            <a href="https://thariqs.github.io/html-effectiveness/05-design-system.html" target="_blank" rel="noreferrer" className="text-clay hover:underline">Birchline design system</a>, expanded with additional capabilities and components.
           </p>
         </header>
 
