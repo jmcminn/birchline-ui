@@ -267,24 +267,67 @@ function DraggableTableHeader({
   )
 }
 
-function DatePickerDemo() {
+// Show the year unless the toggle is off AND the date falls in the current year.
+function formatSelectedDate(date: Date, showCurrentYear: boolean) {
+  const isCurrentYear = date.getFullYear() === new Date().getFullYear()
+  return format(date, showCurrentYear || !isCurrentYear ? "MMM d, yyyy" : "MMM d")
+}
+
+function DatePickerDemo({ showCurrentYear }: { showCurrentYear: boolean }) {
   const [date, setDate] = useState<Date>()
+  const [open, setOpen] = useState(false)
+  const [hadDateOnOpen, setHadDateOnOpen] = useState(false)
   return (
-    <Popover>
+    <Popover
+      open={open}
+      onOpenChange={(o) => {
+        if (o) setHadDateOnOpen(!!date)
+        setOpen(o)
+      }}
+    >
       <PopoverTrigger asChild>
-        <Button variant="outline" className={cn("w-auto justify-start text-left font-normal", !date && "text-gray-500")}>
+        <Button variant="outline" className={cn("w-auto justify-start text-left font-normal px-2", !date && "text-gray-500")}>
           <CalendarDays className="mr-2 h-4 w-4" />
-          {date ? format(date, "MMM dd, yyyy") : "Pick a date"}
+          {date ? formatSelectedDate(date, showCurrentYear) : "Pick a date"}
+          {date && (
+            <span
+              role="button"
+              onClick={(e) => { e.stopPropagation(); setDate(undefined) }}
+              className="ml-2 text-gray-500 hover:text-ink transition-colors"
+            >
+              <X className="h-3.5 w-3.5" />
+            </span>
+          )}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
-        <Calendar mode="single" selected={date} onSelect={setDate} />
+        <Calendar
+          mode="single"
+          selected={date}
+          onSelect={setDate}
+          footer={
+            hadDateOnOpen ? (
+              <div className="flex flex-col items-center mt-2 pt-3 border-t border-gray-200">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setDate(undefined)
+                    setOpen(false)
+                  }}
+                  className="text-xs font-medium text-danger hover:underline"
+                >
+                  Clear Selected Date
+                </button>
+              </div>
+            ) : undefined
+          }
+        />
       </PopoverContent>
     </Popover>
   )
 }
 
-function DatePickerTasksDemo() {
+function DatePickerTasksDemo({ showCurrentYear }: { showCurrentYear: boolean }) {
   const [date, setDate] = useState<Date>()
   const [month, setMonth] = useState<Date>(new Date())
   const [open, setOpen] = useState(false)
@@ -306,9 +349,18 @@ function DatePickerTasksDemo() {
       }}
     >
       <PopoverTrigger asChild>
-        <Button variant="outline" className={cn("w-auto justify-start text-left font-normal", !date && "text-gray-500")}>
+        <Button variant="outline" className={cn("w-auto justify-start text-left font-normal px-2", !date && "text-gray-500")}>
           <CalendarDays className="mr-2 h-4 w-4" />
-          {date ? format(date, "MMM dd, yyyy") : "Pick a date"}
+          {date ? formatSelectedDate(date, showCurrentYear) : "Pick a date"}
+          {date && (
+            <span
+              role="button"
+              onClick={(e) => { e.stopPropagation(); setDate(undefined) }}
+              className="ml-2 text-gray-500 hover:text-ink transition-colors"
+            >
+              <X className="h-3.5 w-3.5" />
+            </span>
+          )}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
@@ -349,20 +401,58 @@ const birchlineColors = [
   { name: "Ivory", hex: "#FAF9F5" },
   { name: "White", hex: "#FFFFFF" },
   { name: "Clay", hex: "#D97757" },
-  { name: "Slate", hex: "#141413" },
+  { name: "Ink", hex: "#141413" },
   { name: "Oat", hex: "#E3DACC" },
   { name: "Gray 100", hex: "#F0EEE6" },
   { name: "Gray 300", hex: "#D1CFC5" },
   { name: "Gray 500", hex: "#87867F" },
   { name: "Gray 700", hex: "#3D3D3A" },
-  { name: "Olive", hex: "#788C5D" },
-  { name: "Warning", hex: "#C78E3F" },
-  { name: "Danger", hex: "#B04A4A" },
-  { name: "Info", hex: "#5C7CA3" },
-  { name: "Dusty Plum", hex: "#7B6B8A" },
-  { name: "Sea Glass", hex: "#5B8E8A" },
-  { name: "Highlight", hex: "#F5E6B8" },
+  { name: "Green", hex: "#788C5D" },
+  { name: "Orange", hex: "#C78E3F" },
+  { name: "Red", hex: "#B04A4A" },
+  { name: "Blue", hex: "#5C7CA3" },
+  { name: "Plum", hex: "#7B6B8A" },
+  { name: "Teal", hex: "#5B8E8A" },
+  { name: "Light Yellow", hex: "#F5E6B8" },
 ]
+
+// Per-menu default background/color selections
+const COLOR_SECTION_DEFAULT = "#FAF9F5" // Ivory
+const TYPE_SECTION_DEFAULT = "#FFFFFF" // White
+const TYPE_COLOR_DEFAULT = "#141413" // Ink
+const SEPARATOR_COLOR_DEFAULT = "#D1CFC5" // Gray 300
+const SEPARATOR_BG_DEFAULT = "#FFFFFF" // White
+
+function ColorMenuItems({
+  value,
+  defaultHex,
+  onSelect,
+}: {
+  value: string
+  defaultHex: string
+  onSelect: (hex: string) => void
+}) {
+  return (
+    <>
+      {birchlineColors.map((c) => (
+        <DropdownMenuItem key={c.hex} onClick={() => onSelect(c.hex)} className="gap-3">
+          <span className="w-4 shrink-0 flex items-center justify-center">
+            {value === c.hex && <Check className="h-3.5 w-3.5 text-clay" />}
+          </span>
+          <div
+            className="w-6 h-6 rounded-xs border border-black/10 shrink-0"
+            style={{ backgroundColor: c.hex }}
+          />
+          <span className="flex-1 text-sm">
+            {c.name}
+            {c.hex === defaultHex && <span className="text-gray-500"> (default)</span>}
+          </span>
+          <span className="font-mono text-[11px] text-gray-500">{c.hex}</span>
+        </DropdownMenuItem>
+      ))}
+    </>
+  )
+}
 
 type Task = {
   id: string
@@ -888,15 +978,29 @@ function BorderChaseDemo() {
 
 /* ── Main App ──────────────────────────────────────────────────────── */
 
+type Scheme = "default" | "bright"
+
 function App() {
+  const [scheme, setScheme] = useState<Scheme>(
+    () => (localStorage.getItem("birchline-scheme") as Scheme) || "default"
+  )
+  useEffect(() => {
+    const root = document.documentElement
+    if (scheme === "default") root.removeAttribute("data-theme")
+    else root.setAttribute("data-theme", scheme)
+    localStorage.setItem("birchline-scheme", scheme)
+  }, [scheme])
+
   const [checked1, setChecked1] = useState(false)
   const [checked2, setChecked2] = useState(true)
   const [switchOn, setSwitchOn] = useState(true)
   const [tableDensity, setTableDensity] = useState<TableDensity>("default")
-  const [colorSectionBg, setColorSectionBg] = useState("#FAF9F5")
-  const [typeSectionBg, setTypeSectionBg] = useState("#FAF9F5")
-  const [separatorColor, setSeparatorColor] = useState("#D1CFC5")
-  const [separatorBg, setSeparatorBg] = useState("#FFFFFF")
+  const [colorSectionBg, setColorSectionBg] = useState(COLOR_SECTION_DEFAULT)
+  const [typeSectionBg, setTypeSectionBg] = useState(TYPE_SECTION_DEFAULT)
+  const [typeColor, setTypeColor] = useState(TYPE_COLOR_DEFAULT)
+  const [showCurrentYear, setShowCurrentYear] = useState(true)
+  const [separatorColor, setSeparatorColor] = useState(SEPARATOR_COLOR_DEFAULT)
+  const [separatorBg, setSeparatorBg] = useState(SEPARATOR_BG_DEFAULT)
   const [selectedUserId, setSelectedUserId] = useState<string | null>("u7")
   const [multiSelectedUserIds, setMultiSelectedUserIds] = useState<string[]>(["u7", "u3"])
   const [sorting, setSorting] = useState<SortingState>([])
@@ -957,9 +1061,21 @@ function App() {
         <Toaster />
 
         <header className="mb-12">
-          <h1 className="font-serif text-[40px] font-medium tracking-tight mb-1.5">
-            Birchline UI
-          </h1>
+          <div className="flex items-start justify-between gap-4 mb-1.5">
+            <h1 className="font-serif text-[40px] font-medium tracking-tight">
+              Birchline UI
+            </h1>
+            <Tabs
+              value={scheme}
+              onValueChange={(v) => setScheme(v as Scheme)}
+              className="shrink-0"
+            >
+              <TabsList>
+                <TabsTrigger value="default">Default</TabsTrigger>
+                <TabsTrigger value="bright">Bright</TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
           <p className="text-gray-500 text-sm">
             Birchline UI design system is a reskin of shadcn/ui components by{" "}
             <a href="https://x.com/jasonmcminn" target="_blank" rel="noreferrer" className="text-clay hover:underline">Jason McMinn</a>. It is a fork of{" "}
@@ -982,23 +1098,11 @@ function App() {
               <DropdownMenuContent align="end" className="w-[280px]">
                 <DropdownMenuLabel>Background color</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                {birchlineColors.map((c) => (
-                  <DropdownMenuItem
-                    key={c.hex}
-                    onClick={() => setColorSectionBg(c.hex)}
-                    className="gap-3"
-                  >
-                    <span className="w-4 shrink-0 flex items-center justify-center">
-                      {colorSectionBg === c.hex && <Check className="h-3.5 w-3.5 text-clay" />}
-                    </span>
-                    <div
-                      className="w-6 h-6 rounded-xs border border-black/10 shrink-0"
-                      style={{ backgroundColor: c.hex }}
-                    />
-                    <span className="flex-1 text-sm">{c.name}</span>
-                    <span className="font-mono text-[11px] text-gray-500">{c.hex}</span>
-                  </DropdownMenuItem>
-                ))}
+                <ColorMenuItems
+                  value={colorSectionBg}
+                  defaultHex={COLOR_SECTION_DEFAULT}
+                  onSelect={setColorSectionBg}
+                />
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -1044,59 +1148,71 @@ function App() {
         <section id="typography" className="mb-16">
           <div className="flex items-center justify-between mb-2">
             <h2 className="font-serif text-[26px] font-medium tracking-tight">Typography</h2>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="gap-2">
-                  <div className="w-4 h-4 rounded-xs border border-gray-300" style={{ backgroundColor: typeSectionBg }} />
-                  <Palette className="h-3.5 w-3.5" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-[280px]">
-                <DropdownMenuLabel>Background color</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                {birchlineColors.map((c) => (
-                  <DropdownMenuItem
-                    key={c.hex}
-                    onClick={() => setTypeSectionBg(c.hex)}
-                    className="gap-3"
-                  >
-                    <span className="w-4 shrink-0 flex items-center justify-center">
-                      {typeSectionBg === c.hex && <Check className="h-3.5 w-3.5 text-clay" />}
-                    </span>
-                    <div
-                      className="w-6 h-6 rounded-xs border border-black/10 shrink-0"
-                      style={{ backgroundColor: c.hex }}
-                    />
-                    <span className="flex-1 text-sm">{c.name}</span>
-                    <span className="font-mono text-[11px] text-gray-500">{c.hex}</span>
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <div className="flex items-center gap-2">
+              {/* Text color menu */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="gap-2">
+                    <div className="w-4 h-4 rounded-xs border border-gray-300" style={{ backgroundColor: typeColor }} />
+                    <span className="text-xs text-gray-500">Text</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-[280px]">
+                  <DropdownMenuLabel>Text color</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <ColorMenuItems
+                    value={typeColor}
+                    defaultHex={TYPE_COLOR_DEFAULT}
+                    onSelect={setTypeColor}
+                  />
+                </DropdownMenuContent>
+              </DropdownMenu>
+              {/* Background color menu */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="gap-2">
+                    <div className="w-4 h-4 rounded-xs border border-gray-300" style={{ backgroundColor: typeSectionBg }} />
+                    <span className="text-xs text-gray-500">Background</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-[280px]">
+                  <DropdownMenuLabel>Background color</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <ColorMenuItems
+                    value={typeSectionBg}
+                    defaultHex={TYPE_SECTION_DEFAULT}
+                    onSelect={setTypeSectionBg}
+                  />
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
           <Separator className="mb-7" />
           <div className="rounded-md p-6 -mx-6 transition-colors">
-          <div className="border border-gray-300 rounded-md overflow-hidden transition-colors" style={{ backgroundColor: typeSectionBg }}>
+          <div className="border border-gray-300 rounded-md overflow-hidden transition-colors" style={{ backgroundColor: typeSectionBg, color: typeColor }}>
             {[
-              { cls: "font-serif text-5xl leading-[1.1] font-medium tracking-tight", name: "Display", face: "Georgia", meta: "48 / 1.1 / 500 (Medium)", color: "text-ink" },
-              { cls: "font-serif text-[32px] leading-[1.2] font-medium tracking-tight", name: "Heading 1", face: "Georgia", meta: "32 / 1.2 / 500 (Medium)", color: "text-ink" },
-              { cls: "font-serif text-2xl leading-[1.3] font-medium", name: "Heading 2", face: "Georgia", meta: "24 / 1.3 / 500 (Medium)", color: "text-ink" },
-              { cls: "font-serif text-[20px] leading-[1.3] font-normal", name: "Heading 3", face: "Georgia", meta: "20 / 1.3 / 400 (Regular)", color: "text-ink" },
-              { cls: "font-sans text-base leading-[1.55]", name: "Body", face: "Inter", meta: "16 / 1.55 / 430 (Regular)", color: "text-ink", text: "Review milestones, assign owners, and surface blockers before they cascade." },
-              { cls: "font-sans text-sm leading-[1.5]", name: "Small", face: "Inter", meta: "14 / 1.5 / 430 (Regular)", color: "text-ink", text: "Review milestones, assign owners, and surface blockers before they cascade." },
-              { cls: "font-sans text-[13px] leading-[1.45]", name: "Fine", face: "Inter", meta: "13 / 1.45 / 430 (Regular)", color: "text-ink", text: "Review milestones, assign owners, and surface blockers before they cascade." },
-              { cls: "font-sans text-xs leading-[1.4] font-medium text-gray-500", name: "Caption", face: "Inter", meta: "12 / 1.4 / 500 (Medium)", color: "text-gray-500", text: "UPDATED 2 HOURS AGO" },
-              { cls: "font-mono text-xs leading-[1.4] text-ink", name: "Code", face: "JetBrains Mono", meta: "12 / 1.4 / 400 (Regular)", color: "text-ink", text: "Small type monospaced label" },
+              { cls: "font-serif text-5xl leading-[1.1] font-medium tracking-tight", name: "Display", face: "Georgia", weight: "500 (Medium)", size: "48", lineSpacing: "1.1" },
+              { cls: "font-serif text-[32px] leading-[1.2] font-medium tracking-tight", name: "Heading 1", face: "Georgia", weight: "500 (Medium)", size: "32", lineSpacing: "1.2" },
+              { cls: "font-serif text-2xl leading-[1.3] font-medium", name: "Heading 2", face: "Georgia", weight: "500 (Medium)", size: "24", lineSpacing: "1.3" },
+              { cls: "font-serif text-[20px] leading-[1.3] font-normal", name: "Heading 3", face: "Georgia", weight: "400 (Regular)", size: "20", lineSpacing: "1.3" },
+              { cls: "font-sans text-base leading-[1.55]", name: "Body", face: "Inter", weight: "430 (Regular)", size: "16", lineSpacing: "1.55", text: "Review milestones, assign owners, and surface blockers before they cascade." },
+              { cls: "font-sans text-sm leading-[1.5]", name: "Small", face: "Inter", weight: "430 (Regular)", size: "14", lineSpacing: "1.5", text: "Review milestones, assign owners, and surface blockers before they cascade." },
+              { cls: "font-sans text-[13px] leading-[1.45]", name: "Fine", face: "Inter", weight: "430 (Regular)", size: "13", lineSpacing: "1.45", text: "Review milestones, assign owners, and surface blockers before they cascade." },
+              { cls: "font-sans text-xs leading-[1.4] font-medium text-gray-500", name: "Caption", face: "Inter", weight: "500 (Medium)", size: "12", lineSpacing: "1.4", text: "UPDATED 2 HOURS AGO" },
+              { cls: "font-mono text-xs leading-[1.4] text-ink", name: "Code", face: "JetBrains Mono", weight: "400 (Regular)", size: "12", lineSpacing: "1.4", text: "Small type monospaced label" },
             ].map((row, i, arr) => (
-              <div key={row.name} className={`flex items-baseline justify-between gap-6 px-6 py-5 ${i < arr.length - 1 ? "border-b border-gray-100" : ""}`}>
+              <div key={row.name} className={`flex items-start justify-between gap-6 px-6 py-5 ${i < arr.length - 1 ? "border-b border-gray-100" : ""}`}>
                 <div className={`flex-1 min-w-0 truncate ${row.cls}`}>
                   {row.text ?? "Plan the week ahead"}
                 </div>
-                <div className="font-mono text-xs text-gray-500 text-right shrink-0">
-                  <span className="text-gray-700 block mb-0.5">{row.name}</span>
-                  <span className="block mb-0.5">{row.face}</span>
-                  <span className="block">{row.meta}</span>
-                  <span className="block">{row.color}</span>
+                <div className="font-mono text-xs text-gray-500 text-left shrink-0 w-[240px]">
+                  <span className="text-gray-700 block mb-1.5">{row.name}</span>
+                  <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5">
+                    <span>Font Face</span><span className="text-gray-700">{row.face}</span>
+                    <span>Font Weight</span><span className="text-gray-700">{row.weight}</span>
+                    <span>Font Size</span><span className="text-gray-700">{row.size}</span>
+                    <span>Line Spacing</span><span className="text-gray-700">{row.lineSpacing}</span>
+                  </div>
                 </div>
               </div>
             ))}
@@ -1819,13 +1935,22 @@ function App() {
             </LabeledItem>
           </ComponentBlock>
 
-          <ComponentBlock name="Calendar" align="start">
+          <ComponentBlock
+            name="Calendar"
+            align="start"
+            headerRight={
+              <label className="flex items-center gap-2 text-xs text-gray-500 cursor-pointer">
+                <Switch checked={showCurrentYear} onCheckedChange={setShowCurrentYear} />
+                Display current year in selected value
+              </label>
+            }
+          >
             <LabeledItem label="Date picker">
-              <DatePickerDemo />
+              <DatePickerDemo showCurrentYear={showCurrentYear} />
             </LabeledItem>
             <div className="w-16" />
             <LabeledItem label="Date picker - tasks">
-              <DatePickerTasksDemo />
+              <DatePickerTasksDemo showCurrentYear={showCurrentYear} />
             </LabeledItem>
             <div className="w-16" />
             <LabeledItem label="Inline calendar">
@@ -2026,23 +2151,11 @@ function App() {
                   <DropdownMenuContent align="end" className="w-[280px]">
                     <DropdownMenuLabel>Separator color</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    {birchlineColors.map((c) => (
-                      <DropdownMenuItem
-                        key={c.hex}
-                        onClick={() => setSeparatorColor(c.hex)}
-                        className="gap-3"
-                      >
-                        <span className="w-4 shrink-0 flex items-center justify-center">
-                          {separatorColor === c.hex && <Check className="h-3.5 w-3.5 text-clay" />}
-                        </span>
-                        <div
-                          className="w-6 h-6 rounded-xs border border-black/10 shrink-0"
-                          style={{ backgroundColor: c.hex }}
-                        />
-                        <span className="flex-1 text-sm">{c.name}</span>
-                        <span className="font-mono text-[11px] text-gray-500">{c.hex}</span>
-                      </DropdownMenuItem>
-                    ))}
+                    <ColorMenuItems
+                      value={separatorColor}
+                      defaultHex={SEPARATOR_COLOR_DEFAULT}
+                      onSelect={setSeparatorColor}
+                    />
                   </DropdownMenuContent>
                 </DropdownMenu>
                 {/* Background color menu */}
@@ -2056,23 +2169,11 @@ function App() {
                   <DropdownMenuContent align="end" className="w-[280px]">
                     <DropdownMenuLabel>Background color</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    {birchlineColors.map((c) => (
-                      <DropdownMenuItem
-                        key={c.hex}
-                        onClick={() => setSeparatorBg(c.hex)}
-                        className="gap-3"
-                      >
-                        <span className="w-4 shrink-0 flex items-center justify-center">
-                          {separatorBg === c.hex && <Check className="h-3.5 w-3.5 text-clay" />}
-                        </span>
-                        <div
-                          className="w-6 h-6 rounded-xs border border-black/10 shrink-0"
-                          style={{ backgroundColor: c.hex }}
-                        />
-                        <span className="flex-1 text-sm">{c.name}</span>
-                        <span className="font-mono text-[11px] text-gray-500">{c.hex}</span>
-                      </DropdownMenuItem>
-                    ))}
+                    <ColorMenuItems
+                      value={separatorBg}
+                      defaultHex={SEPARATOR_BG_DEFAULT}
+                      onSelect={setSeparatorBg}
+                    />
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
@@ -2083,14 +2184,14 @@ function App() {
             style={{ backgroundColor: separatorBg }}
           >
             {/* Horizontal dividers */}
-            <div className="flex-1 flex flex-col justify-between py-8" style={{ gap: "128px" }}>
-              <Separator style={{ backgroundColor: separatorColor }} />
-              <Separator style={{ backgroundColor: separatorColor }} />
-              <Separator className="h-[2px]" style={{ backgroundColor: separatorColor }} />
-              <Separator className="h-[2px]" style={{ backgroundColor: separatorColor }} />
+            <div className="flex-1 flex flex-col justify-between py-4" style={{ gap: "64px" }}>
+              <Separator className="w-1/2" style={{ backgroundColor: separatorColor }} />
+              <Separator className="w-1/2" style={{ backgroundColor: separatorColor }} />
+              <Separator className="h-[2px] w-1/2" style={{ backgroundColor: separatorColor }} />
+              <Separator className="h-[2px] w-1/2" style={{ backgroundColor: separatorColor }} />
             </div>
             {/* Vertical dividers */}
-            <div className="flex-1 flex justify-between px-8" style={{ height: "600px" }}>
+            <div className="flex-1 flex justify-between px-8" style={{ height: "300px" }}>
               <Separator orientation="vertical" style={{ backgroundColor: separatorColor }} />
               <Separator orientation="vertical" style={{ backgroundColor: separatorColor }} />
               <Separator orientation="vertical" className="w-[2px]" style={{ backgroundColor: separatorColor }} />

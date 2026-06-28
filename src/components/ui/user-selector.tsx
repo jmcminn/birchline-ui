@@ -160,7 +160,7 @@ function UserSelector({
       <PopoverTrigger asChild>
         <button
           className={cn(
-            "flex items-center gap-2.5 h-10 px-3 rounded-sm border border-gray-300 bg-white text-sm",
+            "flex items-center gap-2 h-10 px-2 rounded-sm border border-gray-300 bg-white text-sm",
             "hover:bg-gray-100 transition-colors",
             "focus:border-clay focus:ring-[3px] focus:ring-clay/15 focus:outline-none",
             className

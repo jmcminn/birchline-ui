@@ -62,6 +62,34 @@
   --spacing-sp-8: 64px;
 }
 
+/* ── Alternative "Bright" scheme ──
+   Override only the RAW color tokens; semantic tokens (--color-success,
+   --color-background, etc.) reference these via var() and re-theme automatically.
+   These are placeholder values — replace with your hex codes. */
+:root[data-theme="bright"] {
+  --color-ivory: #FFFFFF;
+  --color-clay: #FF6B3D;
+  --color-clay-hover: #F0552A;
+  --color-ink: #1A1A18;
+  --color-oat: #FFE9D6;
+  --color-green: #4CAF50;
+  --color-orange: #FF9F1C;
+  --color-red: #E23B3B;
+  --color-red-hover: #C82F2F;
+  --color-plum: #9B6BD6;
+  --color-teal: #2BB3AD;
+  --color-blue: #3B82F6;
+  --color-light-yellow: #FFF1B8;
+
+  --color-gray-100: #F5F4EE;
+  --color-gray-300: #DAD8CE;
+  --color-gray-500: #8A897F;
+  --color-gray-700: #2E2E2B;
+
+  /* Keep the page background matching the default theme */
+  --color-background: #FAF9F5;
+}
+
 * {
   border-color: var(--color-border);
 }
