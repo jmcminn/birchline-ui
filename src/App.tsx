@@ -1103,7 +1103,7 @@ function App() {
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="gap-2">
                   <div className="w-4 h-4 rounded-xs border border-gray-300" style={{ backgroundColor: colorSectionBg }} />
-                  <Palette className="h-3.5 w-3.5" />
+                  <span className="text-xs text-gray-500">Background</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-[280px]">
@@ -2027,8 +2027,8 @@ function App() {
             align="start"
             headerRight={
               <label className="flex items-center gap-2 text-xs text-gray-500 cursor-pointer">
-                <Switch checked={showCurrentYear} onCheckedChange={setShowCurrentYear} />
                 Display the current year in the selected date
+                <Switch checked={showCurrentYear} onCheckedChange={setShowCurrentYear} />
               </label>
             }
           >
