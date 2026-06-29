@@ -1012,6 +1012,9 @@ function App() {
   const [draggingColumnId, setDraggingColumnId] = useState<string | null>(null)
   const [multiSelectValues, setMultiSelectValues] = useState<string[]>(["floor-1", "floor-2"])
   const [multiSelectOpen, setMultiSelectOpen] = useState(false)
+  const [multiSearchValues, setMultiSearchValues] = useState<string[]>(["floor-1", "floor-2"])
+  const [multiSearchOpen, setMultiSearchOpen] = useState(false)
+  const [multiSearchQuery, setMultiSearchQuery] = useState("")
   const tableRef = useRef<HTMLTableElement>(null)
 
   const columns = useMemo(() => taskColumns, [])
@@ -1395,6 +1398,67 @@ function App() {
                       {item.label}
                     </label>
                   ))}
+                </PopoverContent>
+              </Popover>
+            </LabeledItem>
+            <LabeledItem label="Multi-Select w/ Search">
+              <Popover open={multiSearchOpen} onOpenChange={(v) => { setMultiSearchOpen(v); if (!v) setMultiSearchQuery("") }}>
+                <PopoverTrigger asChild>
+                  <button className="flex h-10 w-[200px] items-center justify-between rounded-sm border border-gray-300 bg-white px-3 py-2 text-sm hover:bg-gray-100 transition-colors focus:border-clay focus:ring-[3px] focus:ring-clay/15 focus:outline-none">
+                    <span className={multiSearchValues.length > 0 ? "text-ink truncate" : "text-gray-500"}>
+                      {multiSearchValues.length > 1
+                        ? `Sheets (${multiSearchValues.length})`
+                        : multiSearchValues.length === 1
+                          ? (() => { const labels: Record<string, string> = { "site-plan": "Site Plan", "floor-1": "Floor 1", "floor-2": "Floor 2", "roof": "Roof", "electrical": "Electrical", "plumbing": "Plumbing", "window-schedule": "Window Schedule" }; return labels[multiSearchValues[0]] ?? multiSearchValues[0] })()
+                        : "Choose sheets…"}
+                    </span>
+                    <ChevronRight className="h-4 w-4 text-gray-500 rotate-90" />
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent className="w-fit max-w-[400px] p-0" align="start">
+                  <div className="flex items-center border-b border-gray-300 px-3">
+                    <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
+                    <input
+                      value={multiSearchQuery}
+                      onChange={(e) => setMultiSearchQuery(e.target.value)}
+                      placeholder="Search sheets"
+                      className="flex h-10 w-full rounded-md bg-transparent py-3 text-base outline-none placeholder:text-gray-500 disabled:cursor-not-allowed disabled:opacity-50"
+                    />
+                  </div>
+                  <div className="p-1">
+                    {(() => {
+                      const sheets = [
+                        { value: "site-plan", label: "01 - Site Plan" },
+                        { value: "floor-1", label: "02 - Floor 1" },
+                        { value: "floor-2", label: "03 - Floor 2" },
+                        { value: "roof", label: "04 - Roof" },
+                        { value: "electrical", label: "05 - Electrical" },
+                        { value: "plumbing", label: "06 - Plumbing" },
+                        { value: "window-schedule", label: "07 - Window Schedule" },
+                      ].filter((item) => item.label.toLowerCase().includes(multiSearchQuery.toLowerCase()))
+                      if (sheets.length === 0) {
+                        return <div className="px-3 py-6 text-center text-sm text-gray-500">No sheets found.</div>
+                      }
+                      return sheets.map((item) => (
+                        <label
+                          key={item.value}
+                          className="flex cursor-pointer items-center gap-2.5 rounded-xs px-3 py-2 text-sm hover:bg-gray-100 transition-colors whitespace-nowrap overflow-hidden text-ellipsis"
+                        >
+                          <Checkbox
+                            checked={multiSearchValues.includes(item.value)}
+                            onCheckedChange={(checked) => {
+                              setMultiSearchValues(prev =>
+                                checked
+                                  ? [...prev, item.value]
+                                  : prev.filter(v => v !== item.value)
+                              )
+                            }}
+                          />
+                          {item.label}
+                        </label>
+                      ))
+                    })()}
+                  </div>
                 </PopoverContent>
               </Popover>
             </LabeledItem>
