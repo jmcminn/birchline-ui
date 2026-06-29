@@ -1422,6 +1422,7 @@ function App() {
                 onValuesChange={setMultiSelectedUserIds}
                 onInvite={() => toast("Invite user flow triggered")}
                 clearable
+                showNoAssignee={false}
                 noAssigneeLabel="Select Assignee"
               />
             </LabeledItem>
@@ -1941,7 +1942,7 @@ function App() {
             headerRight={
               <label className="flex items-center gap-2 text-xs text-gray-500 cursor-pointer">
                 <Switch checked={showCurrentYear} onCheckedChange={setShowCurrentYear} />
-                Display current year in selected value
+                Display the current year in the selected date
               </label>
             }
           >
