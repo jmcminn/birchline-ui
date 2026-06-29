@@ -275,7 +275,7 @@ function UserSelector({
             )}
             {recentUsers.length > 0 && (
               <>
-                <CommandSeparator />
+                {!search && showNoAssignee && <CommandSeparator />}
                 <CommandGroup heading="Recents">
                   {recentUsers.map((user) => (
                     <UserRow
@@ -292,7 +292,7 @@ function UserSelector({
             )}
             {nonRecentUsers.length > 0 && (
               <>
-                <CommandSeparator />
+                {((!search && showNoAssignee) || recentUsers.length > 0) && <CommandSeparator />}
                 <CommandGroup heading="Users">
                   {nonRecentUsers.map((user) => (
                     <UserRow
