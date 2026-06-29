@@ -420,6 +420,13 @@ const birchlineColors = [
 const COLOR_SECTION_DEFAULT = "#FAF9F5" // Ivory
 const TYPE_SECTION_DEFAULT = "#FFFFFF" // White
 const TYPE_COLOR_DEFAULT = "#141413" // Ink
+
+// Typography token specs applied to the "Filled" Textarea sample
+const TEXTAREA_TYPE_SPECS: Record<string, string> = {
+  body: "text-base leading-[1.55]",
+  small: "text-sm leading-[1.5]",
+  fine: "text-[13px] leading-[1.45]",
+}
 const SEPARATOR_COLOR_DEFAULT = "#D1CFC5" // Gray 300
 const SEPARATOR_BG_DEFAULT = "#FFFFFF" // White
 
@@ -999,6 +1006,7 @@ function App() {
   const [typeSectionBg, setTypeSectionBg] = useState(TYPE_SECTION_DEFAULT)
   const [typeColor, setTypeColor] = useState(TYPE_COLOR_DEFAULT)
   const [showCurrentYear, setShowCurrentYear] = useState(true)
+  const [textareaToken, setTextareaToken] = useState("body")
   const [separatorColor, setSeparatorColor] = useState(SEPARATOR_COLOR_DEFAULT)
   const [separatorBg, setSeparatorBg] = useState(SEPARATOR_BG_DEFAULT)
   const [selectedUserId, setSelectedUserId] = useState<string | null>("u7")
@@ -1317,7 +1325,21 @@ function App() {
             </LabeledItem>
           </ComponentBlock>
 
-          <ComponentBlock name="Textarea" align="start">
+          <ComponentBlock name="Textarea" align="start" headerRight={
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-500">Type Size</span>
+              <Select value={textareaToken} onValueChange={setTextareaToken}>
+                <SelectTrigger className="w-[140px] h-7 text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="body">Body</SelectItem>
+                  <SelectItem value="small">Small</SelectItem>
+                  <SelectItem value="fine">Fine</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          }>
             <LabeledItem label="Placeholder">
               <div className="w-[340px]">
                 <Textarea placeholder="Add a description…" />
@@ -1325,7 +1347,7 @@ function App() {
             </LabeledItem>
             <LabeledItem label="Filled">
               <div className="w-[340px]">
-                <Textarea defaultValue="Review milestones, assign owners, and surface blockers before they cascade. Make sure to update the project board after the meeting." />
+                <Textarea className={TEXTAREA_TYPE_SPECS[textareaToken]} defaultValue="Review milestones, assign owners, and surface blockers before they cascade. Make sure to update the project board after the meeting." />
               </div>
             </LabeledItem>
           </ComponentBlock>
