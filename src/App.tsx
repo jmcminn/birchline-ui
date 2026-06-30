@@ -1007,6 +1007,7 @@ function App() {
   const [typeColor, setTypeColor] = useState(TYPE_COLOR_DEFAULT)
   const [showCurrentYear, setShowCurrentYear] = useState(true)
   const [textareaToken, setTextareaToken] = useState("body")
+  const [showMenuName, setShowMenuName] = useState(true)
   const [separatorColor, setSeparatorColor] = useState(SEPARATOR_COLOR_DEFAULT)
   const [separatorBg, setSeparatorBg] = useState(SEPARATOR_BG_DEFAULT)
   const [selectedUserId, setSelectedUserId] = useState<string | null>("u7")
@@ -1519,7 +1520,12 @@ function App() {
             </LabeledItem>
           </ComponentBlock>
 
-          <ComponentBlock name="DropdownMenu">
+          <ComponentBlock name="DropdownMenu" headerRight={
+            <label className="flex items-center gap-2 text-xs text-gray-500 cursor-pointer">
+              Display menu name
+              <Switch checked={showMenuName} onCheckedChange={setShowMenuName} />
+            </label>
+          }>
             <LabeledItem label="Action menu">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -1528,8 +1534,8 @@ function App() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start">
-                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
+                  {showMenuName && <DropdownMenuLabel>Actions</DropdownMenuLabel>}
+                  {showMenuName && <DropdownMenuSeparator />}
                   <DropdownMenuItem><Pencil className="mr-2 h-4 w-4" /> Edit task</DropdownMenuItem>
                   <DropdownMenuItem><Copy className="mr-2 h-4 w-4" /> Duplicate</DropdownMenuItem>
                   <DropdownMenuItem><ArrowRight className="mr-2 h-4 w-4" /> Move to…</DropdownMenuItem>
@@ -1548,15 +1554,15 @@ function App() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start">
-                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
+                  {showMenuName && <DropdownMenuLabel>Actions</DropdownMenuLabel>}
+                  {showMenuName && <DropdownMenuSeparator />}
                   <DropdownMenuItem><Pencil className="mr-2 h-4 w-4" /> Edit task</DropdownMenuItem>
                   <DropdownMenuItem><Copy className="mr-2 h-4 w-4" /> Duplicate</DropdownMenuItem>
                   <DropdownMenuSub>
                     <DropdownMenuSubTrigger><ArrowRight className="mr-2 h-4 w-4" /> Move to…</DropdownMenuSubTrigger>
                     <DropdownMenuSubContent className="w-[200px]">
-                      <DropdownMenuLabel>Projects</DropdownMenuLabel>
-                      <DropdownMenuSeparator />
+                      {showMenuName && <DropdownMenuLabel>Projects</DropdownMenuLabel>}
+                      {showMenuName && <DropdownMenuSeparator />}
                       <DropdownMenuItem><FolderOpen className="mr-2 h-4 w-4" /> Q3 Roadmap</DropdownMenuItem>
                       <DropdownMenuItem><FolderOpen className="mr-2 h-4 w-4" /> Marketing Site</DropdownMenuItem>
                       <DropdownMenuItem><FolderOpen className="mr-2 h-4 w-4" /> Mobile App</DropdownMenuItem>
