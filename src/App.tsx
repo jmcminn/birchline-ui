@@ -1438,49 +1438,54 @@ function App() {
                   </button>
                 </PopoverTrigger>
                 <PopoverContent className="w-fit max-w-[400px] p-0" align="start">
-                  <div className="flex items-center border-b border-gray-300 px-3">
-                    <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
-                    <input
-                      value={multiSearchQuery}
-                      onChange={(e) => setMultiSearchQuery(e.target.value)}
-                      placeholder="Search sheets"
-                      className="flex h-10 w-full rounded-md bg-transparent py-3 text-base outline-none placeholder:text-gray-500 disabled:cursor-not-allowed disabled:opacity-50"
-                    />
-                  </div>
-                  <div className="p-1">
-                    {(() => {
-                      const sheets = [
-                        { value: "site-plan", label: "01 - Site Plan" },
-                        { value: "floor-1", label: "02 - Floor 1" },
-                        { value: "floor-2", label: "03 - Floor 2" },
-                        { value: "roof", label: "04 - Roof" },
-                        { value: "electrical", label: "05 - Electrical" },
-                        { value: "plumbing", label: "06 - Plumbing" },
-                        { value: "window-schedule", label: "07 - Window Schedule" },
-                      ].filter((item) => item.label.toLowerCase().includes(multiSearchQuery.toLowerCase()))
-                      if (sheets.length === 0) {
-                        return <div className="px-3 py-6 text-center text-sm text-gray-500">No sheets found.</div>
-                      }
-                      return sheets.map((item) => (
-                        <label
-                          key={item.value}
-                          className="flex cursor-pointer items-center gap-2.5 rounded-xs px-3 py-2 text-sm hover:bg-gray-100 transition-colors whitespace-nowrap overflow-hidden text-ellipsis"
+                  <Command filter={(value, search) => value.toLowerCase().includes(search.toLowerCase()) ? 1 : 0}>
+                    <div className="relative">
+                      <CommandInput
+                        placeholder="Search sheets"
+                        value={multiSearchQuery}
+                        onValueChange={setMultiSearchQuery}
+                      />
+                      {multiSearchQuery.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => setMultiSearchQuery("")}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-ink transition-colors"
                         >
-                          <Checkbox
-                            checked={multiSearchValues.includes(item.value)}
-                            onCheckedChange={(checked) => {
+                          <X className="h-3.5 w-3.5" />
+                        </button>
+                      )}
+                    </div>
+                    <CommandList>
+                      <CommandEmpty>No sheets found.</CommandEmpty>
+                      <CommandGroup>
+                        {[
+                          { value: "site-plan", label: "01 - Site Plan" },
+                          { value: "floor-1", label: "02 - Floor 1" },
+                          { value: "floor-2", label: "03 - Floor 2" },
+                          { value: "roof", label: "04 - Roof" },
+                          { value: "electrical", label: "05 - Electrical" },
+                          { value: "plumbing", label: "06 - Plumbing" },
+                          { value: "window-schedule", label: "07 - Window Schedule" },
+                        ].map((item) => (
+                          <CommandItem
+                            key={item.value}
+                            value={item.label}
+                            onSelect={() => {
                               setMultiSearchValues(prev =>
-                                checked
-                                  ? [...prev, item.value]
-                                  : prev.filter(v => v !== item.value)
+                                prev.includes(item.value)
+                                  ? prev.filter(v => v !== item.value)
+                                  : [...prev, item.value]
                               )
                             }}
-                          />
-                          {item.label}
-                        </label>
-                      ))
-                    })()}
-                  </div>
+                            className="gap-2.5 px-3 py-2"
+                          >
+                            <Checkbox checked={multiSearchValues.includes(item.value)} tabIndex={-1} className="pointer-events-none" />
+                            <span><HighlightText text={item.label} query={multiSearchQuery} /></span>
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
                 </PopoverContent>
               </Popover>
             </LabeledItem>
