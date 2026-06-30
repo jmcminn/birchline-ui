@@ -1540,6 +1540,37 @@ function App() {
                 </DropdownMenuContent>
               </DropdownMenu>
             </LabeledItem>
+            <LabeledItem label="Action menu w/ submenu">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="icon">
+                    <MoreHorizontal className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start">
+                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem><Pencil className="mr-2 h-4 w-4" /> Edit task</DropdownMenuItem>
+                  <DropdownMenuItem><Copy className="mr-2 h-4 w-4" /> Duplicate</DropdownMenuItem>
+                  <DropdownMenuSub>
+                    <DropdownMenuSubTrigger><ArrowRight className="mr-2 h-4 w-4" /> Move to…</DropdownMenuSubTrigger>
+                    <DropdownMenuSubContent className="w-[200px]">
+                      <DropdownMenuLabel>Projects</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem><FolderOpen className="mr-2 h-4 w-4" /> Q3 Roadmap</DropdownMenuItem>
+                      <DropdownMenuItem><FolderOpen className="mr-2 h-4 w-4" /> Marketing Site</DropdownMenuItem>
+                      <DropdownMenuItem><FolderOpen className="mr-2 h-4 w-4" /> Mobile App</DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem><Plus className="mr-2 h-4 w-4" /> New project…</DropdownMenuItem>
+                    </DropdownMenuSubContent>
+                  </DropdownMenuSub>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem className="text-danger focus:text-danger">
+                    <Trash2 className="mr-2 h-4 w-4" /> Delete
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </LabeledItem>
           </ComponentBlock>
 
           <ComponentBlock name="Checkbox">
