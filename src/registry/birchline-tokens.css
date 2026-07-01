@@ -1,0 +1,112 @@
+/* Birchline design tokens — Tailwind v4 @theme layer + Bright scheme override.
+   Import after `@import "tailwindcss";` in your global stylesheet. */
+
+@theme {
+  /* ── Birchline Color Tokens ── */
+  --color-ivory: #FAF9F5;
+  --color-clay: #D97757;
+  --color-clay-hover: #C7684C;
+  --color-ink: #141413;
+  --color-oat: #E3DACC;
+  --color-green: #788C5D;
+  --color-orange: #C78E3F;
+  --color-red: #B04A4A;
+  --color-red-hover: #9A3F3F;
+  --color-plum: #7B6B8A;
+  --color-teal: #5B8E8A;
+  --color-blue: #5C7CA3;
+  --color-light-yellow: #F5E6B8;
+
+  --color-white: #FFFFFF;
+  --color-gray-100: #F0EEE6;
+  --color-gray-300: #D1CFC5;
+  --color-gray-500: #87867F;
+  --color-gray-700: #3D3D3A;
+
+  --color-success: var(--color-green);
+  --color-warning: var(--color-orange);
+  --color-danger: var(--color-red);
+  --color-danger-hover: var(--color-red-hover);
+  --color-info: var(--color-blue);
+  --color-highlight: var(--color-light-yellow);
+
+  /* ── Semantic mappings (point to Birchline tokens) ── */
+  --color-background: var(--color-ivory);
+  --color-foreground: var(--color-ink);
+
+  --color-card: var(--color-white);
+  --color-card-foreground: var(--color-ink);
+  --color-popover: var(--color-white);
+  --color-popover-foreground: var(--color-ink);
+
+  --color-primary: var(--color-clay);
+  --color-primary-hover: var(--color-clay-hover);
+  --color-primary-foreground: var(--color-white);
+
+  --color-secondary: var(--color-gray-100);
+  --color-secondary-foreground: var(--color-gray-700);
+
+  --color-muted: var(--color-gray-100);
+  --color-muted-foreground: var(--color-gray-500);
+
+  --color-accent: var(--color-gray-100);
+  --color-accent-foreground: var(--color-gray-700);
+
+  --color-border: var(--color-gray-300);
+  --color-input: var(--color-gray-300);
+  --color-ring: var(--color-clay);
+
+  /* ── Typography ── */
+  --font-serif: ui-serif, Georgia, serif;
+  --font-sans: system-ui, -apple-system, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* ── Border Radius ── */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+
+  /* ── Shadows ── */
+  --shadow-sm: 0 1px 2px rgba(20, 20, 19, 0.06);
+  --shadow-md: 0 4px 10px rgba(20, 20, 19, 0.08);
+  --shadow-lg: 0 12px 28px rgba(20, 20, 19, 0.12);
+
+  /* ── Spacing (aliases) ── */
+  --spacing-sp-1: 4px;
+  --spacing-sp-2: 8px;
+  --spacing-sp-3: 12px;
+  --spacing-sp-4: 16px;
+  --spacing-sp-5: 24px;
+  --spacing-sp-6: 32px;
+  --spacing-sp-7: 48px;
+  --spacing-sp-8: 64px;
+}
+
+/* ── Alternative "Bright" scheme ──
+   Override only the RAW color tokens; semantic tokens (--color-success,
+   --color-background, etc.) reference these via var() and re-theme automatically.
+   These are placeholder values — replace with your hex codes. */
+:root[data-theme="bright"] {
+  --color-ivory: #FFFFFF;
+  --color-clay: #FF6B3D;
+  --color-clay-hover: #F0552A;
+  --color-ink: #1A1A18;
+  --color-oat: #FFE9D6;
+  --color-green: #4CAF50;
+  --color-orange: #FF9F1C;
+  --color-red: #E23B3B;
+  --color-red-hover: #C82F2F;
+  --color-plum: #9B6BD6;
+  --color-teal: #2BB3AD;
+  --color-blue: #3B82F6;
+  --color-light-yellow: #FFF1B8;
+
+  --color-gray-100: #F5F4EE;
+  --color-gray-300: #DAD8CE;
+  --color-gray-500: #8A897F;
+  --color-gray-700: #2E2E2B;
+
+  /* Keep the page background matching the default theme */
+  --color-background: #FAF9F5;
+}

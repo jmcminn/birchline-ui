@@ -1,0 +1,22 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "badge",
+  "title": "Badge",
+  "dependencies": [
+    "class-variance-authority@0.7.1",
+    "lucide-react@1.14.0"
+  ],
+  "registryDependencies": [
+    "@birchline/tokens",
+    "@birchline/utils"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/badge.tsx",
+      "content": "import * as React from \"react\"\nimport { X } from \"lucide-react\"\nimport { cva, type VariantProps } from \"class-variance-authority\"\nimport { cn } from \"@/lib/utils\"\n\nconst badgeVariants = cva(\n  \"inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors\",\n  {\n    variants: {\n      variant: {\n        default: \"bg-muted text-secondary-foreground\",\n        accent: \"bg-primary/15 text-primary\",\n        success: \"bg-success/15 text-success\",\n        warning: \"bg-warning/15 text-warning\",\n        destructive: \"bg-danger/15 text-danger\",\n        info: \"bg-info/15 text-info\",\n        muted: \"bg-gray-500/15 text-muted-foreground\",\n      },\n    },\n    defaultVariants: {\n      variant: \"default\",\n    },\n  }\n)\n\nexport interface BadgeProps\n  extends React.HTMLAttributes<HTMLDivElement>,\n    VariantProps<typeof badgeVariants> {\n  /**\n   * When provided, renders a trailing remove (×) button. The badge itself\n   * stays non-interactive; only the × is a button.\n   */\n  onRemove?: (event: React.MouseEvent<HTMLButtonElement>) => void\n  /**\n   * Accessible label for the remove button. Defaults to \"Remove\".\n   * Recommended: pass the badge's text content for clarity, e.g. \"Remove In review\".\n   */\n  removeLabel?: string\n}\n\nfunction Badge({\n  className,\n  variant,\n  onRemove,\n  removeLabel,\n  children,\n  ...props\n}: BadgeProps) {\n  const removable = typeof onRemove === \"function\"\n  return (\n    <div\n      className={cn(\n        badgeVariants({ variant }),\n        removable && \"gap-1 pr-1\",\n        className\n      )}\n      {...props}\n    >\n      <span>{children}</span>\n      {removable && (\n        <button\n          type=\"button\"\n          aria-label={removeLabel ?? \"Remove\"}\n          onClick={onRemove}\n          className={cn(\n            \"inline-flex h-3.5 w-3.5 items-center justify-center rounded-full\",\n            \"opacity-70 hover:opacity-100 hover:bg-current/10\",\n            \"focus:outline-none focus-visible:ring-1 focus-visible:ring-current\",\n            \"transition-opacity\"\n          )}\n        >\n          <X className=\"h-3 w-3\" strokeWidth={2.5} />\n        </button>\n      )}\n    </div>\n  )\n}\n\nexport { Badge, badgeVariants }\n",
+      "type": "registry:ui",
+      "target": "components/ui/badge.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}

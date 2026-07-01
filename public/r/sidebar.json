@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "sidebar",
+  "title": "Sidebar",
+  "registryDependencies": [
+    "@birchline/tokens",
+    "@birchline/utils"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/sidebar.tsx",
+      "content": "import * as React from \"react\"\nimport { cn } from \"@/lib/utils\"\n\nconst Sidebar = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(\n  ({ className, ...props }, ref) => (\n    <aside\n      ref={ref}\n      className={cn(\n        \"flex h-full w-[260px] flex-col border-r border-border bg-card\",\n        className\n      )}\n      {...props}\n    />\n  )\n)\nSidebar.displayName = \"Sidebar\"\n\nconst SidebarHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(\n  ({ className, ...props }, ref) => (\n    <div ref={ref} className={cn(\"flex items-center gap-2 px-4 py-3 border-b border-border\", className)} {...props} />\n  )\n)\nSidebarHeader.displayName = \"SidebarHeader\"\n\nconst SidebarContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(\n  ({ className, ...props }, ref) => (\n    <div ref={ref} className={cn(\"flex-1 py-2\", className)} {...props} />\n  )\n)\nSidebarContent.displayName = \"SidebarContent\"\n\nconst SidebarFooter = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(\n  ({ className, ...props }, ref) => (\n    <div ref={ref} className={cn(\"border-t border-border px-4 py-3\", className)} {...props} />\n  )\n)\nSidebarFooter.displayName = \"SidebarFooter\"\n\nconst SidebarGroup = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(\n  ({ className, ...props }, ref) => (\n    <div ref={ref} className={cn(\"px-2 py-2\", className)} {...props} />\n  )\n)\nSidebarGroup.displayName = \"SidebarGroup\"\n\nconst SidebarGroupLabel = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(\n  ({ className, ...props }, ref) => (\n    <div\n      ref={ref}\n      className={cn(\"px-2 py-1.5 text-xs font-medium text-muted-foreground\", className)}\n      {...props}\n    />\n  )\n)\nSidebarGroupLabel.displayName = \"SidebarGroupLabel\"\n\nconst SidebarItem = React.forwardRef<\n  HTMLButtonElement,\n  React.ButtonHTMLAttributes<HTMLButtonElement> & { active?: boolean }\n>(({ className, active, ...props }, ref) => (\n  <button\n    ref={ref}\n    className={cn(\n      \"flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-sm text-left transition-colors cursor-pointer\",\n      active ? \"bg-muted text-foreground font-medium\" : \"text-muted-foreground hover:bg-accent hover:text-foreground\",\n      className\n    )}\n    {...props}\n  />\n))\nSidebarItem.displayName = \"SidebarItem\"\n\nexport {\n  Sidebar,\n  SidebarHeader,\n  SidebarContent,\n  SidebarFooter,\n  SidebarGroup,\n  SidebarGroupLabel,\n  SidebarItem,\n}\n",
+      "type": "registry:ui",
+      "target": "components/ui/sidebar.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}

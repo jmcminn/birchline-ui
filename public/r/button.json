@@ -1,0 +1,22 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "button",
+  "title": "Button",
+  "dependencies": [
+    "@radix-ui/react-slot@1.2.4",
+    "class-variance-authority@0.7.1"
+  ],
+  "registryDependencies": [
+    "@birchline/tokens",
+    "@birchline/utils"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/button.tsx",
+      "content": "import * as React from \"react\"\nimport { Slot } from \"@radix-ui/react-slot\"\nimport { cva, type VariantProps } from \"class-variance-authority\"\nimport { cn } from \"@/lib/utils\"\n\nconst buttonVariants = cva(\n  \"inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/40 disabled:pointer-events-none disabled:opacity-50 cursor-pointer\",\n  {\n    variants: {\n      variant: {\n        default: \"bg-primary text-primary-foreground hover:bg-primary-hover\",\n        secondary: \"bg-card text-foreground border border-border hover:bg-accent\",\n        ghost: \"text-secondary-foreground hover:bg-accent\",\n        destructive: \"bg-danger text-primary-foreground hover:bg-danger-hover\",\n        link: \"text-primary underline-offset-4 hover:underline\",\n        outline: \"border border-border bg-background hover:bg-accent text-foreground\",\n      },\n      size: {\n        default: \"h-9 px-4 rounded-sm\",\n        sm: \"h-8 px-3 text-xs rounded-sm\",\n        lg: \"h-10 px-6 rounded-sm\",\n        icon: \"h-9 w-9 rounded-sm\",\n      },\n    },\n    defaultVariants: {\n      variant: \"default\",\n      size: \"default\",\n    },\n  }\n)\n\nexport interface ButtonProps\n  extends React.ButtonHTMLAttributes<HTMLButtonElement>,\n    VariantProps<typeof buttonVariants> {\n  asChild?: boolean\n}\n\nconst Button = React.forwardRef<HTMLButtonElement, ButtonProps>(\n  ({ className, variant, size, asChild = false, ...props }, ref) => {\n    const Comp = asChild ? Slot : \"button\"\n    return (\n      <Comp\n        className={cn(buttonVariants({ variant, size, className }))}\n        ref={ref}\n        {...props}\n      />\n    )\n  }\n)\nButton.displayName = \"Button\"\n\nexport { Button, buttonVariants }\n",
+      "type": "registry:ui",
+      "target": "components/ui/button.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}

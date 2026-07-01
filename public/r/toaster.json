@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "toaster",
+  "title": "Toaster",
+  "dependencies": [
+    "sonner@2.0.7"
+  ],
+  "registryDependencies": [
+    "@birchline/tokens"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/toaster.tsx",
+      "content": "import { Toaster as Sonner } from \"sonner\"\n\ntype ToasterProps = React.ComponentProps<typeof Sonner>\n\nconst Toaster = ({ ...props }: ToasterProps) => {\n  return (\n    <Sonner\n      className=\"toaster group\"\n      toastOptions={{\n        classNames: {\n          toast:\n            \"group toast group-[.toaster]:bg-popover group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-md group-[.toaster]:rounded-md\",\n          title: \"group-[.toast]:text-base group-[.toast]:leading-[1.55] group-[.toast]:font-semibold\",\n          description: \"group-[.toast]:text-muted-foreground group-[.toast]:text-sm group-[.toast]:leading-[1.5] group-[.toast]:font-normal\",\n          actionButton:\n            \"group-[.toast]:bg-primary group-[.toast]:text-primary-foreground\",\n          cancelButton:\n            \"group-[.toast]:bg-accent group-[.toast]:text-muted-foreground\",\n        },\n      }}\n      {...props}\n    />\n  )\n}\n\nexport { Toaster }\n",
+      "type": "registry:ui",
+      "target": "components/ui/toaster.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}

@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "input",
+  "title": "Input",
+  "dependencies": [
+    "lucide-react@1.14.0"
+  ],
+  "registryDependencies": [
+    "@birchline/tokens",
+    "@birchline/utils"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/input.tsx",
+      "content": "import * as React from \"react\"\nimport { useState, useRef, useCallback } from \"react\"\nimport { X } from \"lucide-react\"\nimport { cn } from \"@/lib/utils\"\n\ninterface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {\n  wrapperClassName?: string\n}\n\nconst Input = React.forwardRef<HTMLInputElement, InputProps>(\n  ({ className, wrapperClassName, type, value: controlledValue, defaultValue, onChange, ...props }, ref) => {\n    const [internalValue, setInternalValue] = useState(\n      defaultValue !== undefined ? String(defaultValue) : \"\"\n    )\n    const inputRef = useRef<HTMLInputElement | null>(null)\n\n    const isControlled = controlledValue !== undefined\n    const displayValue = isControlled ? controlledValue : internalValue\n    const hasValue = String(displayValue).length > 0\n\n    const setRef = useCallback(\n      (node: HTMLInputElement | null) => {\n        inputRef.current = node\n        if (typeof ref === \"function\") ref(node)\n        else if (ref) (ref as React.MutableRefObject<HTMLInputElement | null>).current = node\n      },\n      [ref]\n    )\n\n    function handleChange(e: React.ChangeEvent<HTMLInputElement>) {\n      if (!isControlled) setInternalValue(e.target.value)\n      onChange?.(e)\n    }\n\n    function handleClear() {\n      const input = inputRef.current\n      if (!input) return\n      const nativeInputValueSetter = Object.getOwnPropertyDescriptor(\n        window.HTMLInputElement.prototype, \"value\"\n      )?.set\n      nativeInputValueSetter?.call(input, \"\")\n      input.dispatchEvent(new Event(\"input\", { bubbles: true }))\n      if (!isControlled) setInternalValue(\"\")\n      input.focus()\n    }\n\n    return (\n      <div className={cn(\"relative w-full\", wrapperClassName)}>\n        <input\n          type={type}\n          className={cn(\n            \"flex h-[38px] w-full rounded-sm border border-border bg-card px-3 text-sm text-foreground transition-colors\",\n            \"placeholder:text-muted-foreground\",\n            \"focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/40 focus-visible:outline-none\",\n            \"disabled:cursor-not-allowed disabled:opacity-50\",\n            hasValue && \"pr-8\",\n            className\n          )}\n          ref={setRef}\n          value={isControlled ? controlledValue : internalValue}\n          onChange={handleChange}\n          {...props}\n        />\n        {hasValue && (\n          <button\n            type=\"button\"\n            onClick={handleClear}\n            tabIndex={-1}\n            className=\"absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground\"\n          >\n            <X className=\"h-3.5 w-3.5\" />\n          </button>\n        )}\n      </div>\n    )\n  }\n)\nInput.displayName = \"Input\"\n\nexport { Input }\n",
+      "type": "registry:ui",
+      "target": "components/ui/input.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}
