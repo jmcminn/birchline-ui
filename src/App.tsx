@@ -1083,13 +1083,14 @@ function App() {
               className="shrink-0"
             >
               <TabsList>
-                <TabsTrigger value="default">Default</TabsTrigger>
+                <TabsTrigger value="default">Muted</TabsTrigger>
                 <TabsTrigger value="bright">Bright</TabsTrigger>
               </TabsList>
             </Tabs>
           </div>
-          <p className="text-gray-500 text-sm">
-            Birchline UI design system is a reskin of shadcn/ui components by{" "}
+          <p className="text-gray-500 font-sans text-base leading-[1.55]">
+            Birchline UI design system is a reskin of{" "}
+            <a href="https://ui.shadcn.com/docs/components" target="_blank" rel="noreferrer" className="text-clay hover:underline">shadcn/ui</a> components by{" "}
             <a href="https://x.com/jasonmcminn" target="_blank" rel="noreferrer" className="text-clay hover:underline">Jason McMinn</a>. It is a fork of{" "}
             <a href="https://x.com/trq212" target="_blank" rel="noreferrer" className="text-clay hover:underline">Thariq’s</a> original{" "}
             <a href="https://thariqs.github.io/html-effectiveness/05-design-system.html" target="_blank" rel="noreferrer" className="text-clay hover:underline">Birchline design system</a>, expanded with additional capabilities and components.
@@ -1348,7 +1349,7 @@ function App() {
             </LabeledItem>
             <LabeledItem label="Filled">
               <div className="w-[340px]">
-                <Textarea className={TEXTAREA_TYPE_SPECS[textareaToken]} defaultValue="Review milestones, assign owners, and surface blockers before they cascade. Make sure to update the project board after the meeting." />
+                <Textarea className={`min-h-[104px] ${TEXTAREA_TYPE_SPECS[textareaToken]}`} defaultValue="Review milestones, assign owners, and surface blockers before they cascade. Make sure to update the project board after the meeting." />
               </div>
             </LabeledItem>
           </ComponentBlock>
@@ -1727,7 +1728,7 @@ function App() {
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Create new task</DialogTitle>
+                  <DialogTitle>Create New Task</DialogTitle>
                   <DialogDescription>Add a new task to your project board.</DialogDescription>
                 </DialogHeader>
                 <div className="flex flex-col gap-4 py-4">
@@ -2312,12 +2313,12 @@ function App() {
             className="flex w-full gap-6 p-6 border border-gray-300 rounded-md transition-colors"
             style={{ backgroundColor: separatorBg }}
           >
-            {/* Horizontal dividers */}
-            <div className="flex-1 flex flex-col justify-between py-4" style={{ gap: "64px" }}>
-              <Separator className="w-1/2" style={{ backgroundColor: separatorColor }} />
-              <Separator className="w-1/2" style={{ backgroundColor: separatorColor }} />
-              <Separator className="h-[2px] w-1/2" style={{ backgroundColor: separatorColor }} />
-              <Separator className="h-[2px] w-1/2" style={{ backgroundColor: separatorColor }} />
+            {/* Horizontal dividers — half column width, extended 200px to the right */}
+            <div className="flex-1 min-w-0 flex flex-col justify-between py-4" style={{ gap: "64px" }}>
+              <Separator className="w-[calc(50%+200px)]" style={{ backgroundColor: separatorColor }} />
+              <Separator className="w-[calc(50%+200px)]" style={{ backgroundColor: separatorColor }} />
+              <Separator className="h-[2px] w-[calc(50%+200px)]" style={{ backgroundColor: separatorColor }} />
+              <Separator className="h-[2px] w-[calc(50%+200px)]" style={{ backgroundColor: separatorColor }} />
             </div>
             {/* Vertical dividers */}
             <div className="flex-1 flex justify-between px-8" style={{ height: "300px" }}>
