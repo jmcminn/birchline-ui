@@ -162,7 +162,7 @@ function UserSelector({
           className={cn(
             "flex items-center gap-2 h-10 px-2 rounded-sm border border-border bg-card text-sm",
             "hover:bg-accent transition-colors",
-            "focus:border-ring focus:ring-[3px] focus:ring-ring/15 focus:outline-none",
+            "focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/40 focus-visible:outline-none",
             className
           )}
         >
