@@ -1876,15 +1876,15 @@ function App() {
                 </div>
               </div>
               <div className="border border-gray-300 rounded-md overflow-hidden">
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                modifiers={[restrictToHorizontalAxis]}
+                onDragStart={handleDragStart}
+                onDragOver={handleDragOver}
+                onDragEnd={handleDragEnd}
+              >
               <Table ref={tableRef} density={tableDensity} className="w-full" style={{ tableLayout: "fixed" }}>
-                <DndContext
-                  sensors={sensors}
-                  collisionDetection={closestCenter}
-                  modifiers={[restrictToHorizontalAxis]}
-                  onDragStart={handleDragStart}
-                  onDragOver={handleDragOver}
-                  onDragEnd={handleDragEnd}
-                >
                 <TableHeader>
                   {table.getHeaderGroups().map((headerGroup) => (
                     <TableRow key={headerGroup.id}>
@@ -1901,7 +1901,6 @@ function App() {
                     </TableRow>
                   ))}
                 </TableHeader>
-                </DndContext>
                 <TableBody>
                   {table.getRowModel().rows.length ? (
                     table.getRowModel().rows.map((row) => (
@@ -1948,6 +1947,7 @@ function App() {
                   )}
                 </TableBody>
               </Table>
+              </DndContext>
               </div>
               <div className="mt-3">
                 <span className="text-xs text-gray-500">
