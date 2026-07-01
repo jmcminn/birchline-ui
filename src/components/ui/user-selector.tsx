@@ -15,7 +15,7 @@ function HighlightMatch({ text, query }: { text: string; query: string }) {
     <>
       {parts.map((part, i) =>
         regex.test(part) ? (
-          <mark key={i} className="bg-highlight text-ink rounded-xs px-0.5">{part}</mark>
+          <mark key={i} className="bg-highlight text-foreground rounded-xs px-0.5">{part}</mark>
         ) : (
           part
         )
@@ -57,7 +57,7 @@ const roleBadgeVariant: Record<UserRole, "accent" | "muted"> = {
 }
 
 function getRoleAvatarColor(role: UserRole) {
-  return role === "Guest" ? "bg-gray-500 text-white" : "bg-clay text-white"
+  return role === "Guest" ? "bg-gray-500 text-primary-foreground" : "bg-primary text-primary-foreground"
 }
 
 function UserRow({
@@ -83,7 +83,7 @@ function UserRow({
         {multiSelect ? (
           <Checkbox checked={selected} tabIndex={-1} className="pointer-events-none" />
         ) : (
-          selected && <Check className="h-4 w-4 text-ink" />
+          selected && <Check className="h-4 w-4 text-foreground" />
         )}
       </span>
       <Avatar className="h-8 w-8 shrink-0">
@@ -98,7 +98,7 @@ function UserRow({
             {user.role}
           </Badge>
         </div>
-        <div className="text-xs text-gray-500 truncate"><HighlightMatch text={user.email} query={search ?? ""} /></div>
+        <div className="text-xs text-muted-foreground truncate"><HighlightMatch text={user.email} query={search ?? ""} /></div>
       </div>
     </CommandItem>
   )
@@ -160,9 +160,9 @@ function UserSelector({
       <PopoverTrigger asChild>
         <button
           className={cn(
-            "flex items-center gap-2 h-10 px-2 rounded-sm border border-gray-300 bg-white text-sm",
-            "hover:bg-gray-100 transition-colors",
-            "focus:border-clay focus:ring-[3px] focus:ring-clay/15 focus:outline-none",
+            "flex items-center gap-2 h-10 px-2 rounded-sm border border-border bg-card text-sm",
+            "hover:bg-accent transition-colors",
+            "focus:border-ring focus:ring-[3px] focus:ring-ring/15 focus:outline-none",
             className
           )}
         >
@@ -171,7 +171,7 @@ function UserSelector({
               <>
                 <div className="flex items-center -space-x-1.5">
                   {selectedUsers.slice(0, 3).map((u) => (
-                    <Avatar key={u.id} className="h-6 w-6 border-2 border-white">
+                    <Avatar key={u.id} className="h-6 w-6 border-2 border-card">
                       <AvatarFallback className={cn("text-[10px] font-medium", getRoleAvatarColor(u.role))}>
                         {u.initials}
                       </AvatarFallback>
@@ -185,7 +185,7 @@ function UserSelector({
                   <span
                     role="button"
                     onClick={(e) => { e.stopPropagation(); onValuesChange?.([]) }}
-                    className="ml-auto text-gray-500 hover:text-ink transition-colors"
+                    className="ml-auto text-muted-foreground hover:text-foreground transition-colors"
                   >
                     <X className="h-3.5 w-3.5" />
                   </span>
@@ -193,10 +193,10 @@ function UserSelector({
               </>
             ) : (
               <>
-                <div className="h-6 w-6 rounded-full border-[1.5px] border-dashed border-gray-300 flex items-center justify-center shrink-0">
+                <div className="h-6 w-6 rounded-full border-[1.5px] border-dashed border-border flex items-center justify-center shrink-0">
                   <UserRound className="h-3 w-3 text-gray-300" />
                 </div>
-                <span className="text-gray-500">{noAssigneeLabel}</span>
+                <span className="text-muted-foreground">{noAssigneeLabel}</span>
               </>
             )
           ) : selectedUser ? (
@@ -211,7 +211,7 @@ function UserSelector({
                 <span
                   role="button"
                   onClick={(e) => { e.stopPropagation(); onSelect?.(null) }}
-                  className="ml-auto text-gray-500 hover:text-ink transition-colors"
+                  className="ml-auto text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <X className="h-3.5 w-3.5" />
                 </span>
@@ -219,13 +219,13 @@ function UserSelector({
             </>
           ) : value === null ? (
             <>
-              <div className="h-6 w-6 rounded-full border-[1.5px] border-dashed border-gray-300 flex items-center justify-center shrink-0">
+              <div className="h-6 w-6 rounded-full border-[1.5px] border-dashed border-border flex items-center justify-center shrink-0">
                 <UserRound className="h-3 w-3 text-gray-300" />
               </div>
-              <span className="text-gray-500">{noAssigneeLabel}</span>
+              <span className="text-muted-foreground">{noAssigneeLabel}</span>
             </>
           ) : (
-            <span className="text-gray-500">{placeholder}</span>
+            <span className="text-muted-foreground">{placeholder}</span>
           )}
         </button>
       </PopoverTrigger>
@@ -248,7 +248,7 @@ function UserSelector({
             {search.length > 0 && (
               <button
                 onClick={() => setSearch("")}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-ink"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
               >
                 <X className="h-3.5 w-3.5" />
               </button>
@@ -264,9 +264,9 @@ function UserSelector({
                   className="flex items-center gap-3 px-3 py-2.5"
                 >
                   <span className="w-5 shrink-0 flex items-center justify-center">
-                    {value === null && <Check className="h-4 w-4 text-ink" />}
+                    {value === null && <Check className="h-4 w-4 text-foreground" />}
                   </span>
-                  <div className="h-8 w-8 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center shrink-0">
+                  <div className="h-8 w-8 rounded-full border-2 border-dashed border-border flex items-center justify-center shrink-0">
                     <UserRound className="h-4 w-4 text-gray-300" />
                   </div>
                   <span className="text-sm font-medium">No Assignee</span>
@@ -309,7 +309,7 @@ function UserSelector({
             )}
           </CommandList>
           {onInvite && !search && (
-            <div className="border-t border-gray-300">
+            <div className="border-t border-border">
               <CommandGroup>
                 <CommandItem
                   onSelect={() => { onInvite(); setOpen(false) }}
@@ -317,7 +317,7 @@ function UserSelector({
                 >
                   <span className="w-5 shrink-0" />
                   <div className="h-8 w-8 flex items-center justify-center shrink-0">
-                    <UserPlus className="h-4 w-4 text-gray-500" />
+                    <UserPlus className="h-4 w-4 text-muted-foreground" />
                   </div>
                   <span className="text-sm">Invite User</span>
                 </CommandItem>

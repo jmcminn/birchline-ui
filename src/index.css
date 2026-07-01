@@ -32,7 +32,27 @@
   /* ── Semantic mappings (point to Birchline tokens) ── */
   --color-background: var(--color-ivory);
   --color-foreground: var(--color-ink);
+
+  --color-card: var(--color-white);
+  --color-card-foreground: var(--color-ink);
+  --color-popover: var(--color-white);
+  --color-popover-foreground: var(--color-ink);
+
+  --color-primary: var(--color-clay);
+  --color-primary-hover: var(--color-clay-hover);
+  --color-primary-foreground: var(--color-white);
+
+  --color-secondary: var(--color-gray-100);
+  --color-secondary-foreground: var(--color-gray-700);
+
+  --color-muted: var(--color-gray-100);
+  --color-muted-foreground: var(--color-gray-500);
+
+  --color-accent: var(--color-gray-100);
+  --color-accent-foreground: var(--color-gray-700);
+
   --color-border: var(--color-gray-300);
+  --color-input: var(--color-gray-300);
   --color-ring: var(--color-clay);
 
   /* ── Typography ── */

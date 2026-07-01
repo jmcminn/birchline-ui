@@ -28,23 +28,23 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         ),
         month_grid: "col-span-3 w-full border-collapse space-y-1",
         weekdays: "flex",
-        weekday: "text-gray-500 rounded-sm w-9 font-medium text-[0.8rem]",
+        weekday: "text-muted-foreground rounded-sm w-9 font-medium text-[0.8rem]",
         week: "flex w-full mt-1",
         day: cn(
-          "relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-gray-100 [&:has([aria-selected].day-outside)]:bg-gray-100/50 [&:has([aria-selected].day-range-end)]:rounded-r-sm",
+          "relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-outside)]:bg-accent/50 [&:has([aria-selected].day-range-end)]:rounded-r-sm",
           props.mode === "range"
             ? "[&:has(>.day-range-end)]:rounded-r-sm [&:has(>.day-range-start)]:rounded-l-sm first:[&:has([aria-selected])]:rounded-l-sm last:[&:has([aria-selected])]:rounded-r-sm"
             : "[&:has([aria-selected])]:rounded-sm"
         ),
         day_button:
-          "inline-flex items-center justify-center rounded-sm h-9 w-9 p-0 text-sm font-normal cursor-pointer hover:bg-gray-100",
+          "inline-flex items-center justify-center rounded-sm h-9 w-9 p-0 text-sm font-normal cursor-pointer hover:bg-accent",
         range_start: "day-range-start",
         range_end: "day-range-end",
-        selected: "[&>button]:bg-clay [&>button]:text-white [&>button]:hover:bg-clay [&>button]:hover:text-white [&>button]:rounded-sm",
-        today: "bg-gray-100 text-ink rounded-sm",
-        outside: "day-outside text-gray-500 aria-selected:bg-gray-100/50 aria-selected:text-gray-500",
-        disabled: "text-gray-500 opacity-50",
-        range_middle: "aria-selected:bg-gray-100 aria-selected:text-ink",
+        selected: "[&>button]:bg-primary [&>button]:text-primary-foreground [&>button]:hover:bg-primary [&>button]:hover:text-primary-foreground [&>button]:rounded-sm",
+        today: "bg-muted text-foreground rounded-sm",
+        outside: "day-outside text-muted-foreground aria-selected:bg-accent/50 aria-selected:text-muted-foreground",
+        disabled: "text-muted-foreground opacity-50",
+        range_middle: "aria-selected:bg-accent aria-selected:text-foreground",
         hidden: "invisible",
         ...classNames,
       }}
