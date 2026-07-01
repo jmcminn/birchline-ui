@@ -59,14 +59,16 @@ A WCAG audit drove a first pass. **Fixed** (now ≥ AA 4.5:1 on ivory *and* whit
 - `muted-foreground` — 3.5 → **4.8** (darkened to `#726F66`)
 - `success` / `warning` / `info` text — 3.7 / 2.9 / 4.3 → **~5.2** each
 
-**Still below AA** (brand-color tradeoffs, deferred pending a design decision):
+**Accepted brand exceptions** (below AA, intentionally kept):
 
 - white on `primary` (clay) — ~3.1 (primary buttons)
 - `primary` as link text on light — ~3.0
 
-Options for the remaining two: darken clay, use dark text on clay, or accept as a
-documented large-text/brand exception. Borders (`gray-300`) are intentionally
-low-contrast and exempt.
+Clay is the brand's signature color; darkening it to meet AA would compromise the
+identity, so these are documented exceptions rather than defects. Mitigation:
+where a clay button or link carries critical meaning, pair it with a non-color
+cue (icon or clear label) so meaning never rests on color alone. Borders
+(`gray-300`) are intentionally low-contrast and exempt.
 
 ## Typography
 
