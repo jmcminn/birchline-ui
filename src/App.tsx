@@ -408,7 +408,7 @@ const birchlineColors = [
   { name: "Gray 500", hex: "#726F66" },
   { name: "Gray 700", hex: "#3D3D3A" },
   { name: "Green", hex: "#5F7348" },
-  { name: "Orange", hex: "#916426" },
+  { name: "Bronze", hex: "#916426" },
   { name: "Red", hex: "#B04A4A" },
   { name: "Blue", hex: "#526E92" },
   { name: "Plum", hex: "#7B6B8A" },
@@ -1145,7 +1145,7 @@ function App() {
                 <div className="font-mono text-sm uppercase tracking-wider text-gray-500 mb-4">Semantic</div>
                 <div className="flex flex-col gap-5">
                   <ColorSwatch color="#5F7348" hex="#5F7348" token="--green" semantic="success" noBorder />
-                  <ColorSwatch color="#916426" hex="#916426" token="--orange" semantic="warning" noBorder />
+                  <ColorSwatch color="#916426" hex="#916426" token="--bronze" semantic="warning" noBorder />
                   <ColorSwatch color="#B04A4A" hex="#B04A4A" token="--red" semantic="danger, destructive" noBorder />
                   <ColorSwatch color="#526E92" hex="#526E92" token="--blue" semantic="info" noBorder />
                   <ColorSwatch color="#F5E6B8" hex="#F5E6B8" token="--light-yellow" semantic="highlight" />

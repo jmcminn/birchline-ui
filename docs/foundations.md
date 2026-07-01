@@ -33,8 +33,8 @@ role-specific avatar color).
 | `--color-ink` | `#141413` | primary text |
 | `--color-oat` | `#E3DACC` | decorative warm neutral |
 | `--color-white` | `#FFFFFF` | surfaces |
-| `--color-gray-100 / 300 / 500 / 700` | `#F0EEE6` / `#D1CFC5` / `#87867F` / `#3D3D3A` | neutral ramp |
-| `--color-green / orange / red / blue` | `#788C5D` / `#C78E3F` / `#B04A4A` / `#5C7CA3` | status hues |
+| `--color-gray-100 / 300 / 500 / 700` | `#F0EEE6` / `#D1CFC5` / `#726F66` / `#3D3D3A` | neutral ramp |
+| `--color-green / bronze / red / blue` | `#5F7348` / `#916426` / `#B04A4A` / `#526E92` | status hues |
 | `--color-plum / teal` | `#7B6B8A` / `#5B8E8A` | extended accents |
 | `--color-light-yellow` | `#F5E6B8` | highlight |
 
@@ -50,7 +50,7 @@ role-specific avatar color).
 | `muted` / `muted-foreground` | gray-100 / gray-500 | subtle fills; captions, meta, placeholders |
 | `accent` / `accent-foreground` | gray-100 / gray-700 | hover/active highlight in menus & lists |
 | `border` / `input` / `ring` | gray-300 / gray-300 / clay | borders, field borders, focus ring |
-| `success` / `warning` / `danger` / `info` / `highlight` | green / orange / red / blue / light-yellow | status semantics |
+| `success` / `warning` / `danger` / `info` / `highlight` | green / bronze / red / blue / light-yellow | status semantics |
 
 ### Contrast status
 

@@ -9,7 +9,7 @@
   --color-ink: #141413;
   --color-oat: #E3DACC;
   --color-green: #5F7348;
-  --color-orange: #916426;
+  --color-bronze: #916426;
   --color-red: #B04A4A;
   --color-red-hover: #9A3F3F;
   --color-plum: #7B6B8A;
@@ -24,7 +24,7 @@
   --color-gray-700: #3D3D3A;
 
   --color-success: var(--color-green);
-  --color-warning: var(--color-orange);
+  --color-warning: var(--color-bronze);
   --color-danger: var(--color-red);
   --color-danger-hover: var(--color-red-hover);
   --color-info: var(--color-blue);
@@ -94,7 +94,7 @@
   --color-ink: #1A1A18;
   --color-oat: #FFE9D6;
   --color-green: #4CAF50;
-  --color-orange: #FF9F1C;
+  --color-bronze: #FF9F1C;
   --color-red: #E23B3B;
   --color-red-hover: #C82F2F;
   --color-plum: #9B6BD6;
