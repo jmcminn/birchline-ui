@@ -2,6 +2,11 @@
 
 shadcn/ui components reskinned with [Birchline](https://github.com/jmcminn/birchline) design tokens.
 
+## Documentation
+
+- [Foundations](./docs/foundations.md) — tokens, color roles, type ramp, spacing, theming, focus.
+- [Components](./docs/components.md) — index, install commands, and "which one do I use?" guidance.
+
 ## Stack
 
 - React 19 + TypeScript
