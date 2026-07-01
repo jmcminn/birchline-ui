@@ -54,16 +54,19 @@ role-specific avatar color).
 
 ### Contrast status
 
-A WCAG audit found several pairings below AA (4.5:1 for normal text) that are
-**not yet remediated**:
+A WCAG audit drove a first pass. **Fixed** (now ≥ AA 4.5:1 on ivory *and* white):
 
-- `muted-foreground` on ivory/white — ~3.5 (captions/meta/placeholders)
+- `muted-foreground` — 3.5 → **4.8** (darkened to `#726F66`)
+- `success` / `warning` / `info` text — 3.7 / 2.9 / 4.3 → **~5.2** each
+
+**Still below AA** (brand-color tradeoffs, deferred pending a design decision):
+
 - white on `primary` (clay) — ~3.1 (primary buttons)
 - `primary` as link text on light — ~3.0
-- `warning` / `success` / `info` as text — 2.9 / 3.7 / 4.3
 
-Treat these as known limitations until the contrast pass lands. Borders
-(`gray-300`) are intentionally low-contrast and exempt.
+Options for the remaining two: darken clay, use dark text on clay, or accept as a
+documented large-text/brand exception. Borders (`gray-300`) are intentionally
+low-contrast and exempt.
 
 ## Typography
 

@@ -405,12 +405,12 @@ const birchlineColors = [
   { name: "Oat", hex: "#E3DACC" },
   { name: "Gray 100", hex: "#F0EEE6" },
   { name: "Gray 300", hex: "#D1CFC5" },
-  { name: "Gray 500", hex: "#87867F" },
+  { name: "Gray 500", hex: "#726F66" },
   { name: "Gray 700", hex: "#3D3D3A" },
-  { name: "Green", hex: "#788C5D" },
-  { name: "Orange", hex: "#C78E3F" },
+  { name: "Green", hex: "#5F7348" },
+  { name: "Orange", hex: "#916426" },
   { name: "Red", hex: "#B04A4A" },
-  { name: "Blue", hex: "#5C7CA3" },
+  { name: "Blue", hex: "#526E92" },
   { name: "Plum", hex: "#7B6B8A" },
   { name: "Teal", hex: "#5B8E8A" },
   { name: "Light Yellow", hex: "#F5E6B8" },
@@ -1137,17 +1137,17 @@ function App() {
                   <ColorSwatch color="#FFFFFF" hex="#FFFFFF" token="--white" semantic="card, popover" />
                   <ColorSwatch color="#F0EEE6" hex="#F0EEE6" token="--gray-100" semantic="secondary, muted, accent" />
                   <ColorSwatch color="#D1CFC5" hex="#D1CFC5" token="--gray-300" semantic="border, input" noBorder />
-                  <ColorSwatch color="#87867F" hex="#87867F" token="--gray-500" semantic="muted-foreground" noBorder />
+                  <ColorSwatch color="#726F66" hex="#726F66" token="--gray-500" semantic="muted-foreground" noBorder />
                   <ColorSwatch color="#3D3D3A" hex="#3D3D3A" token="--gray-700" semantic="secondary-fg, accent-fg" noBorder />
                 </div>
               </div>
               <div>
                 <div className="font-mono text-sm uppercase tracking-wider text-gray-500 mb-4">Semantic</div>
                 <div className="flex flex-col gap-5">
-                  <ColorSwatch color="#788C5D" hex="#788C5D" token="--green" semantic="success" noBorder />
-                  <ColorSwatch color="#C78E3F" hex="#C78E3F" token="--orange" semantic="warning" noBorder />
+                  <ColorSwatch color="#5F7348" hex="#5F7348" token="--green" semantic="success" noBorder />
+                  <ColorSwatch color="#916426" hex="#916426" token="--orange" semantic="warning" noBorder />
                   <ColorSwatch color="#B04A4A" hex="#B04A4A" token="--red" semantic="danger, destructive" noBorder />
-                  <ColorSwatch color="#5C7CA3" hex="#5C7CA3" token="--blue" semantic="info" noBorder />
+                  <ColorSwatch color="#526E92" hex="#526E92" token="--blue" semantic="info" noBorder />
                   <ColorSwatch color="#F5E6B8" hex="#F5E6B8" token="--light-yellow" semantic="highlight" />
                   <ColorSwatch color="#7B6B8A" hex="#7B6B8A" token="--plum" noBorder />
                   <ColorSwatch color="#5B8E8A" hex="#5B8E8A" token="--teal" noBorder />
