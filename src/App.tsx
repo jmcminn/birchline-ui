@@ -74,7 +74,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
 import { Sidebar, SidebarHeader, SidebarContent, SidebarGroup, SidebarGroupLabel, SidebarItem, SidebarFooter } from "@/components/ui/sidebar"
 import { UserSelector, type User } from "@/components/ui/user-selector"
-import { MoreHorizontal, Plus, Search, Trash2, Copy, Pencil, ArrowRight, Info, PanelRight, Bell, CalendarDays, Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, LayoutGrid, List, Home, Settings, FolderOpen, Inbox, FileText, BarChart3, AlertCircle, CheckCircle, AlertTriangle, InfoIcon, Terminal, ChevronRight, Check, Palette, ArrowUpDown, ArrowUp, ArrowDown, X, GripVertical } from "lucide-react"
+import { MoreHorizontal, Plus, Search, Trash2, Copy, Pencil, ArrowRight, Info, PanelRight, Bell, CalendarDays, Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, LayoutGrid, List, Home, Settings, FolderOpen, Inbox, FileText, BarChart3, AlertCircle, CheckCircle, AlertTriangle, InfoIcon, Terminal, ChevronRight, Check, Palette, ArrowUpDown, ArrowUp, ArrowDown, X, GripVertical, Sun, Moon } from "lucide-react"
 import {
   useReactTable,
   getCoreRowModel,
@@ -985,18 +985,26 @@ function BorderChaseDemo() {
 
 /* ── Main App ──────────────────────────────────────────────────────── */
 
-type Scheme = "default" | "bright"
+type Palette = "default" | "bright"
+type Mode = "light" | "dark"
 
 function App() {
-  const [scheme, setScheme] = useState<Scheme>(
-    () => (localStorage.getItem("birchline-scheme") as Scheme) || "default"
+  // Two independent theme axes: palette (data-theme) × mode (data-mode).
+  const [palette, setPalette] = useState<Palette>(
+    () => (localStorage.getItem("birchline-palette") as Palette) || "default"
+  )
+  const [mode, setMode] = useState<Mode>(
+    () => (localStorage.getItem("birchline-mode") as Mode) || "light"
   )
   useEffect(() => {
     const root = document.documentElement
-    if (scheme === "default") root.removeAttribute("data-theme")
-    else root.setAttribute("data-theme", scheme)
-    localStorage.setItem("birchline-scheme", scheme)
-  }, [scheme])
+    if (palette === "default") root.removeAttribute("data-theme")
+    else root.setAttribute("data-theme", palette)
+    if (mode === "dark") root.setAttribute("data-mode", "dark")
+    else root.removeAttribute("data-mode")
+    localStorage.setItem("birchline-palette", palette)
+    localStorage.setItem("birchline-mode", mode)
+  }, [palette, mode])
 
   const [checked1, setChecked1] = useState(false)
   const [checked2, setChecked2] = useState(true)
@@ -1077,16 +1085,23 @@ function App() {
             <h1 className="font-serif text-[40px] font-medium tracking-tight">
               Birchline UI
             </h1>
-            <Tabs
-              value={scheme}
-              onValueChange={(v) => setScheme(v as Scheme)}
-              className="shrink-0"
-            >
-              <TabsList>
-                <TabsTrigger value="default">Muted</TabsTrigger>
-                <TabsTrigger value="bright">Bright</TabsTrigger>
-              </TabsList>
-            </Tabs>
+            <div className="flex items-center gap-2 shrink-0">
+              <Tabs value={palette} onValueChange={(v) => setPalette(v as Palette)}>
+                <TabsList>
+                  <TabsTrigger value="default">Muted</TabsTrigger>
+                  <TabsTrigger value="bright">Bright</TabsTrigger>
+                </TabsList>
+              </Tabs>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setMode((m) => (m === "dark" ? "light" : "dark"))}
+                aria-label={mode === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+                title={mode === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+              >
+                {mode === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+              </Button>
+            </div>
           </div>
           <p className="text-gray-500 font-sans text-base leading-[1.55]">
             Birchline UI design system is a reskin of{" "}

@@ -110,3 +110,42 @@
   /* Keep the page background matching the default theme */
   --color-background: #FAF9F5;
 }
+
+/* ── Dark mode ──
+   Orthogonal to palette: data-mode="dark" remaps SURFACE + neutral roles
+   (and dark-tuned status hues) to dark values. Brand accents (clay/ring) are
+   left untouched, so they carry through from the active palette — the Muted
+   palette keeps its clay, the Bright palette keeps its brighter clay.
+   Placed AFTER the Bright block (equal specificity) so surface overrides win,
+   letting Bright + Dark compose without a fourth explicit block. */
+:root[data-mode="dark"] {
+  --color-background: #1B1A17;
+  --color-foreground: #ECE8DE;
+
+  --color-card: #262420;
+  --color-card-foreground: #ECE8DE;
+  --color-popover: #262420;
+  --color-popover-foreground: #ECE8DE;
+
+  --color-secondary: #262420;
+  --color-secondary-foreground: #C6C1B4;
+  --color-muted: #211F1B;
+  --color-muted-foreground: #9C978A;
+  --color-accent: #302D27;
+  --color-accent-foreground: #ECE8DE;
+
+  --color-border: #37342C;
+  --color-input: #37342C;
+
+  /* status hues re-tuned to read on dark surfaces (light-mode values are too dark) */
+  --color-success: #8FB06B;
+  --color-warning: #D69C4E;
+  --color-danger: #E06B6B;
+  --color-danger-hover: #CE5D5D;
+  --color-info: #7FA3D0;
+  --color-highlight: #4A3C18;
+
+  /* decorative raw neutrals used directly (guest avatar, placeholder icons) */
+  --color-gray-300: #46433B;
+  --color-gray-500: #8B8578;
+}
