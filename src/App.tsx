@@ -145,7 +145,7 @@ function ColorSwatch({ color, hex, token, semantic, noBorder }: { color: string;
   return (
     <div className="flex items-center gap-4">
       <div
-        className="w-16 h-16 rounded-sm shrink-0"
+        className="w-20 h-20 rounded-sm shrink-0"
         style={{
           backgroundColor: color,
           border: noBorder ? "1.5px solid transparent" : "1.5px solid var(--color-gray-300)",
