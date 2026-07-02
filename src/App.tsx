@@ -1006,6 +1006,15 @@ function App() {
     localStorage.setItem("birchline-mode", mode)
   }, [palette, mode])
 
+  // Theme controls sit inline at load, then lift into a fixed floating chip on scroll.
+  const [controlsFloating, setControlsFloating] = useState(false)
+  useEffect(() => {
+    const onScroll = () => setControlsFloating(window.scrollY > 16)
+    onScroll()
+    window.addEventListener("scroll", onScroll, { passive: true })
+    return () => window.removeEventListener("scroll", onScroll)
+  }, [])
+
   const [checked1, setChecked1] = useState(false)
   const [checked2, setChecked2] = useState(true)
   const [switchOn, setSwitchOn] = useState(true)
@@ -1085,7 +1094,13 @@ function App() {
             <h1 className="font-serif text-[40px] font-medium tracking-tight">
               Birchline UI
             </h1>
-            <div className="flex items-center gap-2 shrink-0">
+            <div
+              className={cn(
+                "flex items-center gap-2 shrink-0 transition-[background-color,box-shadow] duration-200",
+                controlsFloating &&
+                  "fixed top-4 right-6 z-50 rounded-full border border-border bg-card/80 px-2 py-1.5 shadow-lg backdrop-blur-md"
+              )}
+            >
               <Tabs value={palette} onValueChange={(v) => setPalette(v as Palette)}>
                 <TabsList>
                   <TabsTrigger value="default">Muted</TabsTrigger>
