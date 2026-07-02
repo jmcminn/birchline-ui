@@ -1098,7 +1098,7 @@ function App() {
               className={cn(
                 "flex items-center gap-2 shrink-0 transition-[background-color,box-shadow] duration-200",
                 controlsFloating &&
-                  "fixed top-4 right-6 z-50 rounded-full border border-border bg-card/80 px-2 py-1.5 shadow-lg backdrop-blur-md"
+                  "fixed top-4 right-6 z-50 rounded-sm border border-border bg-background/80 px-2 py-1.5 shadow-lg backdrop-blur-md"
               )}
             >
               <Tabs value={palette} onValueChange={(v) => setPalette(v as Palette)}>
