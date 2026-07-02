@@ -1349,7 +1349,7 @@ function App() {
             </LabeledItem>
             <LabeledItem label="Filled">
               <div className="w-[340px]">
-                <Textarea className={`min-h-[104px] ${TEXTAREA_TYPE_SPECS[textareaToken]}`} defaultValue="Review milestones, assign owners, and surface blockers before they cascade. Make sure to update the project board after the meeting." />
+                <Textarea className={`min-h-0 field-sizing-content ${TEXTAREA_TYPE_SPECS[textareaToken]}`} defaultValue="Review milestones, assign owners, and surface blockers before they cascade. Make sure to update the project board after the meeting." />
               </div>
             </LabeledItem>
           </ComponentBlock>
