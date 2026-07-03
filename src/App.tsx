@@ -1030,6 +1030,8 @@ function App() {
   const [typeColor, setTypeColor] = useState(TYPE_COLOR_DEFAULT)
   const [showCurrentYear, setShowCurrentYear] = useState(true)
   const [textareaToken, setTextareaToken] = useState("body")
+  const [badgeSize, setBadgeSize] = useState("caption")
+  const [removableBadgeSize, setRemovableBadgeSize] = useState("caption")
   const [showMenuName, setShowMenuName] = useState(true)
   const [separatorColor, setSeparatorColor] = useState(SEPARATOR_COLOR_DEFAULT)
   const [separatorBg, setSeparatorBg] = useState(SEPARATOR_BG_DEFAULT)
@@ -1646,22 +1648,52 @@ function App() {
             </LabeledItem>
           </ComponentBlock>
 
-          <ComponentBlock name="Badge">
-            <LabeledItem label="Default"><Badge variant="default">Draft</Badge></LabeledItem>
-            <LabeledItem label="Accent"><Badge variant="accent">In review</Badge></LabeledItem>
-            <LabeledItem label="Success"><Badge variant="success">Done</Badge></LabeledItem>
-            <LabeledItem label="Warning"><Badge variant="warning">Overdue</Badge></LabeledItem>
-            <LabeledItem label="Destructive"><Badge variant="destructive">Failed</Badge></LabeledItem>
-            <LabeledItem label="Info"><Badge variant="info">Info</Badge></LabeledItem>
+          <ComponentBlock name="Badge" headerRight={
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">Type Size</span>
+              <Select value={badgeSize} onValueChange={setBadgeSize}>
+                <SelectTrigger className="w-[140px] h-7 text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="body">Body</SelectItem>
+                  <SelectItem value="small">Small</SelectItem>
+                  <SelectItem value="fine">Fine</SelectItem>
+                  <SelectItem value="caption">Caption</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          }>
+            <LabeledItem label="Default"><Badge variant="default" className={TYPE_SIZE_SPECS[badgeSize]}>Draft</Badge></LabeledItem>
+            <LabeledItem label="Accent"><Badge variant="accent" className={TYPE_SIZE_SPECS[badgeSize]}>In review</Badge></LabeledItem>
+            <LabeledItem label="Success"><Badge variant="success" className={TYPE_SIZE_SPECS[badgeSize]}>Done</Badge></LabeledItem>
+            <LabeledItem label="Warning"><Badge variant="warning" className={TYPE_SIZE_SPECS[badgeSize]}>Overdue</Badge></LabeledItem>
+            <LabeledItem label="Destructive"><Badge variant="destructive" className={TYPE_SIZE_SPECS[badgeSize]}>Failed</Badge></LabeledItem>
+            <LabeledItem label="Info"><Badge variant="info" className={TYPE_SIZE_SPECS[badgeSize]}>Info</Badge></LabeledItem>
           </ComponentBlock>
 
-          <ComponentBlock name="Badge — Removable">
-            <LabeledItem label="Default"><Badge variant="default" onRemove={() => {}} removeLabel="Remove Draft">Draft</Badge></LabeledItem>
-            <LabeledItem label="Accent"><Badge variant="accent" onRemove={() => {}} removeLabel="Remove In review">In review</Badge></LabeledItem>
-            <LabeledItem label="Success"><Badge variant="success" onRemove={() => {}} removeLabel="Remove Done">Done</Badge></LabeledItem>
-            <LabeledItem label="Warning"><Badge variant="warning" onRemove={() => {}} removeLabel="Remove Overdue">Overdue</Badge></LabeledItem>
-            <LabeledItem label="Destructive"><Badge variant="destructive" onRemove={() => {}} removeLabel="Remove Failed">Failed</Badge></LabeledItem>
-            <LabeledItem label="Info"><Badge variant="info" onRemove={() => {}} removeLabel="Remove Info">Info</Badge></LabeledItem>
+          <ComponentBlock name="Badge — Removable" headerRight={
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">Type Size</span>
+              <Select value={removableBadgeSize} onValueChange={setRemovableBadgeSize}>
+                <SelectTrigger className="w-[140px] h-7 text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="body">Body</SelectItem>
+                  <SelectItem value="small">Small</SelectItem>
+                  <SelectItem value="fine">Fine</SelectItem>
+                  <SelectItem value="caption">Caption</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          }>
+            <LabeledItem label="Default"><Badge variant="default" className={TYPE_SIZE_SPECS[removableBadgeSize]} onRemove={() => {}} removeLabel="Remove Draft">Draft</Badge></LabeledItem>
+            <LabeledItem label="Accent"><Badge variant="accent" className={TYPE_SIZE_SPECS[removableBadgeSize]} onRemove={() => {}} removeLabel="Remove In review">In review</Badge></LabeledItem>
+            <LabeledItem label="Success"><Badge variant="success" className={TYPE_SIZE_SPECS[removableBadgeSize]} onRemove={() => {}} removeLabel="Remove Done">Done</Badge></LabeledItem>
+            <LabeledItem label="Warning"><Badge variant="warning" className={TYPE_SIZE_SPECS[removableBadgeSize]} onRemove={() => {}} removeLabel="Remove Overdue">Overdue</Badge></LabeledItem>
+            <LabeledItem label="Destructive"><Badge variant="destructive" className={TYPE_SIZE_SPECS[removableBadgeSize]} onRemove={() => {}} removeLabel="Remove Failed">Failed</Badge></LabeledItem>
+            <LabeledItem label="Info"><Badge variant="info" className={TYPE_SIZE_SPECS[removableBadgeSize]} onRemove={() => {}} removeLabel="Remove Info">Info</Badge></LabeledItem>
           </ComponentBlock>
 
           <ComponentBlock name="Avatar" gap="gap-16" align="end">

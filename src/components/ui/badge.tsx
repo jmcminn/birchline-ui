@@ -63,13 +63,13 @@ function Badge({
           aria-label={removeLabel ?? "Remove"}
           onClick={onRemove}
           className={cn(
-            "inline-flex h-3.5 w-3.5 items-center justify-center rounded-full",
+            "inline-flex size-[1.15em] items-center justify-center rounded-full",
             "opacity-70 hover:opacity-100 hover:bg-current/10",
             "focus:outline-none focus-visible:ring-1 focus-visible:ring-current",
             "transition-opacity"
           )}
         >
-          <X className="h-3 w-3" strokeWidth={2.5} />
+          <X className="size-[1em]" strokeWidth={2.5} />
         </button>
       )}
     </div>
