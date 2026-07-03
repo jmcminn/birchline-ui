@@ -119,10 +119,10 @@ function ComponentBlock({ name, children, align, headerRight, gap }: { name: str
   return (
     <div className="mb-8">
       <div className="flex items-center justify-between mb-3">
-        <div className="font-mono text-base text-gray-500">&lt;{name} /&gt;</div>
+        <div className="font-mono text-base text-muted-foreground">&lt;{name} /&gt;</div>
         {headerRight}
       </div>
-      <div className={`flex flex-wrap ${align === "start" ? "items-start" : align === "end" ? "items-end" : "items-center"} ${gap ?? "gap-4"} p-6 bg-white border border-gray-300 rounded-md`}>
+      <div className={`flex flex-wrap ${align === "start" ? "items-start" : align === "end" ? "items-end" : "items-center"} ${gap ?? "gap-4"} p-6 bg-card border border-border rounded-md`}>
         {children}
       </div>
     </div>
@@ -134,8 +134,8 @@ function LabeledItem({ label, subtitle, children }: { label: string; subtitle?: 
     <div className="flex flex-col items-center gap-2.5">
       {children}
       <div className="flex flex-col items-center">
-        <span className="font-mono text-[11px] text-gray-500">{label}</span>
-        {subtitle && <span className="font-mono text-[11px] text-gray-500">{subtitle}</span>}
+        <span className="font-mono text-[11px] text-muted-foreground">{label}</span>
+        {subtitle && <span className="font-mono text-[11px] text-muted-foreground">{subtitle}</span>}
       </div>
     </div>
   )
@@ -152,9 +152,9 @@ function ColorSwatch({ color, hex, token, semantic, noBorder }: { color: string;
         }}
       />
       <div>
-        <span className="font-mono text-xs text-gray-700 block">{hex}</span>
-        <span className="font-mono text-[11px] text-gray-500 block">{token}</span>
-        {semantic && <span className="font-mono text-[11px] text-gray-500 block">{semantic}</span>}
+        <span className="font-mono text-xs text-secondary-foreground block">{hex}</span>
+        <span className="font-mono text-[11px] text-muted-foreground block">{token}</span>
+        {semantic && <span className="font-mono text-[11px] text-muted-foreground block">{semantic}</span>}
       </div>
     </div>
   )
@@ -168,7 +168,7 @@ function HighlightText({ text, query }: { text: string; query: string }) {
     <>
       {parts.map((part, i) =>
         regex.test(part) ? (
-          <mark key={i} className="bg-highlight text-ink rounded-xs px-0.5">{part}</mark>
+          <mark key={i} className="bg-highlight text-foreground rounded-xs px-0.5">{part}</mark>
         ) : (
           part
         )
@@ -217,25 +217,25 @@ function DraggableTableHeader({
           className={cn(
             "flex items-center gap-1.5 flex-1",
             header.column.getCanSort() && "cursor-pointer",
-            (isBeingDragged || header.column.getIsResizing()) && "text-clay",
+            (isBeingDragged || header.column.getIsResizing()) && "text-primary",
           )}
           onClick={header.column.getToggleSortingHandler()}
         >
           {flexRender(header.column.columnDef.header, header.getContext())}
           {header.column.getCanSort() && !draggingColumnId && (
             header.column.getIsSorted() === "asc" ? (
-              <ArrowUp className="h-3.5 w-3.5 text-clay" />
+              <ArrowUp className="h-3.5 w-3.5 text-primary" />
             ) : header.column.getIsSorted() === "desc" ? (
-              <ArrowDown className="h-3.5 w-3.5 text-clay" />
+              <ArrowDown className="h-3.5 w-3.5 text-primary" />
             ) : (
-              <ArrowUpDown className="h-3.5 w-3.5 text-gray-500/50" />
+              <ArrowUpDown className="h-3.5 w-3.5 text-muted-foreground/50" />
             )
           )}
         </div>
         <button
           className={cn(
             "cursor-grab active:cursor-grabbing absolute right-4 top-1/2 -translate-y-1/2",
-            isBeingDragged ? "text-clay opacity-100" : "text-gray-500 hover:text-gray-700 opacity-0 group-hover:opacity-100",
+            isBeingDragged ? "text-primary opacity-100" : "text-muted-foreground hover:text-secondary-foreground opacity-0 group-hover:opacity-100",
             "transition-opacity",
           )}
           {...attributes}
@@ -250,15 +250,15 @@ function DraggableTableHeader({
             onClick={(e) => e.stopPropagation()}
             className={cn(
               "absolute right-0 top-0 h-full w-1 cursor-col-resize select-none touch-none",
-              "group-hover:bg-gray-300 hover:!bg-clay/30",
-              header.column.getIsResizing() && "!bg-clay/50",
+              "group-hover:bg-input hover:!bg-primary/30",
+              header.column.getIsResizing() && "!bg-primary/50",
             )}
           />
         )}
       </div>
       {(isBeingDragged || header.column.getIsResizing()) && (
         <>
-          <div className="pointer-events-none absolute inset-x-0 top-0 bg-clay/10" style={{ height: overlayHeight }} />
+          <div className="pointer-events-none absolute inset-x-0 top-0 bg-primary/10" style={{ height: overlayHeight }} />
           <div className="pointer-events-none absolute left-0 top-0 w-0.5 border-l-2 border-dashed" style={{ borderColor: "var(--color-clay)", height: overlayHeight }} />
           <div className="pointer-events-none absolute right-0 top-0 w-0.5 border-r-2 border-dashed" style={{ borderColor: "var(--color-clay)", height: overlayHeight }} />
         </>
@@ -286,14 +286,14 @@ function DatePickerDemo({ showCurrentYear }: { showCurrentYear: boolean }) {
       }}
     >
       <PopoverTrigger asChild>
-        <Button variant="outline" className={cn("w-auto justify-start text-left font-normal px-2", !date && "text-gray-500")}>
+        <Button variant="outline" className={cn("w-auto justify-start text-left font-normal px-2", !date && "text-muted-foreground")}>
           <CalendarDays className="mr-2 h-4 w-4" />
           {date ? formatSelectedDate(date, showCurrentYear) : "Pick a date"}
           {date && (
             <span
               role="button"
               onClick={(e) => { e.stopPropagation(); setDate(undefined) }}
-              className="ml-2 text-gray-500 hover:text-ink transition-colors"
+              className="ml-2 text-muted-foreground hover:text-foreground transition-colors"
             >
               <X className="h-3.5 w-3.5" />
             </span>
@@ -307,7 +307,7 @@ function DatePickerDemo({ showCurrentYear }: { showCurrentYear: boolean }) {
           onSelect={setDate}
           footer={
             hadDateOnOpen ? (
-              <div className="flex flex-col items-center mt-2 pt-3 border-t border-gray-200">
+              <div className="flex flex-col items-center mt-2 pt-3 border-t border-border">
                 <button
                   type="button"
                   onClick={() => {
@@ -349,14 +349,14 @@ function DatePickerTasksDemo({ showCurrentYear }: { showCurrentYear: boolean }) 
       }}
     >
       <PopoverTrigger asChild>
-        <Button variant="outline" className={cn("w-auto justify-start text-left font-normal px-2", !date && "text-gray-500")}>
+        <Button variant="outline" className={cn("w-auto justify-start text-left font-normal px-2", !date && "text-muted-foreground")}>
           <CalendarDays className="mr-2 h-4 w-4" />
           {date ? formatSelectedDate(date, showCurrentYear) : "Pick a date"}
           {date && (
             <span
               role="button"
               onClick={(e) => { e.stopPropagation(); setDate(undefined) }}
-              className="ml-2 text-gray-500 hover:text-ink transition-colors"
+              className="ml-2 text-muted-foreground hover:text-foreground transition-colors"
             >
               <X className="h-3.5 w-3.5" />
             </span>
@@ -371,7 +371,7 @@ function DatePickerTasksDemo({ showCurrentYear }: { showCurrentYear: boolean }) 
           month={month}
           onMonthChange={setMonth}
           footer={
-            <div className="flex flex-col items-center gap-2 mt-2 pt-3 border-t border-gray-200">
+            <div className="flex flex-col items-center gap-2 mt-2 pt-3 border-t border-border">
               <div className="flex justify-center gap-2">
                 <Button variant="outline" className={quickBtn} onClick={() => pickRelative(0)}>Today</Button>
                 <Button variant="outline" className={quickBtn} onClick={() => pickRelative(1)}>Tomorrow</Button>
@@ -417,18 +417,20 @@ const birchlineColors = [
 ]
 
 // Per-menu default background/color selections
-const COLOR_SECTION_DEFAULT = "#FAF9F5" // Ivory
-const TYPE_SECTION_DEFAULT = "#FFFFFF" // White
-const TYPE_COLOR_DEFAULT = "#141413" // Ink
+// Demo-panel defaults follow the active theme (var()) so they stay coherent in dark mode.
+const COLOR_SECTION_DEFAULT = "var(--color-background)"
+const TYPE_SECTION_DEFAULT = "var(--color-card)"
+const TYPE_COLOR_DEFAULT = "var(--color-foreground)"
 
-// Typography token specs applied to the "Filled" Textarea sample
-const TEXTAREA_TYPE_SPECS: Record<string, string> = {
+// Typography token specs used by the Type Size controls (Textarea, Badge, …)
+const TYPE_SIZE_SPECS: Record<string, string> = {
   body: "text-base leading-[1.55]",
   small: "text-sm leading-[1.5]",
   fine: "text-[13px] leading-[1.45]",
+  caption: "text-xs leading-[1.4]",
 }
-const SEPARATOR_COLOR_DEFAULT = "#D1CFC5" // Gray 300
-const SEPARATOR_BG_DEFAULT = "#FFFFFF" // White
+const SEPARATOR_COLOR_DEFAULT = "var(--color-border)"
+const SEPARATOR_BG_DEFAULT = "var(--color-card)"
 
 function ColorMenuItems({
   value,
@@ -444,7 +446,7 @@ function ColorMenuItems({
       {birchlineColors.map((c) => (
         <DropdownMenuItem key={c.hex} onClick={() => onSelect(c.hex)} className="gap-3">
           <span className="w-4 shrink-0 flex items-center justify-center">
-            {value === c.hex && <Check className="h-3.5 w-3.5 text-clay" />}
+            {value === c.hex && <Check className="h-3.5 w-3.5 text-primary" />}
           </span>
           <div
             className="w-6 h-6 rounded-xs border border-black/10 shrink-0"
@@ -452,9 +454,9 @@ function ColorMenuItems({
           />
           <span className="flex-1 text-sm">
             {c.name}
-            {c.hex === defaultHex && <span className="text-gray-500"> (default)</span>}
+            {c.hex === defaultHex && <span className="text-muted-foreground"> (default)</span>}
           </span>
-          <span className="font-mono text-[11px] text-gray-500">{c.hex}</span>
+          <span className="font-mono text-[11px] text-muted-foreground">{c.hex}</span>
         </DropdownMenuItem>
       ))}
     </>
@@ -719,7 +721,7 @@ function BorderChaseCard({
           <CardDescription>Multi-color animated border with inner glow diffusion.</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-center h-20 text-sm text-gray-500">
+          <div className="flex items-center justify-center h-20 text-sm text-muted-foreground">
             Tap Play to preview
           </div>
         </CardContent>
@@ -874,7 +876,7 @@ function BorderChaseDemo() {
                 onClick={() => setPaletteKey(key)}
               >
                 <span className="w-4 shrink-0 flex items-center justify-center">
-                  {isActive && <Check className="h-3.5 w-3.5 text-clay" />}
+                  {isActive && <Check className="h-3.5 w-3.5 text-primary" />}
                 </span>
                 <div className="flex -space-x-1 shrink-0">
                   {palette.swatches.slice(0, 4).map((s) => (
@@ -888,7 +890,7 @@ function BorderChaseDemo() {
                 <span className="flex-1 text-sm">{palette.label}</span>
               </DropdownMenuSubTrigger>
               <DropdownMenuSubContent className="w-[200px]">
-                <DropdownMenuLabel className="text-[11px] text-gray-500">Colors</DropdownMenuLabel>
+                <DropdownMenuLabel className="text-[11px] text-muted-foreground">Colors</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 {palette.swatches.map((s) => (
                   <DropdownMenuItem key={s.hex} className="gap-3 pointer-events-none opacity-100">
@@ -897,7 +899,7 @@ function BorderChaseDemo() {
                       style={{ backgroundColor: s.hex }}
                     />
                     <span className="flex-1 text-sm">{s.name}</span>
-                    <span className="font-mono text-[11px] text-gray-500">{s.hex}</span>
+                    <span className="font-mono text-[11px] text-muted-foreground">{s.hex}</span>
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuSubContent>
@@ -937,7 +939,7 @@ function BorderChaseDemo() {
               <div key={c.label} className="flex flex-col gap-1.5">
                 <div className="flex items-center justify-between">
                   <Label className="text-xs">{c.label}</Label>
-                  <span className="font-mono text-[11px] text-gray-500">
+                  <span className="font-mono text-[11px] text-muted-foreground">
                     {c.value}{c.unit ?? ""}
                   </span>
                 </div>
@@ -948,7 +950,7 @@ function BorderChaseDemo() {
                   step={c.step}
                   value={c.value}
                   onChange={(e) => c.set(Number(e.target.value))}
-                  className="w-full h-1.5 bg-gray-100 rounded-full appearance-none cursor-pointer accent-clay"
+                  className="w-full h-1.5 bg-muted rounded-full appearance-none cursor-pointer accent-clay"
                 />
               </div>
             ))}
@@ -998,10 +1000,14 @@ function App() {
   )
   useEffect(() => {
     const root = document.documentElement
+    root.classList.add("theme-switching")
     if (palette === "default") root.removeAttribute("data-theme")
     else root.setAttribute("data-theme", palette)
     if (mode === "dark") root.setAttribute("data-mode", "dark")
     else root.removeAttribute("data-mode")
+    // Flush the new colors with transitions suppressed, then re-enable them.
+    void root.offsetWidth
+    root.classList.remove("theme-switching")
     localStorage.setItem("birchline-palette", palette)
     localStorage.setItem("birchline-mode", mode)
   }, [palette, mode])
@@ -1118,12 +1124,12 @@ function App() {
               </Button>
             </div>
           </div>
-          <p className="text-gray-500 font-sans text-base leading-[1.55]">
+          <p className="text-muted-foreground font-sans text-base leading-[1.55]">
             Birchline UI design system is a reskin of{" "}
-            <a href="https://ui.shadcn.com/docs/components" target="_blank" rel="noreferrer" className="text-clay hover:underline">shadcn/ui</a> components by{" "}
-            <a href="https://x.com/jasonmcminn" target="_blank" rel="noreferrer" className="text-clay hover:underline">Jason McMinn</a>. It is a fork of{" "}
-            <a href="https://x.com/trq212" target="_blank" rel="noreferrer" className="text-clay hover:underline">Thariq’s</a> original{" "}
-            <a href="https://thariqs.github.io/html-effectiveness/05-design-system.html" target="_blank" rel="noreferrer" className="text-clay hover:underline">Birchline design system</a>, expanded with additional capabilities and components.
+            <a href="https://ui.shadcn.com/docs/components" target="_blank" rel="noreferrer" className="text-primary hover:underline">shadcn/ui</a> components by{" "}
+            <a href="https://x.com/jasonmcminn" target="_blank" rel="noreferrer" className="text-primary hover:underline">Jason McMinn</a>. It is a fork of{" "}
+            <a href="https://x.com/trq212" target="_blank" rel="noreferrer" className="text-primary hover:underline">Thariq’s</a> original{" "}
+            <a href="https://thariqs.github.io/html-effectiveness/05-design-system.html" target="_blank" rel="noreferrer" className="text-primary hover:underline">Birchline design system</a>, expanded with additional capabilities and components.
           </p>
         </header>
 
@@ -1134,8 +1140,8 @@ function App() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="gap-2">
-                  <div className="w-4 h-4 rounded-xs border border-gray-300" style={{ backgroundColor: colorSectionBg }} />
-                  <span className="text-xs text-gray-500">Background</span>
+                  <div className="w-4 h-4 rounded-xs border border-border" style={{ backgroundColor: colorSectionBg }} />
+                  <span className="text-xs text-muted-foreground">Background</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-[280px]">
@@ -1153,7 +1159,7 @@ function App() {
           <div className="rounded-md p-6 -mx-6 transition-colors" style={{ backgroundColor: colorSectionBg }}>
             <div className="max-w-[1280px] mx-auto grid grid-cols-3 gap-10">
               <div>
-                <div className="font-mono text-sm uppercase tracking-wider text-gray-500 mb-4">Primary</div>
+                <div className="font-mono text-sm uppercase tracking-wider text-muted-foreground mb-4">Primary</div>
                 <div className="flex flex-col gap-5">
                   <ColorSwatch color="#D97757" hex="#D97757" token="--clay" semantic="primary, ring" noBorder />
                   <ColorSwatch color="#141413" hex="#141413" token="--ink" semantic="foreground" noBorder />
@@ -1162,7 +1168,7 @@ function App() {
                 </div>
               </div>
               <div>
-                <div className="font-mono text-sm uppercase tracking-wider text-gray-500 mb-4">Neutral</div>
+                <div className="font-mono text-sm uppercase tracking-wider text-muted-foreground mb-4">Neutral</div>
                 <div className="flex flex-col gap-5">
                   <ColorSwatch color="#FFFFFF" hex="#FFFFFF" token="--white" semantic="card, popover" />
                   <ColorSwatch color="#F0EEE6" hex="#F0EEE6" token="--gray-100" semantic="secondary, muted, accent" />
@@ -1172,7 +1178,7 @@ function App() {
                 </div>
               </div>
               <div>
-                <div className="font-mono text-sm uppercase tracking-wider text-gray-500 mb-4">Semantic</div>
+                <div className="font-mono text-sm uppercase tracking-wider text-muted-foreground mb-4">Semantic</div>
                 <div className="flex flex-col gap-5">
                   <ColorSwatch color="#5F7348" hex="#5F7348" token="--green" semantic="success" noBorder />
                   <ColorSwatch color="#916426" hex="#916426" token="--bronze" semantic="warning" noBorder />
@@ -1196,8 +1202,8 @@ function App() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" size="sm" className="gap-2">
-                    <div className="w-4 h-4 rounded-xs border border-gray-300" style={{ backgroundColor: typeColor }} />
-                    <span className="text-xs text-gray-500">Text</span>
+                    <div className="w-4 h-4 rounded-xs border border-border" style={{ backgroundColor: typeColor }} />
+                    <span className="text-xs text-muted-foreground">Text</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-[280px]">
@@ -1214,8 +1220,8 @@ function App() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" size="sm" className="gap-2">
-                    <div className="w-4 h-4 rounded-xs border border-gray-300" style={{ backgroundColor: typeSectionBg }} />
-                    <span className="text-xs text-gray-500">Background</span>
+                    <div className="w-4 h-4 rounded-xs border border-border" style={{ backgroundColor: typeSectionBg }} />
+                    <span className="text-xs text-muted-foreground">Background</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-[280px]">
@@ -1232,7 +1238,7 @@ function App() {
           </div>
           <Separator className="mb-7" />
           <div className="rounded-md p-6 -mx-6 transition-colors">
-          <div className="border border-gray-300 rounded-md overflow-hidden transition-colors" style={{ backgroundColor: typeSectionBg, color: typeColor }}>
+          <div className="border border-border rounded-md overflow-hidden transition-colors" style={{ backgroundColor: typeSectionBg, color: typeColor }}>
             {[
               { cls: "font-serif text-5xl leading-[1.1] font-medium tracking-tight", name: "Display", face: "Georgia", weight: "500 (Medium)", size: "48", lineSpacing: "1.1" },
               { cls: "font-serif text-[32px] leading-[1.2] font-medium tracking-tight", name: "Heading 1", face: "Georgia", weight: "500 (Medium)", size: "32", lineSpacing: "1.2" },
@@ -1241,20 +1247,20 @@ function App() {
               { cls: "font-sans text-base leading-[1.55]", name: "Body", face: "Inter", weight: "430 (Regular)", size: "16", lineSpacing: "1.55", text: "Review milestones, assign owners, and surface blockers before they cascade." },
               { cls: "font-sans text-sm leading-[1.5]", name: "Small", face: "Inter", weight: "430 (Regular)", size: "14", lineSpacing: "1.5", text: "Review milestones, assign owners, and surface blockers before they cascade." },
               { cls: "font-sans text-[13px] leading-[1.45]", name: "Fine", face: "Inter", weight: "430 (Regular)", size: "13", lineSpacing: "1.45", text: "Review milestones, assign owners, and surface blockers before they cascade." },
-              { cls: "font-sans text-xs leading-[1.4] font-medium text-gray-500", name: "Caption", face: "Inter", weight: "500 (Medium)", size: "12", lineSpacing: "1.4", text: "UPDATED 2 HOURS AGO" },
-              { cls: "font-mono text-xs leading-[1.4] text-ink", name: "Code", face: "JetBrains Mono", weight: "400 (Regular)", size: "12", lineSpacing: "1.4", text: "Small type monospaced label" },
+              { cls: "font-sans text-xs leading-[1.4] font-medium text-muted-foreground", name: "Caption", face: "Inter", weight: "500 (Medium)", size: "12", lineSpacing: "1.4", text: "UPDATED 2 HOURS AGO" },
+              { cls: "font-mono text-xs leading-[1.4] text-foreground", name: "Code", face: "JetBrains Mono", weight: "400 (Regular)", size: "12", lineSpacing: "1.4", text: "Small type monospaced label" },
             ].map((row, i, arr) => (
-              <div key={row.name} className={`flex items-start justify-between gap-6 px-6 py-5 ${i < arr.length - 1 ? "border-b border-gray-100" : ""}`}>
+              <div key={row.name} className={`flex items-start justify-between gap-6 px-6 py-5 ${i < arr.length - 1 ? "border-b border-muted" : ""}`}>
                 <div className={`flex-1 min-w-0 truncate ${row.cls}`}>
                   {row.text ?? "Plan the week ahead"}
                 </div>
-                <div className="font-mono text-xs text-gray-500 text-left shrink-0 w-[240px]">
-                  <span className="text-gray-700 block mb-1.5">{row.name}</span>
+                <div className="font-mono text-xs text-muted-foreground text-left shrink-0 w-[240px]">
+                  <span className="text-secondary-foreground block mb-1.5">{row.name}</span>
                   <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5">
-                    <span>Font Face</span><span className="text-gray-700">{row.face}</span>
-                    <span>Font Weight</span><span className="text-gray-700">{row.weight}</span>
-                    <span>Font Size</span><span className="text-gray-700">{row.size}</span>
-                    <span>Line Spacing</span><span className="text-gray-700">{row.lineSpacing}</span>
+                    <span>Font Face</span><span className="text-secondary-foreground">{row.face}</span>
+                    <span>Font Weight</span><span className="text-secondary-foreground">{row.weight}</span>
+                    <span>Font Size</span><span className="text-secondary-foreground">{row.size}</span>
+                    <span>Line Spacing</span><span className="text-secondary-foreground">{row.lineSpacing}</span>
                   </div>
                 </div>
               </div>
@@ -1265,7 +1271,7 @@ function App() {
 
         {/* ── SPACING ── */}
         <Section id="spacing" title="Spacing">
-          <div className="flex items-end gap-7 p-7 bg-white border border-gray-300 rounded-md overflow-x-auto">
+          <div className="flex items-end gap-7 p-7 bg-card border border-border rounded-md overflow-x-auto">
             {[
               { px: 4, token: "--sp-1" },
               { px: 8, token: "--sp-2" },
@@ -1277,9 +1283,9 @@ function App() {
               { px: 64, token: "--sp-8" },
             ].map((s) => (
               <div key={s.token} className="flex flex-col items-center gap-2.5 shrink-0">
-                <div className="bg-clay rounded-[3px] h-3.5" style={{ width: s.px }} />
-                <div className="font-mono text-[11px] text-gray-700 text-center">
-                  {s.px}<span className="block text-gray-500">{s.token}</span>
+                <div className="bg-primary rounded-[3px] h-3.5" style={{ width: s.px }} />
+                <div className="font-mono text-[11px] text-secondary-foreground text-center">
+                  {s.px}<span className="block text-muted-foreground">{s.token}</span>
                 </div>
               </div>
             ))}
@@ -1297,11 +1303,11 @@ function App() {
             ].map((item) => (
               <div
                 key={item.token}
-                className="w-[120px] h-[88px] bg-oat border border-gray-300 flex items-end p-3"
+                className="w-[120px] h-[88px] bg-oat border border-border flex items-end p-3"
                 style={{ borderRadius: item.r }}
               >
-                <div className="font-mono text-[11px] text-gray-700">
-                  {item.r}<span className="block text-gray-500">{item.token}</span>
+                <div className="font-mono text-[11px] text-secondary-foreground">
+                  {item.r}<span className="block text-muted-foreground">{item.token}</span>
                 </div>
               </div>
             ))}
@@ -1314,11 +1320,11 @@ function App() {
             ].map((item) => (
               <div
                 key={item.token}
-                className="w-40 h-24 bg-white rounded-md flex items-end p-3.5"
+                className="w-40 h-24 bg-card rounded-md flex items-end p-3.5"
                 style={{ boxShadow: item.shadow }}
               >
-                <div className="font-mono text-[11px] text-gray-700">
-                  {item.token}<span className="block text-gray-500">{item.meta}</span>
+                <div className="font-mono text-[11px] text-secondary-foreground">
+                  {item.token}<span className="block text-muted-foreground">{item.meta}</span>
                 </div>
               </div>
             ))}
@@ -1351,7 +1357,7 @@ function App() {
             </LabeledItem>
             <LabeledItem label="With icon">
               <div className="w-[260px] relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 z-10" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground z-10" />
                 <Input className="pl-9" placeholder="Search…" />
               </div>
             </LabeledItem>
@@ -1359,7 +1365,7 @@ function App() {
 
           <ComponentBlock name="Textarea" align="start" headerRight={
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-500">Type Size</span>
+              <span className="text-sm text-muted-foreground">Type Size</span>
               <Select value={textareaToken} onValueChange={setTextareaToken}>
                 <SelectTrigger className="w-[140px] h-7 text-xs">
                   <SelectValue />
@@ -1379,7 +1385,7 @@ function App() {
             </LabeledItem>
             <LabeledItem label="Filled">
               <div className="w-[340px]">
-                <Textarea className={`min-h-0 field-sizing-content ${TEXTAREA_TYPE_SPECS[textareaToken]}`} defaultValue="Review milestones, assign owners, and surface blockers before they cascade. Make sure to update the project board after the meeting." />
+                <Textarea className={`min-h-0 field-sizing-content ${TYPE_SIZE_SPECS[textareaToken]}`} defaultValue="Review milestones, assign owners, and surface blockers before they cascade. Make sure to update the project board after the meeting." />
               </div>
             </LabeledItem>
           </ComponentBlock>
@@ -1414,15 +1420,15 @@ function App() {
             <LabeledItem label="Multi-Select">
               <Popover open={multiSelectOpen} onOpenChange={setMultiSelectOpen}>
                 <PopoverTrigger asChild>
-                  <button className="flex h-10 w-[200px] items-center justify-between rounded-sm border border-gray-300 bg-white px-3 py-2 text-sm hover:bg-gray-100 transition-colors focus:border-clay focus:ring-[3px] focus:ring-clay/15 focus:outline-none">
-                    <span className={multiSelectValues.length > 0 ? "text-ink truncate" : "text-gray-500"}>
+                  <button className="flex h-10 w-[200px] items-center justify-between rounded-sm border border-border bg-card px-3 py-2 text-sm hover:bg-accent transition-colors focus:border-ring focus:ring-[3px] focus:ring-ring/15 focus:outline-none">
+                    <span className={multiSelectValues.length > 0 ? "text-foreground truncate" : "text-muted-foreground"}>
                       {multiSelectValues.length > 1
                         ? `Sheets (${multiSelectValues.length})`
                         : multiSelectValues.length === 1
                           ? (() => { const labels: Record<string, string> = { "site-plan": "Site Plan", "floor-1": "Floor 1", "floor-2": "Floor 2", "roof": "Roof", "electrical": "Electrical", "plumbing": "Plumbing", "window-schedule": "Window Schedule" }; return labels[multiSelectValues[0]] ?? multiSelectValues[0] })()
                         : "Choose sheets…"}
                     </span>
-                    <ChevronRight className="h-4 w-4 text-gray-500 rotate-90" />
+                    <ChevronRight className="h-4 w-4 text-muted-foreground rotate-90" />
                   </button>
                 </PopoverTrigger>
                 <PopoverContent className="w-fit max-w-[400px] p-1" align="start">
@@ -1437,7 +1443,7 @@ function App() {
                   ].map((item) => (
                     <label
                       key={item.value}
-                      className="flex cursor-pointer items-center gap-2.5 rounded-xs px-3 py-2 text-sm hover:bg-gray-100 transition-colors whitespace-nowrap overflow-hidden text-ellipsis"
+                      className="flex cursor-pointer items-center gap-2.5 rounded-xs px-3 py-2 text-sm hover:bg-accent transition-colors whitespace-nowrap overflow-hidden text-ellipsis"
                     >
                       <Checkbox
                         checked={multiSelectValues.includes(item.value)}
@@ -1458,15 +1464,15 @@ function App() {
             <LabeledItem label="Multi-Select w/ Search">
               <Popover open={multiSearchOpen} onOpenChange={(v) => { setMultiSearchOpen(v); if (!v) setMultiSearchQuery("") }}>
                 <PopoverTrigger asChild>
-                  <button className="flex h-10 w-[200px] items-center justify-between rounded-sm border border-gray-300 bg-white px-3 py-2 text-sm hover:bg-gray-100 transition-colors focus:border-clay focus:ring-[3px] focus:ring-clay/15 focus:outline-none">
-                    <span className={multiSearchValues.length > 0 ? "text-ink truncate" : "text-gray-500"}>
+                  <button className="flex h-10 w-[200px] items-center justify-between rounded-sm border border-border bg-card px-3 py-2 text-sm hover:bg-accent transition-colors focus:border-ring focus:ring-[3px] focus:ring-ring/15 focus:outline-none">
+                    <span className={multiSearchValues.length > 0 ? "text-foreground truncate" : "text-muted-foreground"}>
                       {multiSearchValues.length > 1
                         ? `Sheets (${multiSearchValues.length})`
                         : multiSearchValues.length === 1
                           ? (() => { const labels: Record<string, string> = { "site-plan": "Site Plan", "floor-1": "Floor 1", "floor-2": "Floor 2", "roof": "Roof", "electrical": "Electrical", "plumbing": "Plumbing", "window-schedule": "Window Schedule" }; return labels[multiSearchValues[0]] ?? multiSearchValues[0] })()
                         : "Choose sheets…"}
                     </span>
-                    <ChevronRight className="h-4 w-4 text-gray-500 rotate-90" />
+                    <ChevronRight className="h-4 w-4 text-muted-foreground rotate-90" />
                   </button>
                 </PopoverTrigger>
                 <PopoverContent className="w-fit max-w-[400px] p-0" align="start">
@@ -1481,7 +1487,7 @@ function App() {
                         <button
                           type="button"
                           onClick={() => setMultiSearchQuery("")}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-ink transition-colors"
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                         >
                           <X className="h-3.5 w-3.5" />
                         </button>
@@ -1552,7 +1558,7 @@ function App() {
           </ComponentBlock>
 
           <ComponentBlock name="DropdownMenu" headerRight={
-            <label className="flex items-center gap-2 text-xs text-gray-500 cursor-pointer">
+            <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer">
               Display menu name
               <Switch checked={showMenuName} onCheckedChange={setShowMenuName} />
             </label>
@@ -1687,7 +1693,7 @@ function App() {
                   <AvatarFallback className="text-xs">SR</AvatarFallback>
                 </Avatar>
                 <Avatar className="h-8 w-8 border-2 border-card">
-                  <AvatarFallback className="text-xs bg-gray-300 text-gray-700">+2</AvatarFallback>
+                  <AvatarFallback className="text-xs bg-input text-secondary-foreground">+2</AvatarFallback>
                 </Avatar>
               </div>
             </LabeledItem>
@@ -1808,7 +1814,7 @@ function App() {
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction className="bg-danger text-white hover:bg-danger-hover">
+                  <AlertDialogAction className="bg-danger text-primary-foreground hover:bg-danger-hover">
                     Delete
                   </AlertDialogAction>
                 </AlertDialogFooter>
@@ -1858,7 +1864,7 @@ function App() {
 
           <ComponentBlock name="Table" align="start" headerRight={
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-500">Row density</span>
+              <span className="text-sm text-muted-foreground">Row density</span>
               <Select value={tableDensity} onValueChange={(v) => setTableDensity(v as TableDensity)}>
                 <SelectTrigger className="w-[140px] h-7 text-xs">
                   <SelectValue />
@@ -1888,7 +1894,7 @@ function App() {
                   )}
                 </div>
                 <div className="relative w-[200px]">
-                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-500 z-10" />
+                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground z-10" />
                   <Input
                     placeholder="Filter tasks…"
                     value={globalFilter}
@@ -1898,14 +1904,14 @@ function App() {
                   {globalFilter && (
                     <button
                       onClick={() => setGlobalFilter("")}
-                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-ink"
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                     >
                       <X className="h-3.5 w-3.5" />
                     </button>
                   )}
                 </div>
               </div>
-              <div className="border border-gray-300 rounded-md overflow-hidden">
+              <div className="border border-border rounded-md overflow-hidden">
               <DndContext
                 sensors={sensors}
                 collisionDetection={closestCenter}
@@ -1943,7 +1949,7 @@ function App() {
                               key={cell.id}
                               style={{ width: cell.column.getSize() }}
                               className={cn(
-                                colId === "id" && "font-mono text-xs text-gray-500",
+                                colId === "id" && "font-mono text-xs text-muted-foreground",
                                 colId === "title" && "font-medium",
                                 colId === "priority" && "text-sm",
                               )}
@@ -1970,7 +1976,7 @@ function App() {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={columnOrder.length} className="h-24 text-center text-gray-500">
+                      <TableCell colSpan={columnOrder.length} className="h-24 text-center text-muted-foreground">
                         No tasks found.
                       </TableCell>
                     </TableRow>
@@ -1980,7 +1986,7 @@ function App() {
               </DndContext>
               </div>
               <div className="mt-3">
-                <span className="text-xs text-gray-500">
+                <span className="text-xs text-muted-foreground">
                   {table.getFilteredRowModel().rows.length} of {tasks.length} task(s)
                 </span>
               </div>
@@ -1995,13 +2001,13 @@ function App() {
                   <TabsTrigger value="tasks">Tasks</TabsTrigger>
                   <TabsTrigger value="settings">Settings</TabsTrigger>
                 </TabsList>
-                <TabsContent value="overview" className="p-4 text-sm text-gray-500">
+                <TabsContent value="overview" className="p-4 text-sm text-muted-foreground">
                   Project overview content goes here.
                 </TabsContent>
-                <TabsContent value="tasks" className="p-4 text-sm text-gray-500">
+                <TabsContent value="tasks" className="p-4 text-sm text-muted-foreground">
                   Task list content goes here.
                 </TabsContent>
-                <TabsContent value="settings" className="p-4 text-sm text-gray-500">
+                <TabsContent value="settings" className="p-4 text-sm text-muted-foreground">
                   Settings content goes here.
                 </TabsContent>
               </Tabs>
@@ -2021,8 +2027,8 @@ function App() {
                     <span className="text-sm">Progress</span>
                     <Badge variant="accent">In review</Badge>
                   </div>
-                  <div className="w-full bg-gray-100 rounded-full h-2">
-                    <div className="bg-clay h-2 rounded-full" style={{ width: "65%" }} />
+                  <div className="w-full bg-muted rounded-full h-2">
+                    <div className="bg-primary h-2 rounded-full" style={{ width: "65%" }} />
                   </div>
                 </div>
               </CardContent>
@@ -2039,7 +2045,7 @@ function App() {
         <Section id="medium" title="Extended Components">
           <ComponentBlock name="Command">
             <LabeledItem label="Inline palette">
-              <Command className="rounded-md border border-gray-300 shadow-sm w-[350px]">
+              <Command className="rounded-md border border-border shadow-sm w-[350px]">
                 <CommandInput placeholder="Type a command or search…" />
                 <CommandList>
                   <CommandEmpty>No results found.</CommandEmpty>
@@ -2068,7 +2074,7 @@ function App() {
                   <div className="grid gap-4">
                     <div className="space-y-2">
                       <h4 className="font-medium leading-none">Filter tasks</h4>
-                      <p className="text-sm text-gray-500">Narrow down your task list.</p>
+                      <p className="text-sm text-muted-foreground">Narrow down your task list.</p>
                     </div>
                     <div className="grid gap-2">
                       <div className="grid grid-cols-3 items-center gap-4">
@@ -2099,7 +2105,7 @@ function App() {
             name="Calendar"
             align="start"
             headerRight={
-              <label className="flex items-center gap-2 text-xs text-gray-500 cursor-pointer">
+              <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer">
                 Display the current year in the selected date
                 <Switch checked={showCurrentYear} onCheckedChange={setShowCurrentYear} />
               </label>
@@ -2114,7 +2120,7 @@ function App() {
             </LabeledItem>
             <div className="w-16" />
             <LabeledItem label="Inline calendar">
-              <div className="border border-gray-300 rounded-md bg-white">
+              <div className="border border-border rounded-md bg-card">
                 <Calendar mode="single" className="rounded-md" />
               </div>
             </LabeledItem>
@@ -2262,7 +2268,7 @@ function App() {
 
           <ComponentBlock name="Sidebar" align="start">
             <LabeledItem label="App sidebar">
-              <Sidebar className="rounded-md border border-gray-300">
+              <Sidebar className="rounded-md border border-border">
                 <SidebarHeader>
                   <span className="font-serif text-lg font-medium">Range</span>
                 </SidebarHeader>
@@ -2298,14 +2304,14 @@ function App() {
         <section id="dividers" className="mb-16">
           <div className="mb-3">
             <div className="flex items-center justify-between">
-              <div className="font-mono text-base text-gray-500">&lt;Separator /&gt;</div>
+              <div className="font-mono text-base text-muted-foreground">&lt;Separator /&gt;</div>
               <div className="flex items-center gap-2">
                 {/* Separator color menu */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" size="sm" className="gap-2">
-                      <div className="w-4 h-4 rounded-xs border border-gray-300" style={{ backgroundColor: separatorColor }} />
-                      <span className="text-xs text-gray-500">Separator</span>
+                      <div className="w-4 h-4 rounded-xs border border-border" style={{ backgroundColor: separatorColor }} />
+                      <span className="text-xs text-muted-foreground">Separator</span>
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-[280px]">
@@ -2322,8 +2328,8 @@ function App() {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" size="sm" className="gap-2">
-                      <div className="w-4 h-4 rounded-xs border border-gray-300" style={{ backgroundColor: separatorBg }} />
-                      <span className="text-xs text-gray-500">Background</span>
+                      <div className="w-4 h-4 rounded-xs border border-border" style={{ backgroundColor: separatorBg }} />
+                      <span className="text-xs text-muted-foreground">Background</span>
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-[280px]">
@@ -2340,7 +2346,7 @@ function App() {
             </div>
           </div>
           <div
-            className="flex w-full gap-6 p-6 border border-gray-300 rounded-md transition-colors"
+            className="flex w-full gap-6 p-6 border border-border rounded-md transition-colors"
             style={{ backgroundColor: separatorBg }}
           >
             {/* Horizontal dividers — half column width, extended 200px to the right */}

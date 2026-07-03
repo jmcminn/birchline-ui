@@ -5,6 +5,15 @@
   border-color: var(--color-border);
 }
 
+/* While switching palette/mode, suppress transitions so var-based colors flip
+   instantly instead of getting stuck (transition-colors can't interpolate an
+   unregistered custom-property change). */
+.theme-switching *,
+.theme-switching *::before,
+.theme-switching *::after {
+  transition: none !important;
+}
+
 body {
   background-color: var(--color-background);
   color: var(--color-foreground);
