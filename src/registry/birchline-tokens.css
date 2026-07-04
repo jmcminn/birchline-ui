@@ -56,6 +56,12 @@
   --color-input: var(--color-gray-300);
   --color-ring: var(--color-clay);
 
+  /* Skeleton loading placeholder — kept separate from `muted` (which also drives
+     track surfaces) so it can be tuned without side effects. `highlight` is the
+     colour of the sweeping shimmer band. */
+  --color-skeleton: var(--color-gray-100);
+  --color-skeleton-highlight: var(--color-white);
+
   /* ── Typography ── */
   --font-serif: ui-serif, Georgia, serif;
   --font-sans: system-ui, -apple-system, sans-serif;
@@ -122,6 +128,11 @@
   --color-border: #4A453E;
   --color-input: #37342C;
 
+  /* Skeleton sits a step ABOVE the card surface (#262420) in dark so it reads as
+     a placeholder rather than a hole; the shimmer band is a lighter neutral. */
+  --color-skeleton: #34312B;
+  --color-skeleton-highlight: #46433B;
+
   /* status hues re-tuned to read on dark surfaces (light-mode values are too dark) */
   --color-success: #8FB06B;
   --color-warning: #D69C4E;
@@ -133,4 +144,39 @@
   /* decorative raw neutrals used directly (guest avatar, placeholder icons) */
   --color-gray-300: #46433B;
   --color-gray-500: #8B8578;
+}
+
+/* ── Skeleton shimmer ──
+   A highlight band sweeps across the base fill. Both colours come from the
+   --color-skeleton* tokens, so it adapts to palette + mode automatically. The
+   band is an ::after overlay clipped to the element's rounded shape. */
+.bl-skeleton {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--color-skeleton);
+}
+.bl-skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  /* Fade to the base fill (not `transparent`) so the band edges never pick up a
+     muddy transparent-black tint on dark surfaces. */
+  background-image: linear-gradient(
+    90deg,
+    var(--color-skeleton),
+    var(--color-skeleton-highlight),
+    var(--color-skeleton)
+  );
+  animation: bl-skeleton-shimmer 1.6s ease-in-out infinite;
+}
+@keyframes bl-skeleton-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bl-skeleton::after {
+    animation: none;
+  }
 }
