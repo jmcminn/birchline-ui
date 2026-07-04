@@ -1318,8 +1318,8 @@ function App() {
                 className="w-[120px] h-[88px] bg-oat border border-border flex items-end p-3"
                 style={{ borderRadius: item.r }}
               >
-                <div className="font-mono text-[11px] text-secondary-foreground">
-                  {item.r}<span className="block text-muted-foreground">{item.token}</span>
+                <div className="font-mono text-[11px] text-ink">
+                  {item.r}<span className="block text-gray-700">{item.token}</span>
                 </div>
               </div>
             ))}
