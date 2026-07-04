@@ -62,7 +62,7 @@ const SidebarItem = React.forwardRef<
     ref={ref}
     className={cn(
       "flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-sm text-left transition-colors cursor-pointer",
-      active ? "bg-muted text-foreground font-medium" : "text-muted-foreground hover:bg-accent hover:text-foreground",
+      active ? "bg-accent text-foreground font-medium" : "text-muted-foreground hover:bg-accent/50 hover:text-foreground",
       className
     )}
     {...props}
