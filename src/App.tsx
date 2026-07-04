@@ -85,6 +85,7 @@ import {
   type SortingState,
   type ColumnFiltersState,
   type ColumnOrderState,
+  type ColumnSizingState,
 } from "@tanstack/react-table"
 import {
   DndContext,
@@ -201,6 +202,47 @@ function DraggableTableHeader({
   })
 
   const isBeingDragged = draggingColumnId === header.column.id
+  const [isResizing, setIsResizing] = useState(false)
+
+  // Neighbor-pair resize: dragging a boundary trades width between this column
+  // and the one immediately to its right, keeping their combined width — and so
+  // the table's total width — constant. No other column moves.
+  const table = header.getContext().table
+  const leafCols = table.getVisibleLeafColumns()
+  const isLastColumn = leafCols[leafCols.length - 1]?.id === header.column.id
+
+  const handleResizeStart = (e: React.PointerEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    const cols = table.getVisibleLeafColumns()
+    const i = cols.findIndex((c) => c.id === header.column.id)
+    const left = cols[i]
+    const right = cols[i + 1]
+    if (!right) return
+    const startX = e.clientX
+    const startLeft = left.getSize()
+    const startRight = right.getSize()
+    const pairTotal = startLeft + startRight
+    const leftMin = left.columnDef.minSize ?? 40
+    const rightMin = right.columnDef.minSize ?? 40
+    setIsResizing(true)
+    const onMove = (ev: PointerEvent) => {
+      const delta = ev.clientX - startX
+      const newLeft = Math.max(leftMin, Math.min(startLeft + delta, pairTotal - rightMin))
+      table.setColumnSizing((prev) => ({
+        ...prev,
+        [left.id]: newLeft,
+        [right.id]: pairTotal - newLeft,
+      }))
+    }
+    const onUp = () => {
+      setIsResizing(false)
+      window.removeEventListener("pointermove", onMove)
+      window.removeEventListener("pointerup", onUp)
+    }
+    window.addEventListener("pointermove", onMove)
+    window.addEventListener("pointerup", onUp)
+  }
 
   const style: React.CSSProperties = {
     width: header.getSize(),
@@ -222,23 +264,25 @@ function DraggableTableHeader({
         (isDragging || isBeingDragged) && "z-10",
       )}
     >
-      <div className="flex items-center gap-1.5">
+      <div className="flex items-center gap-1.5 min-w-0 overflow-hidden">
         <div
           className={cn(
-            "flex items-center gap-1.5 flex-1",
+            "flex items-center gap-1.5 flex-1 min-w-0",
             header.column.getCanSort() && "cursor-pointer",
-            (isBeingDragged || header.column.getIsResizing()) && "text-primary",
+            (isBeingDragged || isResizing) && "text-primary",
           )}
           onClick={header.column.getToggleSortingHandler()}
         >
-          {flexRender(header.column.columnDef.header, header.getContext())}
+          <span className="truncate">
+            {flexRender(header.column.columnDef.header, header.getContext())}
+          </span>
           {header.column.getCanSort() && !draggingColumnId && (
             header.column.getIsSorted() === "asc" ? (
-              <ArrowUp className="h-3.5 w-3.5 text-primary" />
+              <ArrowUp className="h-3.5 w-3.5 shrink-0 text-primary" />
             ) : header.column.getIsSorted() === "desc" ? (
-              <ArrowDown className="h-3.5 w-3.5 text-primary" />
+              <ArrowDown className="h-3.5 w-3.5 shrink-0 text-primary" />
             ) : (
-              <ArrowUpDown className="h-3.5 w-3.5 text-muted-foreground/50" />
+              <ArrowUpDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground/50" />
             )
           )}
         </div>
@@ -253,20 +297,19 @@ function DraggableTableHeader({
         >
           <GripVertical className="h-3.5 w-3.5" />
         </button>
-        {header.column.getCanResize() && (
+        {header.column.getCanResize() && !isLastColumn && (
           <div
-            onMouseDown={header.getResizeHandler()}
-            onTouchStart={header.getResizeHandler()}
+            onPointerDown={handleResizeStart}
             onClick={(e) => e.stopPropagation()}
             className={cn(
               "absolute right-0 top-0 h-full w-1 cursor-col-resize select-none touch-none",
               "group-hover:bg-input hover:!bg-primary/30",
-              header.column.getIsResizing() && "!bg-primary/50",
+              isResizing && "!bg-primary/50",
             )}
           />
         )}
       </div>
-      {(isBeingDragged || header.column.getIsResizing()) && (
+      {(isBeingDragged || isResizing) && (
         <>
           <div className="pointer-events-none absolute inset-x-0 top-0 bg-primary/10" style={{ height: overlayHeight }} />
           <div className="pointer-events-none absolute left-0 top-0 w-0.5 border-l-2 border-dashed" style={{ borderColor: "var(--color-clay)", height: overlayHeight }} />
@@ -1047,13 +1090,18 @@ function App() {
   const [separatorBg, setSeparatorBg] = useState(SEPARATOR_BG_DEFAULT)
   const [selectedUserId, setSelectedUserId] = useState<string | null>("u7")
   const [multiSelectedUserIds, setMultiSelectedUserIds] = useState<string[]>(["u7", "u3"])
-  const [sorting, setSorting] = useState<SortingState>([])
+  const [sorting, setSorting] = useState<SortingState>([{ id: "priority", desc: false }])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [globalFilter, setGlobalFilter] = useState("")
-  const [columnOrder, setColumnOrder] = useState<ColumnOrderState>(
-    taskColumns.map((c) => (c as { accessorKey: string }).accessorKey)
-  )
+  const [columnOrder, setColumnOrder] = useState<ColumnOrderState>([
+    "priority",
+    "status",
+    "title",
+    "assignee",
+    "id",
+  ])
   const [draggingColumnId, setDraggingColumnId] = useState<string | null>(null)
+  const [columnSizing, setColumnSizing] = useState<ColumnSizingState>({})
   const [multiSelectValues, setMultiSelectValues] = useState<string[]>(["floor-1", "floor-2"])
   const [multiSelectOpen, setMultiSelectOpen] = useState(false)
   const [multiSearchValues, setMultiSearchValues] = useState<string[]>(["floor-1", "floor-2"])
@@ -1066,17 +1114,59 @@ function App() {
   const table = useReactTable({
     data: tasks,
     columns,
-    state: { sorting, columnFilters, globalFilter, columnOrder },
+    state: { sorting, columnFilters, globalFilter, columnOrder, columnSizing },
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
     onColumnOrderChange: setColumnOrder,
+    onColumnSizingChange: setColumnSizing,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     enableColumnResizing: true,
     columnResizeMode: "onChange",
   })
+
+  // Keep the columns summing to exactly the container width so `table-layout:
+  // fixed` renders each column at its literal size (no proportional stretch).
+  // That's what makes a resize move only the grabbed boundary — the pair of
+  // columns on either side of it — instead of every column at once. Seeds the
+  // widths from each column's default `size` proportion, and re-scales that
+  // proportion when the container itself resizes.
+  const tableApiRef = useRef(table)
+  tableApiRef.current = table
+  const lastTableWidth = useRef(0)
+  useEffect(() => {
+    // Observe the scroll container, not the <table>: a fixed-layout table's own
+    // width is driven by its columns, so watching it would be a fixpoint. The
+    // container's width is the true available space.
+    const el = tableRef.current?.parentElement
+    if (!el) return
+    const ro = new ResizeObserver(([entry]) => {
+      const w = Math.round(entry.contentRect.width)
+      if (!w || w === lastTableWidth.current) return
+      lastTableWidth.current = w
+      setColumnSizing((prev) => {
+        const cols = tableApiRef.current.getVisibleLeafColumns()
+        const current = cols.map((c) => prev[c.id] ?? c.columnDef.size ?? 150)
+        const oldTotal = current.reduce((a, b) => a + b, 0) || 1
+        const next: ColumnSizingState = {}
+        let running = 0
+        cols.forEach((c, i) => {
+          if (i === cols.length - 1) {
+            next[c.id] = w - running // last column absorbs the rounding remainder
+          } else {
+            const size = Math.round((current[i] / oldTotal) * w)
+            next[c.id] = size
+            running += size
+          }
+        })
+        return next
+      })
+    })
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
