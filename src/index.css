@@ -1,6 +1,9 @@
 @import "tailwindcss";
 @import "./registry/birchline-tokens.css";
 
+/* Enable `dark:` utilities to respond to our data-mode attribute. */
+@custom-variant dark (&:is([data-mode="dark"] *));
+
 * {
   border-color: var(--color-border);
 }
