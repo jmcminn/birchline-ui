@@ -41,7 +41,7 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         range_start: "day-range-start",
         range_end: "day-range-end",
         selected: "[&>button]:bg-primary [&>button]:text-primary-foreground [&>button]:hover:bg-primary [&>button]:hover:text-primary-foreground [&>button]:rounded-sm",
-        today: "bg-muted text-foreground rounded-sm",
+        today: "bg-accent text-foreground rounded-sm",
         outside: "day-outside text-muted-foreground aria-selected:bg-accent/50 aria-selected:text-muted-foreground",
         disabled: "text-muted-foreground opacity-50",
         range_middle: "aria-selected:bg-accent aria-selected:text-foreground",
