@@ -141,14 +141,24 @@ function LabeledItem({ label, subtitle, children }: { label: string; subtitle?: 
   )
 }
 
-function ColorSwatch({ color, hex, token, semantic, noBorder }: { color: string; hex: string; token: string; semantic?: string; noBorder?: boolean }) {
+function ColorSwatch({ token, semantic, noBorder }: { token: string; semantic?: string; noBorder?: boolean }) {
+  // Read the live value of the token so the swatch reflects the active theme.
+  const cssVar = token.replace("--", "--color-")
+  const [hex, setHex] = useState("")
+  useEffect(() => {
+    const read = () => setHex(getComputedStyle(document.documentElement).getPropertyValue(cssVar).trim().toUpperCase())
+    read()
+    const obs = new MutationObserver(read)
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-mode"] })
+    return () => obs.disconnect()
+  }, [cssVar])
   return (
     <div className="flex items-center gap-4">
       <div
         className="w-20 h-20 rounded-sm shrink-0"
         style={{
-          backgroundColor: color,
-          border: noBorder ? "1.5px solid transparent" : "1.5px solid var(--color-gray-300)",
+          backgroundColor: `var(${cssVar})`,
+          border: noBorder ? "1.5px solid transparent" : "1.5px solid var(--color-border)",
         }}
       />
       <div>
@@ -1163,32 +1173,32 @@ function App() {
               <div>
                 <div className="font-mono text-sm uppercase tracking-wider text-muted-foreground mb-4">Primary</div>
                 <div className="flex flex-col gap-5">
-                  <ColorSwatch color="#D97757" hex="#D97757" token="--clay" semantic="primary, ring" noBorder />
-                  <ColorSwatch color="#141413" hex="#141413" token="--ink" semantic="foreground" noBorder />
-                  <ColorSwatch color="#FAF9F5" hex="#FAF9F5" token="--ivory" semantic="background" />
-                  <ColorSwatch color="#E3DACC" hex="#E3DACC" token="--oat" noBorder />
+                  <ColorSwatch token="--clay" semantic="primary, ring" noBorder />
+                  <ColorSwatch token="--ink" semantic="foreground" noBorder />
+                  <ColorSwatch token="--ivory" semantic="background" />
+                  <ColorSwatch token="--oat" noBorder />
                 </div>
               </div>
               <div>
                 <div className="font-mono text-sm uppercase tracking-wider text-muted-foreground mb-4">Neutral</div>
                 <div className="flex flex-col gap-5">
-                  <ColorSwatch color="#FFFFFF" hex="#FFFFFF" token="--white" semantic="card, popover" />
-                  <ColorSwatch color="#F0EEE6" hex="#F0EEE6" token="--gray-100" semantic="secondary, muted, accent" />
-                  <ColorSwatch color="#D1CFC5" hex="#D1CFC5" token="--gray-300" semantic="border, input" noBorder />
-                  <ColorSwatch color="#726F66" hex="#726F66" token="--gray-500" semantic="muted-foreground" noBorder />
-                  <ColorSwatch color="#3D3D3A" hex="#3D3D3A" token="--gray-700" semantic="secondary-fg, accent-fg" noBorder />
+                  <ColorSwatch token="--white" semantic="card, popover" />
+                  <ColorSwatch token="--gray-100" semantic="secondary, muted, accent" />
+                  <ColorSwatch token="--gray-300" semantic="border, input" noBorder />
+                  <ColorSwatch token="--gray-500" semantic="muted-foreground" noBorder />
+                  <ColorSwatch token="--gray-700" semantic="secondary-fg, accent-fg" noBorder />
                 </div>
               </div>
               <div>
                 <div className="font-mono text-sm uppercase tracking-wider text-muted-foreground mb-4">Semantic</div>
                 <div className="flex flex-col gap-5">
-                  <ColorSwatch color="#5F7348" hex="#5F7348" token="--green" semantic="success" noBorder />
-                  <ColorSwatch color="#916426" hex="#916426" token="--bronze" semantic="warning" noBorder />
-                  <ColorSwatch color="#B04A4A" hex="#B04A4A" token="--red" semantic="danger, destructive" noBorder />
-                  <ColorSwatch color="#526E92" hex="#526E92" token="--blue" semantic="info" noBorder />
-                  <ColorSwatch color="#F5E6B8" hex="#F5E6B8" token="--light-yellow" semantic="highlight" />
-                  <ColorSwatch color="#7B6B8A" hex="#7B6B8A" token="--plum" noBorder />
-                  <ColorSwatch color="#5B8E8A" hex="#5B8E8A" token="--teal" noBorder />
+                  <ColorSwatch token="--green" semantic="success" noBorder />
+                  <ColorSwatch token="--bronze" semantic="warning" noBorder />
+                  <ColorSwatch token="--red" semantic="danger, destructive" noBorder />
+                  <ColorSwatch token="--blue" semantic="info" noBorder />
+                  <ColorSwatch token="--light-yellow" semantic="highlight" />
+                  <ColorSwatch token="--plum" noBorder />
+                  <ColorSwatch token="--teal" noBorder />
                 </div>
               </div>
             </div>
