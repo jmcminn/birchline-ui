@@ -2159,9 +2159,7 @@ function App() {
                     <span className="text-sm">Progress</span>
                     <Badge variant="accent">In review</Badge>
                   </div>
-                  <div className="w-full bg-muted rounded-full h-2">
-                    <div className="bg-primary h-2 rounded-full" style={{ width: "65%" }} />
-                  </div>
+                  <Progress value={65} />
                 </div>
               </CardContent>
               <CardFooter className="justify-between">
