@@ -41,14 +41,15 @@ Birchline UI is distributed as a **shadcn registry** — components are copied i
 your project (you own the code), and they ship with the Birchline design tokens.
 
 Source of truth is [`registry.json`](./registry.json); `npm run registry:build`
-compiles it to servable JSON in `public/r/`. Host `public/r/` anywhere static
-and point the base URL at it (replace `birchline-ui.example.com`).
+compiles it to servable JSON in `public/r/`, which is published to GitHub Pages
+by [`.github/workflows/pages.yml`](./.github/workflows/pages.yml) on every push
+to `main` and served at **`https://jmcminn.github.io/birchline-ui/r/{name}.json`**.
 
 **Consume it** from any Tailwind v4 + shadcn project:
 
 1. Register the namespace in your `components.json`:
    ```json
-   { "registries": { "@birchline": "https://<your-host>/r/{name}.json" } }
+   { "registries": { "@birchline": "https://jmcminn.github.io/birchline-ui/r/{name}.json" } }
    ```
 2. Install the tokens once, then any component (deps resolve automatically):
    ```bash

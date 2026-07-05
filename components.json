@@ -18,6 +18,6 @@
     "hooks": "@/hooks"
   },
   "registries": {
-    "@birchline": "https://birchline-ui.example.com/r/{name}.json"
+    "@birchline": "https://jmcminn.github.io/birchline-ui/r/{name}.json"
   }
 }
