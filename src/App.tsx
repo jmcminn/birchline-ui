@@ -451,22 +451,22 @@ function DatePickerTasksDemo({ showCurrentYear }: { showCurrentYear: boolean }) 
 }
 
 const birchlineColors = [
-  { name: "Ivory", hex: "#FAF9F5" },
-  { name: "White", hex: "#FFFFFF" },
-  { name: "Clay", hex: "#D97757" },
-  { name: "Ink", hex: "#141413" },
-  { name: "Oat", hex: "#E3DACC" },
-  { name: "Gray 100", hex: "#F0EEE6" },
-  { name: "Gray 300", hex: "#D1CFC5" },
-  { name: "Gray 500", hex: "#726F66" },
-  { name: "Gray 700", hex: "#3D3D3A" },
-  { name: "Green", hex: "#5F7348" },
-  { name: "Bronze", hex: "#916426" },
-  { name: "Red", hex: "#B04A4A" },
-  { name: "Blue", hex: "#526E92" },
-  { name: "Plum", hex: "#7B6B8A" },
-  { name: "Teal", hex: "#5B8E8A" },
-  { name: "Light Yellow", hex: "#F5E6B8" },
+  { name: "Ivory", hex: "#FAF9F5", token: "--color-ivory" },
+  { name: "White", hex: "#FFFFFF", token: "--color-white" },
+  { name: "Clay", hex: "#D97757", token: "--color-clay" },
+  { name: "Ink", hex: "#141413", token: "--color-ink" },
+  { name: "Oat", hex: "#E3DACC", token: "--color-oat" },
+  { name: "Gray 100", hex: "#F0EEE6", token: "--color-gray-100" },
+  { name: "Gray 300", hex: "#D1CFC5", token: "--color-gray-300" },
+  { name: "Gray 500", hex: "#726F66", token: "--color-gray-500" },
+  { name: "Gray 700", hex: "#3D3D3A", token: "--color-gray-700" },
+  { name: "Green", hex: "#5F7348", token: "--color-green" },
+  { name: "Bronze", hex: "#916426", token: "--color-bronze" },
+  { name: "Red", hex: "#B04A4A", token: "--color-red" },
+  { name: "Blue", hex: "#526E92", token: "--color-blue" },
+  { name: "Plum", hex: "#7B6B8A", token: "--color-plum" },
+  { name: "Teal", hex: "#5B8E8A", token: "--color-teal" },
+  { name: "Light Yellow", hex: "#F5E6B8", token: "--color-light-yellow" },
 ]
 
 // Per-menu default background/color selections
@@ -485,33 +485,109 @@ const TYPE_SIZE_SPECS: Record<string, string> = {
 const SEPARATOR_COLOR_DEFAULT = "var(--color-border)"
 const SEPARATOR_BG_DEFAULT = "var(--color-card)"
 
+// Resolve a colour value that may be a CSS var() reference (e.g.
+// "var(--color-background)") to a concrete hex, re-resolving when the theme
+// changes. Plain hex values pass through unchanged.
+function useResolvedHex(value: string) {
+  const [hex, setHex] = useState(value)
+  useEffect(() => {
+    if (!value.startsWith("var(")) {
+      setHex(value)
+      return
+    }
+    const varName = value.slice(4, -1).trim()
+    const read = () =>
+      setHex(getComputedStyle(document.documentElement).getPropertyValue(varName).trim() || value)
+    read()
+    const obs = new MutationObserver(read)
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-mode"] })
+    return () => obs.disconnect()
+  }, [value])
+  return hex
+}
+
+// Live value of a CSS custom property on :root.
+function readVar(token: string) {
+  return getComputedStyle(document.documentElement).getPropertyValue(token).trim()
+}
+
+// Bumps whenever the palette/mode changes so consumers re-read live token values.
+function useThemeVersion() {
+  const [v, setV] = useState(0)
+  useEffect(() => {
+    const obs = new MutationObserver(() => setV((x) => x + 1))
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-mode"] })
+    return () => obs.disconnect()
+  }, [])
+  return v
+}
+
+// Name of a palette colour by hex (using each token's LIVE value so it tracks the
+// active theme), or undefined if the colour isn't a named Birchline colour.
+function colorName(hex: string) {
+  const target = hex.toLowerCase()
+  return birchlineColors.find((c) => (readVar(c.token) || c.hex).toLowerCase() === target)?.name
+}
+
 function ColorMenuItems({
   value,
   defaultHex,
+  defaultLabel,
   onSelect,
 }: {
   value: string
   defaultHex: string
+  defaultLabel: string
   onSelect: (hex: string) => void
 }) {
+  useThemeVersion() // re-read live token values whenever the theme changes
+  // Values may be CSS vars (theme-following defaults); resolve to hex so the
+  // checkmark and "(default)" tag match the actual selected colour.
+  const selectedHex = useResolvedHex(value)
+  const resolvedDefault = useResolvedHex(defaultHex)
+  const onDefault = value === defaultHex
+  const rows = birchlineColors.map((c) => ({ ...c, live: readVar(c.token) || c.hex }))
+  // In dark mode the default is a surface colour (e.g. #1B1A17) that isn't a
+  // named palette colour — surface it as a live row on top so it's always shown.
+  const defaultInPalette = rows.some((c) => c.live.toLowerCase() === resolvedDefault.toLowerCase())
   return (
     <>
-      {birchlineColors.map((c) => (
-        <DropdownMenuItem key={c.hex} onClick={() => onSelect(c.hex)} className="gap-3">
+      {!defaultInPalette && (
+        <DropdownMenuItem onClick={() => onSelect(defaultHex)} className="gap-3">
           <span className="w-4 shrink-0 flex items-center justify-center">
-            {value === c.hex && <Check className="h-3.5 w-3.5 text-primary" />}
+            {onDefault && <Check className="h-3.5 w-3.5 text-primary" />}
           </span>
           <div
             className="w-6 h-6 rounded-xs border border-black/10 shrink-0"
-            style={{ backgroundColor: c.hex }}
+            style={{ backgroundColor: resolvedDefault }}
           />
           <span className="flex-1 text-sm">
-            {c.name}
-            {c.hex === defaultHex && <span className="text-muted-foreground"> (default)</span>}
+            {defaultLabel}
+            <span className="text-muted-foreground"> (default)</span>
           </span>
-          <span className="font-mono text-[11px] text-muted-foreground">{c.hex}</span>
+          <span className="font-mono text-[11px] text-muted-foreground">{resolvedDefault.toUpperCase()}</span>
         </DropdownMenuItem>
-      ))}
+      )}
+      {rows.map((c) => {
+        const isSelected = selectedHex.toLowerCase() === c.live.toLowerCase()
+        const isDefault = resolvedDefault.toLowerCase() === c.live.toLowerCase()
+        return (
+          <DropdownMenuItem key={c.token} onClick={() => onSelect(c.live)} className="gap-3">
+            <span className="w-4 shrink-0 flex items-center justify-center">
+              {isSelected && <Check className="h-3.5 w-3.5 text-primary" />}
+            </span>
+            <div
+              className="w-6 h-6 rounded-xs border border-black/10 shrink-0"
+              style={{ backgroundColor: c.live }}
+            />
+            <span className="flex-1 text-sm">
+              {c.name}
+              {isDefault && <span className="text-muted-foreground"> (default)</span>}
+            </span>
+            <span className="font-mono text-[11px] text-muted-foreground">{c.live.toUpperCase()}</span>
+          </DropdownMenuItem>
+        )
+      })}
     </>
   )
 }
@@ -916,7 +992,7 @@ function BorderChaseDemo() {
           <Palette className="h-3.5 w-3.5" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[280px]">
+      <DropdownMenuContent align="end" className="w-[320px]">
         <DropdownMenuLabel>Color palette</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {(Object.keys(CHASE_PALETTES) as ChasePaletteKey[]).map((key) => {
@@ -1046,7 +1122,7 @@ type Mode = "light" | "dark"
 function App() {
   // Two independent theme axes: palette (data-theme) × mode (data-mode).
   const [palette, setPalette] = useState<Palette>(
-    () => (localStorage.getItem("birchline-palette") as Palette) || "default"
+    () => (localStorage.getItem("birchline-palette") as Palette) || "bright"
   )
   const [mode, setMode] = useState<Mode>(
     () => (localStorage.getItem("birchline-mode") as Mode) || "light"
@@ -1088,6 +1164,13 @@ function App() {
   const [showMenuName, setShowMenuName] = useState(true)
   const [separatorColor, setSeparatorColor] = useState(SEPARATOR_COLOR_DEFAULT)
   const [separatorBg, setSeparatorBg] = useState(SEPARATOR_BG_DEFAULT)
+  // Resolved names for the colour-picker trigger labels (fall back to the
+  // menu's semantic label when the current colour isn't a named palette hue).
+  const colorSectionName = colorName(useResolvedHex(colorSectionBg))
+  const typeColorName = colorName(useResolvedHex(typeColor))
+  const typeSectionName = colorName(useResolvedHex(typeSectionBg))
+  const separatorColorName = colorName(useResolvedHex(separatorColor))
+  const separatorBgName = colorName(useResolvedHex(separatorBg))
   const [selectedUserId, setSelectedUserId] = useState<string | null>("u7")
   const [multiSelectedUserIds, setMultiSelectedUserIds] = useState<string[]>(["u7", "u3"])
   const [sorting, setSorting] = useState<SortingState>([{ id: "priority", desc: false }])
@@ -1211,8 +1294,8 @@ function App() {
             >
               <Tabs value={palette} onValueChange={(v) => setPalette(v as Palette)}>
                 <TabsList>
-                  <TabsTrigger value="default">Muted</TabsTrigger>
                   <TabsTrigger value="bright">Bright</TabsTrigger>
+                  <TabsTrigger value="default">Muted</TabsTrigger>
                 </TabsList>
               </Tabs>
               <Button
@@ -1243,15 +1326,16 @@ function App() {
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="gap-2">
                   <div className="w-4 h-4 rounded-xs border border-border" style={{ backgroundColor: colorSectionBg }} />
-                  <span className="text-xs text-muted-foreground">Background</span>
+                  <span className="text-xs text-muted-foreground">{colorSectionName ?? "Background"}</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-[280px]">
-                <DropdownMenuLabel>Background color</DropdownMenuLabel>
+              <DropdownMenuContent align="end" className="w-[320px]">
+                <DropdownMenuLabel>Background Color</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <ColorMenuItems
                   value={colorSectionBg}
                   defaultHex={COLOR_SECTION_DEFAULT}
+                  defaultLabel="Background"
                   onSelect={setColorSectionBg}
                 />
               </DropdownMenuContent>
@@ -1305,15 +1389,16 @@ function App() {
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" size="sm" className="gap-2">
                     <div className="w-4 h-4 rounded-xs border border-border" style={{ backgroundColor: typeColor }} />
-                    <span className="text-xs text-muted-foreground">Text</span>
+                    <span className="text-xs text-muted-foreground">{typeColorName ?? "Text"}</span>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-[280px]">
-                  <DropdownMenuLabel>Text color</DropdownMenuLabel>
+                <DropdownMenuContent align="end" className="w-[320px]">
+                  <DropdownMenuLabel>Text Color</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <ColorMenuItems
                     value={typeColor}
                     defaultHex={TYPE_COLOR_DEFAULT}
+                    defaultLabel="Text"
                     onSelect={setTypeColor}
                   />
                 </DropdownMenuContent>
@@ -1323,15 +1408,16 @@ function App() {
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" size="sm" className="gap-2">
                     <div className="w-4 h-4 rounded-xs border border-border" style={{ backgroundColor: typeSectionBg }} />
-                    <span className="text-xs text-muted-foreground">Background</span>
+                    <span className="text-xs text-muted-foreground">{typeSectionName ?? "Background"}</span>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-[280px]">
-                  <DropdownMenuLabel>Background color</DropdownMenuLabel>
+                <DropdownMenuContent align="end" className="w-[320px]">
+                  <DropdownMenuLabel>Background Color</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <ColorMenuItems
                     value={typeSectionBg}
                     defaultHex={TYPE_SECTION_DEFAULT}
+                    defaultLabel="Background"
                     onSelect={setTypeSectionBg}
                   />
                 </DropdownMenuContent>
@@ -2441,15 +2527,16 @@ function App() {
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" size="sm" className="gap-2">
                       <div className="w-4 h-4 rounded-xs border border-border" style={{ backgroundColor: separatorColor }} />
-                      <span className="text-xs text-muted-foreground">Separator</span>
+                      <span className="text-xs text-muted-foreground">{separatorColorName ?? "Separator"}</span>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-[280px]">
-                    <DropdownMenuLabel>Separator color</DropdownMenuLabel>
+                  <DropdownMenuContent align="end" className="w-[320px]">
+                    <DropdownMenuLabel>Separator Color</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <ColorMenuItems
                       value={separatorColor}
                       defaultHex={SEPARATOR_COLOR_DEFAULT}
+                      defaultLabel="Separator"
                       onSelect={setSeparatorColor}
                     />
                   </DropdownMenuContent>
@@ -2459,15 +2546,16 @@ function App() {
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" size="sm" className="gap-2">
                       <div className="w-4 h-4 rounded-xs border border-border" style={{ backgroundColor: separatorBg }} />
-                      <span className="text-xs text-muted-foreground">Background</span>
+                      <span className="text-xs text-muted-foreground">{separatorBgName ?? "Background"}</span>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-[280px]">
-                    <DropdownMenuLabel>Background color</DropdownMenuLabel>
+                  <DropdownMenuContent align="end" className="w-[320px]">
+                    <DropdownMenuLabel>Background Color</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <ColorMenuItems
                       value={separatorBg}
                       defaultHex={SEPARATOR_BG_DEFAULT}
+                      defaultLabel="Background"
                       onSelect={setSeparatorBg}
                     />
                   </DropdownMenuContent>

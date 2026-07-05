@@ -10,10 +10,11 @@
       // already themed — avoids a flash and the transition-colors "stuck" state.
       (function () {
         try {
-          var p = localStorage.getItem("birchline-palette");
+          // Default to the "bright" palette when nothing is stored yet.
+          var p = localStorage.getItem("birchline-palette") || "bright";
           var m = localStorage.getItem("birchline-mode");
           var root = document.documentElement;
-          if (p && p !== "default") root.setAttribute("data-theme", p);
+          if (p !== "default") root.setAttribute("data-theme", p);
           if (m === "dark") root.setAttribute("data-mode", "dark");
         } catch (e) {}
       })();
