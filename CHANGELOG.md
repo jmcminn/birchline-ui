@@ -22,6 +22,13 @@ the contract too, but the **semantic** tier is what components should consume.
 
 ## [Unreleased]
 
+### Added
+
+- **Public distribution** — the shadcn registry is now published to GitHub Pages
+  (auto-rebuilt on every push to `main`) and installable at
+  `https://jmcminn.github.io/birchline-ui/r/{name}.json`. Verified end-to-end:
+  every item's npm + registry dependency chain resolves and serves real content.
+
 ## [0.1.0] — 2026-07-04
 
 First tagged release — the design-system foundation.
