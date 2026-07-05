@@ -4,8 +4,9 @@ shadcn/ui components reskinned with [Birchline](https://github.com/jmcminn/birch
 
 ## Documentation
 
-- [Foundations](./docs/foundations.md) — tokens, color roles, type ramp, spacing, theming, focus.
+- [Foundations](./docs/foundations.md) — token architecture, color roles, type ramp, spacing, theming, focus.
 - [Components](./docs/components.md) — index, install commands, and "which one do I use?" guidance.
+- [Changelog](./CHANGELOG.md) — notable changes and the token versioning policy.
 
 ## Stack
 
@@ -77,4 +78,24 @@ and point the base URL at it (replace `birchline-ui.example.com`).
 
 ## Design Tokens
 
-All Birchline tokens are defined in `src/index.css` using Tailwind v4's `@theme` directive — colors, typography, spacing, radius, and shadows map directly from the [Birchline Design System](https://jmcminn.github.io/birchline/birchline-design-system.html).
+Tokens follow a three-tier architecture (primitives → aliases → semantic) so a
+hex value lives in exactly one place. The **single source of truth** is
+[`tokens/birchline.tokens.mjs`](./tokens/birchline.tokens.mjs); edit it there and
+run:
+
+```bash
+npm run tokens:build
+```
+
+That generates two artifacts (never hand-edit them):
+
+- [`src/registry/birchline-tokens.css`](./src/registry/birchline-tokens.css) —
+  the Tailwind v4 `@theme` file the app and shadcn registry consume.
+- [`tokens/birchline.tokens.json`](./tokens/birchline.tokens.json) — a portable
+  **W3C DTCG** document for Figma, native, and other-platform tooling.
+
+`build` and `registry:build` regenerate automatically. Theming composes two
+independent axes — palette (`data-theme`: Muted / `bright`) × mode (`data-mode`:
+light / `dark`). See [Foundations](./docs/foundations.md) for the full token
+reference and theming guide, and [CHANGELOG.md](./CHANGELOG.md) for the
+versioning policy (tokens are a public API).

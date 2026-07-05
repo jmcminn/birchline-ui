@@ -1,11 +1,43 @@
 # Foundations
 
 Birchline UI is a warm, editorial reskin of shadcn/ui built on **Tailwind CSS v4**.
-All design decisions live as tokens in
-[`src/registry/birchline-tokens.css`](../src/registry/birchline-tokens.css) via
-the `@theme` directive, so every utility (`bg-primary`, `text-muted-foreground`,
-`border-border`, …) resolves to a CSS variable and the whole system can be
-re-themed by swapping token values.
+Every utility (`bg-primary`, `text-muted-foreground`, `border-border`, …)
+resolves to a CSS variable, so the whole system re-themes by swapping token
+values.
+
+## Token architecture
+
+Tokens are organized in three tiers — **a hex value lives in exactly one place
+(a primitive); everything above references it by name.**
+
+1. **Primitives** — raw named values. The warm-neutral ramp (`--color-warm-50 …
+   975`) and the brand/status hues (`clay`, `green-500` / `green-400`, …). The
+   only place hexes live.
+2. **Aliases** — legacy names (`ivory`, `gray-300`, `green`, …) kept working,
+   sourced from the ramp/hues.
+3. **Semantic** — purpose-based roles (`background`, `border`, `primary`,
+   `muted-foreground`, …). **This is what components consume.** Dark mode remaps
+   these to different primitives, never to new hexes.
+
+### Editing tokens
+
+The source of truth is **[`tokens/birchline.tokens.mjs`](../tokens/birchline.tokens.mjs)**.
+Edit it there, then run:
+
+```bash
+npm run tokens:build
+```
+
+This generates two artifacts (never hand-edit them):
+
+- [`src/registry/birchline-tokens.css`](../src/registry/birchline-tokens.css) —
+  the Tailwind v4 `@theme` file the app and shadcn registry consume.
+- [`tokens/birchline.tokens.json`](../tokens/birchline.tokens.json) — a portable
+  **W3C DTCG** document for Figma, native, and other-platform tooling.
+
+`build` and `registry:build` regenerate automatically. Opacity modifiers
+(`bg-primary/15`) derive from a token and are correct as-is — you don't tokenize
+every alpha step.
 
 ## How to use tokens
 
@@ -24,19 +56,40 @@ role-specific avatar color).
 
 ## Color
 
-### Raw palette
+### Primitives — the warm-neutral ramp
 
-| Token | Value | Notes |
+One continuous ramp is the single source of truth for every neutral surface,
+lightest (`50`) → ink (`975`). Light surfaces draw from the top, dark surfaces
+from the bottom; the tuned dark values are preserved as named steps.
+
+| Step | Value | | Step | Value |
+|---|---|---|---|---|
+| `warm-50` | `#FAF9F5` | | `warm-700` | `#3E3A32` |
+| `warm-100` | `#F0EEE6` | | `warm-720` | `#3D3D3A` |
+| `warm-150` | `#ECE8DE` | | `warm-750` | `#37342C` |
+| `warm-300` | `#D1CFC5` | | `warm-780` | `#34312B` |
+| `warm-350` | `#C6C1B4` | | `warm-800` | `#302D27` |
+| `warm-450` | `#9C978A` | | `warm-850` | `#262420` |
+| `warm-500` | `#8B8578` | | `warm-900` | `#211F1B` |
+| `warm-550` | `#726F66` | | `warm-950` | `#1B1A17` |
+| `warm-650 / 680` | `#4A453E` / `#46433B` | | `warm-975` | `#141413` |
+
+### Primitives — brand & status hues
+
+Each carries a light (`-500`) and dark-tuned (`-400`) value.
+
+| Token | Light `-500` | Dark `-400` |
 |---|---|---|
-| `--color-ivory` | `#FAF9F5` | page background |
-| `--color-clay` / `--color-clay-hover` | `#D97757` / `#C7684C` | brand accent |
-| `--color-ink` | `#141413` | primary text |
-| `--color-oat` | `#E3DACC` | decorative warm neutral |
-| `--color-white` | `#FFFFFF` | surfaces |
-| `--color-gray-100 / 300 / 500 / 700` | `#F0EEE6` / `#D1CFC5` / `#726F66` / `#3D3D3A` | neutral ramp |
-| `--color-green / bronze / red / blue` | `#5F7348` / `#916426` / `#B04A4A` / `#526E92` | status hues |
-| `--color-plum / teal` | `#7B6B8A` / `#5B8E8A` | extended accents |
-| `--color-light-yellow` | `#F5E6B8` | highlight |
+| `clay` / `clay-hover` | `#D97757` / `#C7684C` | (carries through both modes) |
+| `green` | `#5F7348` | `#8FB06B` |
+| `bronze` | `#916426` | `#D69C4E` |
+| `red` | `#B04A4A` | `#C9413F` |
+| `blue` | `#526E92` | `#7FA3D0` |
+| `plum` / `teal` | `#7B6B8A` / `#5B8E8A` | extended accents |
+| `white` `#FFFFFF` · `oat` `#E3DACC` · `light-yellow` `#F5E6B8` | | |
+
+Aliases (`ivory` → `warm-50`, `gray-300` → `warm-300`, `green` → `green-500`, …)
+keep the older names working.
 
 ### Semantic roles
 
@@ -102,14 +155,26 @@ for padding/gaps so rhythm stays consistent.
 
 ## Theming
 
-The system ships two schemes, toggled by a `data-theme` attribute on `<html>`:
+Two **independent axes** compose on `<html>` — palette (`data-theme`) × mode
+(`data-mode`):
 
-- **Muted** (default) — no attribute; the base `@theme` values.
-- **Bright** — `data-theme="bright"` overrides the **raw palette** only; semantic
-  tokens reference the palette via `var()`, so they re-theme automatically.
+| Axis | Attribute | Values | Overrides |
+|---|---|---|---|
+| Palette | `data-theme` | *(absent)* = Muted · `bright` | accent-hue **primitives** |
+| Mode | `data-mode` | *(absent)* = light · `dark` | **semantic** surface/neutral roles |
 
-To add a scheme (e.g. dark), add a `:root[data-theme="dark"]` block that remaps
-the **semantic roles** (background, foreground, card, muted-foreground, …).
+Because they're orthogonal, all four combinations work with no extra blocks:
+Muted + light, Bright + light, Muted + dark, Bright + dark. The Bright block
+overrides only the `-500` accent primitives (which flow through the aliases and
+semantic status), and the Dark block remaps semantic roles + shifting neutral
+aliases to the dark end of the ramp — so brand accents carry through and the two
+axes never conflict.
+
+Apply before first paint to avoid a flash — read the stored choice in a blocking
+`<head>` script and set the attributes (see [`index.html`](../index.html)).
+
+**Adding a palette or mode:** edit `modes` in
+[`tokens/birchline.tokens.mjs`](../tokens/birchline.tokens.mjs) and rebuild.
 Because components consume semantic tokens, no component changes are needed.
 
 ## Focus
