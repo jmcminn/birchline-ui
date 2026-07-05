@@ -1,23 +1,12 @@
-/* Birchline design tokens — Tailwind v4 @theme layer + Bright scheme override.
-   Import after `@import "tailwindcss";` in your global stylesheet.
+/* AUTO-GENERATED — do not edit by hand.
+   Source: tokens/birchline.tokens.mjs · Build: scripts/build-tokens.mjs (npm run tokens:build)
 
-   Architecture (three tiers):
-     1. Primitives  — raw named values. The ONLY place hexes live.
-                      A warm-neutral ramp (--color-warm-*) + brand/status hues
-                      (light -500 / dark -400).
-     2. Semantic    — purpose-based tokens (--color-background, --color-border,
-                      --color-primary …). Reference primitives; this is what
-                      components consume. Dark mode remaps them to different
-                      primitives — never to new hexes.
-   Legacy names (--color-ivory, --color-gray-300, --color-green …) are kept as
-   aliases onto the ramp/hues for backwards compatibility. */
+   Three tiers: primitives → aliases → semantic, with mode overrides. A hex value
+   lives once (a primitive); everything above references it. Import after
+   `@import "tailwindcss";`. */
 
 @theme {
   /* ═══ TIER 1 · PRIMITIVES ═══ */
-
-  /* Warm-neutral ramp — single source of truth for every neutral surface,
-     from the lightest cream (50) to ink (975). Values preserved from the
-     hand-tuned light + dark surfaces. */
   --color-warm-50: #FAF9F5;
   --color-warm-100: #F0EEE6;
   --color-warm-150: #ECE8DE;
@@ -37,11 +26,8 @@
   --color-warm-900: #211F1B;
   --color-warm-950: #1B1A17;
   --color-warm-975: #141413;
-
   --color-white: #FFFFFF;
-  --color-oat: #E3DACC; /* warm accent — intentionally outside the neutral ramp */
-
-  /* Brand + status hues — light (-500) and dark-tuned (-400) values. */
+  --color-oat: #E3DACC;
   --color-clay: #D97757;
   --color-clay-hover: #C7684C;
   --color-green-500: #5F7348;
@@ -59,8 +45,7 @@
   --color-light-yellow: #F5E6B8;
   --color-highlight-dark: #4A3C18;
 
-  /* Legacy aliases — keep existing component/palette names working, now sourced
-     from the ramp/hues so there's still one source of truth. */
+  /* Legacy aliases — existing names, sourced from the ramp/hues. */
   --color-ivory: var(--color-warm-50);
   --color-ink: var(--color-warm-975);
   --color-gray-100: var(--color-warm-100);
@@ -73,42 +58,30 @@
   --color-blue: var(--color-blue-500);
 
   /* ═══ TIER 2 · SEMANTIC (light) ═══ */
-
   --color-success: var(--color-green-500);
   --color-warning: var(--color-bronze-500);
   --color-danger: var(--color-red-500);
   --color-danger-hover: var(--color-red-hover);
   --color-info: var(--color-blue-500);
   --color-highlight: var(--color-light-yellow);
-
   --color-background: var(--color-warm-50);
   --color-foreground: var(--color-warm-975);
-
   --color-card: var(--color-white);
   --color-card-foreground: var(--color-warm-975);
   --color-popover: var(--color-white);
   --color-popover-foreground: var(--color-warm-975);
-
   --color-primary: var(--color-clay);
   --color-primary-hover: var(--color-clay-hover);
   --color-primary-foreground: var(--color-white);
-
   --color-secondary: var(--color-warm-100);
   --color-secondary-foreground: var(--color-warm-720);
-
   --color-muted: var(--color-warm-100);
   --color-muted-foreground: var(--color-warm-550);
-
   --color-accent: var(--color-warm-100);
   --color-accent-foreground: var(--color-warm-720);
-
   --color-border: var(--color-warm-300);
   --color-input: var(--color-warm-300);
   --color-ring: var(--color-clay);
-
-  /* Skeleton loading placeholder — separate from `muted` (which also drives
-     track surfaces) so it can be tuned independently. `highlight` is the
-     colour of the sweeping shimmer band. */
   --color-skeleton: var(--color-warm-100);
   --color-skeleton-highlight: var(--color-white);
 
@@ -139,11 +112,7 @@
   --spacing-sp-8: 64px;
 }
 
-/* ── Alternative "Bright" scheme ──
-   Overrides ONLY the accent-hue primitives; the ramp, surfaces, and hovers are
-   intentionally omitted so they inherit the base values. Because the legacy
-   aliases and semantic status tokens reference the -500 hues, overriding the
-   -500 primitives flows through automatically. */
+/* ── Alternative "Bright" scheme — overrides accent-hue primitives only. ── */
 :root[data-theme="bright"] {
   --color-clay: #D05E38;
   --color-green-500: #658E3B;
@@ -154,46 +123,30 @@
   --color-teal: #5DB2AC;
 }
 
-/* ── Dark mode ──
-   Orthogonal to palette: data-mode="dark" remaps SEMANTIC surface/neutral roles
-   to the dark end of the warm ramp, and status roles to the -400 hues. Every
-   value references a named primitive — no inline hexes. Brand accents
-   (clay/ring) are left untouched so they carry through from the active palette.
-   Placed AFTER the Bright block (equal specificity) so surface overrides win,
-   letting Bright + Dark compose without a fourth explicit block. */
+/* ── Dark mode — remaps semantic + shifting aliases to dark primitives. ── */
 :root[data-mode="dark"] {
   --color-background: var(--color-warm-950);
   --color-foreground: var(--color-warm-150);
-
   --color-card: var(--color-warm-850);
   --color-card-foreground: var(--color-warm-150);
   --color-popover: var(--color-warm-850);
   --color-popover-foreground: var(--color-warm-150);
-
   --color-secondary: var(--color-warm-850);
   --color-secondary-foreground: var(--color-warm-350);
   --color-muted: var(--color-warm-900);
   --color-muted-foreground: var(--color-warm-450);
   --color-accent: var(--color-warm-800);
   --color-accent-foreground: var(--color-warm-150);
-
   --color-border: var(--color-warm-650);
   --color-input: var(--color-warm-750);
-
-  /* Skeleton sits a step ABOVE the card surface in dark so it reads as a
-     placeholder rather than a hole; the shimmer band is a lighter neutral. */
   --color-skeleton: var(--color-warm-780);
   --color-skeleton-highlight: var(--color-warm-680);
-
-  /* status roles → dark-tuned hues (light-mode values are too dark on dark) */
   --color-success: var(--color-green-400);
   --color-warning: var(--color-bronze-400);
   --color-danger: var(--color-red-400);
   --color-danger-hover: var(--color-red-hover-dark);
   --color-info: var(--color-blue-400);
   --color-highlight: var(--color-highlight-dark);
-
-  /* legacy neutral aliases that shift value in dark */
   --color-gray-300: var(--color-warm-680);
   --color-gray-500: var(--color-warm-500);
 }
