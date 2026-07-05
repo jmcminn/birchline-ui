@@ -22,6 +22,10 @@ the contract too, but the **semantic** tier is what components should consume.
 
 ## [Unreleased]
 
+## [0.1.0] — 2026-07-04
+
+First tagged release — the design-system foundation.
+
 ### Added
 
 - **Three-tier token architecture** — primitives → aliases → semantic. A named
@@ -50,5 +54,8 @@ the contract too, but the **semantic** tier is what components should consume.
 - Removed the last raw hex in a shipped component (`progress.tsx`), now routed
   through `--color-warm-700`.
 
-_This entry is the pre-1.0 baseline; the architecture above is verified
-value-for-value identical to the prior hand-authored tokens._
+_Baseline release; the architecture above is verified value-for-value identical
+to the prior hand-authored tokens._
+
+[Unreleased]: https://github.com/jmcminn/birchline-ui/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/jmcminn/birchline-ui/releases/tag/v0.1.0
