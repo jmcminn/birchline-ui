@@ -1,22 +1,48 @@
 import * as React from "react"
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import { ChevronLeft, ChevronRight, ChevronDown } from "lucide-react"
 import { DayPicker } from "react-day-picker"
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>
 
-function Calendar({ className, classNames, showOutsideDays = true, ...props }: CalendarProps) {
+function Calendar({
+  className,
+  classNames,
+  showOutsideDays = true,
+  captionLayout = "dropdown",
+  startMonth,
+  endMonth,
+  formatters,
+  ...props
+}: CalendarProps) {
+  // Bound the month/year dropdowns to a sensible, overridable range.
+  const currentYear = new Date().getFullYear()
+  const resolvedStartMonth = startMonth ?? new Date(currentYear - 100, 0)
+  const resolvedEndMonth = endMonth ?? new Date(currentYear + 10, 11)
+
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
       navLayout="around"
+      captionLayout={captionLayout}
+      startMonth={resolvedStartMonth}
+      endMonth={resolvedEndMonth}
+      formatters={{
+        // Abbreviated month names ("Jul") in the trigger and dropdown list.
+        formatMonthDropdown: (month) => month.toLocaleString("default", { month: "short" }),
+        ...formatters,
+      }}
       className={cn("p-4", className)}
       classNames={{
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
         month: "grid grid-cols-[auto_1fr_auto] items-center gap-y-4",
-        month_caption: "text-center",
-        caption_label: "text-sm font-medium",
+        month_caption: "flex items-center justify-center",
+        caption_label: "inline-flex items-center gap-1 text-sm font-medium",
+        // Month + year dropdown triggers, styled to read as plain text with a caret.
+        dropdowns: "inline-flex items-center gap-1.5",
+        dropdown_root: "relative inline-flex items-center rounded-sm px-1.5 py-1 transition-colors cursor-pointer hover:bg-warm-100",
+        dropdown: "absolute inset-0 z-10 w-full cursor-pointer opacity-0",
         nav: "hidden",
         button_previous: cn(
           buttonVariants({ variant: "outline" }),
@@ -49,9 +75,11 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         ...classNames,
       }}
       components={{
-        Chevron: ({ orientation }) => {
-          const Icon = orientation === "left" ? ChevronLeft : ChevronRight
-          return <Icon className="h-4 w-4" />
+        Chevron: ({ orientation, className: chevronClassName }) => {
+          if (orientation === "left") return <ChevronLeft className="h-4 w-4" />
+          if (orientation === "right") return <ChevronRight className="h-4 w-4" />
+          // Down caret for the month/year dropdown triggers.
+          return <ChevronDown className={cn("h-3.5 w-3.5 text-muted-foreground", chevronClassName)} />
         },
       }}
       {...props}
