@@ -19,4 +19,25 @@ export default defineConfig([
       globals: globals.browser,
     },
   },
+  {
+    // shadcn-style component files export a style helper next to the component
+    // (other components and the registry import them), so fast refresh is told
+    // those names are fine. Keeps the vite preset's other options.
+    files: ['src/components/ui/**/*.{ts,tsx}'],
+    rules: {
+      'react-refresh/only-export-components': [
+        'error',
+        {
+          allowConstantExport: true,
+          allowCompoundComponents: true,
+          allowExportNames: [
+            'badgeVariants',
+            'buttonVariants',
+            'toggleVariants',
+            'navigationMenuTriggerStyle',
+          ],
+        },
+      ],
+    },
+  },
 ])
