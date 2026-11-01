@@ -1,0 +1,33 @@
+name: CI
+
+# Runs lint, the type-check + build, and the tests on every pull request to main
+# and on every push to main. The Pages deploy (pages.yml) is separate and does
+# not wait for this.
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+# A new push to the same branch or PR cancels the run it replaces.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build # tokens, tsc -b (type-check), then vite build
+      - run: npm test
