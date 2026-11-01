@@ -1,7 +1,7 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry.json",
   "name": "birchline-ui",
-  "homepage": "https://birchline-ui.example.com",
+  "homepage": "https://jmcminn.github.io/birchline-ui",
   "items": [
     {
       "name": "tokens",
