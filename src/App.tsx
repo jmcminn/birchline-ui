@@ -204,11 +204,13 @@ function HighlightText({ text, query }: { text: string; query: string }) {
 function DraggableTableHeader({
   header,
   draggingColumnId,
-  tableRef,
+  overlayHeight,
+  onResizeStart,
 }: {
   header: Header<TaskTableFeatures, Task, unknown>
   draggingColumnId: string | null
-  tableRef: React.RefObject<HTMLTableElement | null>
+  overlayHeight: number
+  onResizeStart: () => void
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: header.column.id,
@@ -238,6 +240,7 @@ function DraggableTableHeader({
     const pairTotal = startLeft + startRight
     const leftMin = left.columnDef.minSize ?? 40
     const rightMin = right.columnDef.minSize ?? 40
+    onResizeStart()
     setIsResizing(true)
     const onMove = (ev: PointerEvent) => {
       const delta = ev.clientX - startX
@@ -264,8 +267,6 @@ function DraggableTableHeader({
     opacity: isDragging ? 0.8 : 1,
     position: "relative",
   }
-
-  const overlayHeight = tableRef.current ? `${tableRef.current.offsetHeight}px` : "999px"
 
   return (
     <TableHead
@@ -502,21 +503,19 @@ const SEPARATOR_BG_DEFAULT = "var(--color-card)"
 // "var(--color-background)") to a concrete hex, re-resolving when the theme
 // changes. Plain hex values pass through unchanged.
 function useResolvedHex(value: string) {
-  const [hex, setHex] = useState(value)
+  const isVar = value.startsWith("var(")
+  const [resolved, setResolved] = useState(value)
   useEffect(() => {
-    if (!value.startsWith("var(")) {
-      setHex(value)
-      return
-    }
+    if (!isVar) return
     const varName = value.slice(4, -1).trim()
     const read = () =>
-      setHex(getComputedStyle(document.documentElement).getPropertyValue(varName).trim() || value)
+      setResolved(getComputedStyle(document.documentElement).getPropertyValue(varName).trim() || value)
     read()
     const obs = new MutationObserver(read)
     obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-mode"] })
     return () => obs.disconnect()
-  }, [value])
-  return hex
+  }, [isVar, value])
+  return isVar ? resolved : value
 }
 
 // Live value of a CSS custom property on :root.
@@ -1222,6 +1221,10 @@ function App() {
   const [multiSearchOpen, setMultiSearchOpen] = useState(false)
   const [multiSearchQuery, setMultiSearchQuery] = useState("")
   const tableRef = useRef<HTMLTableElement>(null)
+  // Height of the drag/resize overlay, measured when a drag or resize starts
+  // (events), not read from the ref while rendering.
+  const [overlayHeight, setOverlayHeight] = useState(0)
+  const measureOverlay = () => setOverlayHeight(tableRef.current?.offsetHeight ?? 999)
 
   const columns = useMemo(() => taskColumns, [])
 
@@ -1290,6 +1293,7 @@ function App() {
   )
 
   function handleDragStart(event: DragEndEvent) {
+    measureOverlay()
     setDraggingColumnId(event.active.id as string)
   }
 
@@ -2181,7 +2185,8 @@ function App() {
                             key={header.id}
                             header={header}
                             draggingColumnId={draggingColumnId}
-                            tableRef={tableRef}
+                            overlayHeight={overlayHeight}
+                            onResizeStart={measureOverlay}
                           />
                         ))}
                       </SortableContext>
