@@ -76,11 +76,24 @@ import { Sidebar, SidebarHeader, SidebarContent, SidebarGroup, SidebarGroupLabel
 import { UserSelector, type User } from "@/components/ui/user-selector"
 import { MoreHorizontal, Plus, Search, Trash2, Copy, Pencil, ArrowRight, Info, PanelRight, Bell, CalendarDays, Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, LayoutGrid, List, Home, Settings, FolderOpen, Inbox, FileText, BarChart3, AlertCircle, CheckCircle, AlertTriangle, InfoIcon, Terminal, ChevronRight, Check, Palette, ArrowUpDown, ArrowUp, ArrowDown, X, GripVertical, Sun, Moon } from "lucide-react"
 import {
-  useReactTable,
-  getCoreRowModel,
-  getSortedRowModel,
-  getFilteredRowModel,
+  useTable,
+  tableFeatures,
+  rowSortingFeature,
+  columnFilteringFeature,
+  globalFilteringFeature,
+  columnOrderingFeature,
+  columnSizingFeature,
+  columnResizingFeature,
+  columnVisibilityFeature,
+  createSortedRowModel,
+  createFilteredRowModel,
+  sortFn_alphanumeric,
+  sortFn_text,
+  sortFn_basic,
+  sortFn_datetime,
+  filterFn_includesString,
   flexRender,
+  type Header,
   type ColumnDef,
   type SortingState,
   type ColumnFiltersState,
@@ -193,7 +206,7 @@ function DraggableTableHeader({
   draggingColumnId,
   tableRef,
 }: {
-  header: import("@tanstack/react-table").Header<Task, unknown>
+  header: Header<TaskTableFeatures, Task, unknown>
   draggingColumnId: string | null
   tableRef: React.RefObject<HTMLTableElement | null>
 }) {
@@ -616,7 +629,25 @@ const tasks: Task[] = [
 const priorityOrder: Record<string, number> = { High: 0, Medium: 1, Low: 2 }
 const statusOrder: Record<string, number> = { "In Progress": 0, Todo: 1, Backlog: 2, Done: 3 }
 
-const taskColumns: ColumnDef<Task>[] = [
+// v9 only exposes the table APIs for features registered here. Sizing must be
+// registered before resizing, and column filtering before global filtering.
+const taskTableFeatures = tableFeatures({
+  columnVisibilityFeature,
+  columnOrderingFeature,
+  columnSizingFeature,
+  columnResizingFeature,
+  columnFilteringFeature,
+  globalFilteringFeature,
+  rowSortingFeature,
+  filteredRowModel: createFilteredRowModel(),
+  sortedRowModel: createSortedRowModel(),
+  filterFns: { includesString: filterFn_includesString },
+  // "auto" sorting only resolves registered functions.
+  sortFns: { alphanumeric: sortFn_alphanumeric, text: sortFn_text, basic: sortFn_basic, datetime: sortFn_datetime },
+})
+type TaskTableFeatures = typeof taskTableFeatures
+
+const taskColumns: ColumnDef<TaskTableFeatures, Task>[] = [
   {
     accessorKey: "id",
     header: "ID",
@@ -633,14 +664,14 @@ const taskColumns: ColumnDef<Task>[] = [
   {
     accessorKey: "status",
     header: "Status",
-    sortingFn: (a, b) => (statusOrder[a.getValue("status") as string] ?? 99) - (statusOrder[b.getValue("status") as string] ?? 99),
+    sortFn: (a, b) => (statusOrder[a.getValue("status") as string] ?? 99) - (statusOrder[b.getValue("status") as string] ?? 99),
     size: 140,
     minSize: 90,
   },
   {
     accessorKey: "priority",
     header: "Priority",
-    sortingFn: (a, b) => (priorityOrder[a.getValue("priority") as string] ?? 99) - (priorityOrder[b.getValue("priority") as string] ?? 99),
+    sortFn: (a, b) => (priorityOrder[a.getValue("priority") as string] ?? 99) - (priorityOrder[b.getValue("priority") as string] ?? 99),
     size: 120,
     minSize: 80,
   },
@@ -1194,7 +1225,8 @@ function App() {
 
   const columns = useMemo(() => taskColumns, [])
 
-  const table = useReactTable({
+  const table = useTable({
+    features: taskTableFeatures,
     data: tasks,
     columns,
     state: { sorting, columnFilters, globalFilter, columnOrder, columnSizing },
@@ -1203,9 +1235,6 @@ function App() {
     onGlobalFilterChange: setGlobalFilter,
     onColumnOrderChange: setColumnOrder,
     onColumnSizingChange: setColumnSizing,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
     enableColumnResizing: true,
     columnResizeMode: "onChange",
   })
@@ -1217,7 +1246,11 @@ function App() {
   // widths from each column's default `size` proportion, and re-scales that
   // proportion when the container itself resizes.
   const tableApiRef = useRef(table)
-  tableApiRef.current = table
+  // Assigned after commit, not during render (react-hooks/refs). The observer
+  // below only reads it from resize events, which always fire after a commit.
+  useEffect(() => {
+    tableApiRef.current = table
+  })
   const lastTableWidth = useRef(0)
   useEffect(() => {
     // Observe the scroll container, not the <table>: a fixed-layout table's own
