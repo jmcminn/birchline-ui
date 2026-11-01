@@ -626,9 +626,7 @@ const tasks: Task[] = [
 ]
 
 const priorityOrder: Record<string, number> = { High: 0, Medium: 1, Low: 2 }
-const deliberateTypeError: number = "this is a string, not a number" // CI demo: remove
-console.debug(deliberateTypeError)
-const statusOrder: Record<string, number> = { "In Progress": 0, Todo: 1, Backlog: 2, Done: 3 }
+const statusOrder: Record<string, number> = { "In Progress": 3, Todo: 2, Backlog: 1, Done: 0 }
 
 // v9 only exposes the table APIs for features registered here. Sizing must be
 // registered before resizing, and column filtering before global filtering.
