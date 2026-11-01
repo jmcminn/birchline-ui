@@ -31,3 +31,7 @@ jobs:
       - run: npm run lint
       - run: npm run build # tokens, tsc -b (type-check), then vite build
       - run: npm test
+      - name: Registry files are up to date
+        run: |
+          npm run registry:build
+          git diff --exit-code -- public/r
