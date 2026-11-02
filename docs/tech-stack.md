@@ -6,7 +6,7 @@ Based on the `package.json`, config files and workflows in `jmcminn/birchline-ui
 - React 19 with TypeScript 6.0 (TypeScript 7 is deferred, see "Decisions and pins")
 - Vite 8 (dev server and bundler), with `@vitejs/plugin-react`
 - Tailwind CSS 4, via the `@tailwindcss/vite` plugin
-- Node 22 in CI and the Pages deploy
+- Node 22 in CI and the Pages deploy. `.nvmrc` pins 22 and `engines` allows `^22.22.2 || ^24.15.0 || >=26` (the range `vitest` 5 and `jsdom` 30 support; odd-numbered releases such as 25 are outside it)
 
 ## Components and UI
 - Radix UI primitives: alert dialog, avatar, checkbox, collapsible, dialog, dropdown menu, label, navigation menu, popover, progress, scroll area, select, separator, slot, switch, tabs, toggle, toggle group, tooltip
