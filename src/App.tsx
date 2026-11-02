@@ -734,6 +734,14 @@ const CHASE_DEFAULTS = {
   colors: ["#4285F4", "#EA4335", "#FBBC04", "#34A853", "#4285F4"],
 };
 
+/* "Border beam" timing: constant angular speed about the card centre (linear),
+   one lap every 2.23s, looping. Measured from a reference screen recording. */
+const BEAM_PERIOD_MS = 2230;
+const BEAM_KEYFRAME_STEPS = 72;
+/* How much of the pure-rotation speed variation to keep (1 = full slow/fast
+   swing as in the reference recording, 0 = constant speed along the path). */
+const BEAM_SPEED_VARIATION = 0.5;
+
 function BorderChaseCard({
   strokeWidth = CHASE_DEFAULTS.strokeWidth,
   segmentPercent = CHASE_DEFAULTS.segmentPercent,
@@ -746,6 +754,8 @@ function BorderChaseCard({
   borderRadius = CHASE_DEFAULTS.borderRadius,
   glowOpacity = CHASE_DEFAULTS.glowOpacity,
   colors = CHASE_DEFAULTS.colors,
+  beam = false,
+  beamPeriod = BEAM_PERIOD_MS,
   playing,
   onAnimationEnd,
 }: {
@@ -760,6 +770,8 @@ function BorderChaseCard({
   borderRadius?: number;
   glowOpacity?: number;
   colors?: string[];
+  beam?: boolean;
+  beamPeriod?: number;
   playing: boolean;
   onAnimationEnd?: () => void;
 }) {
@@ -803,6 +815,68 @@ function BorderChaseCard({
     ].join(" ");
   }, [w, h, r, half, pw, ph]);
 
+  // Beam mode: table mapping rotation angle (clockwise about the card centre)
+  // to arc length along the path, so a constant-speed rotation can be
+  // expressed as stroke-dashoffset keyframes.
+  const beamTable = useMemo(() => {
+    if (!beam || w <= 0 || h <= 0 || perimeter <= 0) return null;
+    const arcLen = (Math.PI * r) / 2;
+    const arcAt = (cx: number, cy: number, startDeg: number) => (f: number): [number, number] => {
+      const a = ((startDeg + f * 90) * Math.PI) / 180;
+      return [cx + r * Math.cos(a), cy + r * Math.sin(a)];
+    };
+    type Seg = { len: number; at: (f: number) => [number, number] };
+    const segs: Seg[] = ([
+      { len: straightH, at: (f: number): [number, number] => [half + r + f * straightH, half] },
+      { len: arcLen, at: arcAt(half + pw - r, half + r, -90) },
+      { len: straightV, at: (f: number): [number, number] => [half + pw, half + r + f * straightV] },
+      { len: arcLen, at: arcAt(half + pw - r, half + ph - r, 0) },
+      { len: straightH, at: (f: number): [number, number] => [half + pw - r - f * straightH, half + ph] },
+      { len: arcLen, at: arcAt(half + r, half + ph - r, 90) },
+      { len: straightV, at: (f: number): [number, number] => [half, half + ph - r - f * straightV] },
+      { len: arcLen, at: arcAt(half + r, half + r, 180) },
+    ] as Seg[]).filter((seg) => seg.len > 0);
+
+    const cx = w / 2;
+    const cy = h / 2;
+    const N = 720;
+    const sArr: number[] = [];
+    const aArr: number[] = [];
+    let prev = 0;
+    for (let k = 0; k <= N; k++) {
+      let rem = (k / N) * perimeter;
+      let pt: [number, number] = segs[0].at(0);
+      for (let si = 0; si < segs.length; si++) {
+        const seg = segs[si];
+        if (rem <= seg.len || si === segs.length - 1) {
+          pt = seg.at(Math.min(1, Math.max(0, rem / seg.len)));
+          break;
+        }
+        rem -= seg.len;
+      }
+      let a = (Math.atan2(pt[0] - cx, -(pt[1] - cy)) * 180) / Math.PI; // 0° = up, clockwise
+      if (k > 0) while (a < prev - 180) a += 360;
+      prev = a;
+      sArr.push((k / N) * perimeter);
+      aArr.push(a);
+    }
+    const a0 = aArr[0];
+    const aEnd = aArr[N];
+    const sAtAngle = (deg: number) => {
+      const t = a0 + ((deg - a0) / 360) * (aEnd - a0);
+      let lo = 0;
+      let hi = N;
+      while (hi - lo > 1) {
+        const mid = (lo + hi) >> 1;
+        if (aArr[mid] <= t) lo = mid;
+        else hi = mid;
+      }
+      const span = aArr[hi] - aArr[lo] || 1;
+      return sArr[lo] + ((t - aArr[lo]) / span) * (sArr[hi] - sArr[lo]);
+    };
+    return { a0, sAtAngle };
+  }, [beam, w, h, r, half, pw, ph, straightH, straightV, perimeter]);
+
   // Build gradient stops from colors
   const gradientStops = colors.map((c, i) => ({
     offset: `${(i / (colors.length - 1)) * 100}%`,
@@ -842,12 +916,13 @@ function BorderChaseCard({
     if (playing && perimeter > 0) {
       animId.current += 1;
       setAnimKey(animId.current);
+      if (beam) return; // beam loops until stopped
       const timer = setTimeout(() => {
         onAnimationEnd?.();
       }, duration + 300);
       return () => clearTimeout(timer);
     }
-  }, [playing, perimeter, duration, onAnimationEnd]);
+  }, [playing, perimeter, duration, onAnimationEnd, beam]);
 
   const totalTravel = perimeter * laps;
 
@@ -867,6 +942,24 @@ function BorderChaseCard({
       }
     `;
     fadeLayers.forEach((layer, i) => {
+      if (beam && beamTable) {
+        // Constant angular speed: sample the rotation and convert each angle
+        // to an arc-length position; the beam stays centred on that angle.
+        let frames = "";
+        for (let j = 0; j <= BEAM_KEYFRAME_STEPS; j++) {
+          const uniform = (perimeter * j) / BEAM_KEYFRAME_STEPS;
+          const rotational = beamTable.sAtAngle(beamTable.a0 + (360 * j) / BEAM_KEYFRAME_STEPS);
+          const centre = uniform + BEAM_SPEED_VARIATION * (rotational - uniform);
+          const start = centre - segmentLength / 2 + layer.offset;
+          frames += `${((j / BEAM_KEYFRAME_STEPS) * 100).toFixed(3)}% { stroke-dashoffset: ${(-start).toFixed(2)}; }\n`;
+        }
+        css += `
+        @keyframes chase-fade-layer-${animKey}-${i} {
+          ${frames}
+        }
+      `;
+        return;
+      }
       css += `
         @keyframes chase-fade-layer-${animKey}-${i} {
           from { stroke-dashoffset: ${-layer.offset}; }
@@ -875,10 +968,12 @@ function BorderChaseCard({
       `;
     });
     return css;
-  }, [playing, animKey, totalTravel, perimeter, fadeLayers]);
+  }, [playing, animKey, totalTravel, perimeter, fadeLayers, beam, beamTable, segmentLength]);
 
   const containerAnimStyle: React.CSSProperties = playing && animKey > 0
-    ? { animation: `chase-fade-in-${animKey} ${duration + 300}ms ease forwards` }
+    ? beam
+      ? { opacity: 1 }
+      : { animation: `chase-fade-in-${animKey} ${duration + 300}ms ease forwards` }
     : { opacity: 0 };
 
   return (
@@ -923,7 +1018,11 @@ function BorderChaseCard({
                     strokeDasharray={`${layer.len} ${Math.max(1, perimeter - layer.len)}`}
                     style={
                       playing && animKey > 0
-                        ? { animation: `chase-fade-layer-${animKey}-${i} ${duration}ms linear forwards` }
+                        ? {
+                            animation: beam
+                              ? `chase-fade-layer-${animKey}-${i} ${beamPeriod}ms linear infinite`
+                              : `chase-fade-layer-${animKey}-${i} ${duration}ms linear forwards`,
+                          }
                         : { strokeDashoffset: -layer.offset }
                     }
                   />
@@ -997,17 +1096,18 @@ function BorderChaseDemo() {
   const [borderRadius, setBorderRadius] = useState(CHASE_DEFAULTS.borderRadius);
   const [glowOpacity, setGlowOpacity] = useState(CHASE_DEFAULTS.glowOpacity);
   const [paletteKey, setPaletteKey] = useState<ChasePaletteKey>("default");
+  const [beam, setBeam] = useState(false);
   const [playing, setPlaying] = useState(false);
   const activePalette = CHASE_PALETTES[paletteKey];
 
   const handlePlay = useCallback(() => setPlaying(true), []);
   const handleEnd = useCallback(() => setPlaying(false), []);
 
-  const controls: { label: string; value: number; set: (v: number) => void; min: number; max: number; step: number; unit?: string }[] = [
+  const controls: { label: string; value: number; set: (v: number) => void; min: number; max: number; step: number; unit?: string; disabled?: boolean }[] = [
     { label: "Stroke Width", value: strokeWidth, set: setStrokeWidth, min: 1, max: 8, step: 0.5, unit: "px" },
     { label: "Chase Line Length", value: segmentPercent, set: setSegmentPercent, min: 10, max: 80, step: 1, unit: "%" },
-    { label: "Chase Laps", value: laps, set: setLaps, min: 0.5, max: 4, step: 0.25 },
-    { label: "Chase Line Speed", value: speed, set: setSpeed, min: 1, max: 5, step: 0.25, unit: "s" },
+    { label: "Chase Laps", value: laps, set: setLaps, min: 0.5, max: 4, step: 0.25, disabled: beam },
+    { label: "Chase Line Speed", value: speed, set: setSpeed, min: 1, max: 5, step: 0.25, unit: "s", disabled: beam },
     { label: "Start / End Fade Steps", value: fadeSteps, set: setFadeSteps, min: 2, max: 30, step: 1 },
     { label: "Start / End Line Fade Distance", value: fadePx, set: setFadePx, min: 8, max: 120, step: 4, unit: "px" },
     { label: "Inner Glow Depth", value: glowDepth, set: setGlowDepth, min: 4, max: 48, step: 2, unit: "px" },
@@ -1097,6 +1197,7 @@ function BorderChaseDemo() {
               borderRadius={borderRadius}
               glowOpacity={glowOpacity}
               colors={[...activePalette.colors]}
+              beam={beam}
               playing={playing}
               onAnimationEnd={handleEnd}
             />
@@ -1105,7 +1206,11 @@ function BorderChaseDemo() {
           {/* Controls */}
           <div className="flex-1 grid grid-cols-2 gap-x-6 gap-y-4 min-w-[400px]">
             {controls.map((c) => (
-              <div key={c.label} className="flex flex-col gap-1.5">
+              <div
+                key={c.label}
+                className={cn("flex flex-col gap-1.5", c.disabled && "opacity-50")}
+                title={c.disabled ? "Fixed in border beam mode (2.23s per lap, loops)" : undefined}
+              >
                 <div className="flex items-center justify-between">
                   <Label className="text-xs">{c.label}</Label>
                   <span className="font-mono text-[11px] text-muted-foreground">
@@ -1119,7 +1224,8 @@ function BorderChaseDemo() {
                   step={c.step}
                   value={c.value}
                   onChange={(e) => c.set(Number(e.target.value))}
-                  className="w-full h-1.5 bg-muted rounded-full appearance-none cursor-pointer accent-clay"
+                  disabled={c.disabled}
+                  className="w-full h-1.5 bg-muted rounded-full appearance-none cursor-pointer accent-clay disabled:cursor-not-allowed"
                 />
               </div>
             ))}
@@ -1127,8 +1233,12 @@ function BorderChaseDemo() {
         </div>
 
         <div className="flex gap-3">
-          <Button size="sm" onClick={handlePlay} disabled={playing}>
-            {playing ? "Playing…" : "Play"}
+          <Button
+            size="sm"
+            onClick={beam && playing ? handleEnd : handlePlay}
+            disabled={playing && !beam}
+          >
+            {playing ? (beam ? "Stop" : "Playing…") : "Play"}
           </Button>
           <Button
             variant="outline"
@@ -1148,6 +1258,19 @@ function BorderChaseDemo() {
           >
             Reset
           </Button>
+          <div className="flex items-center gap-2 ml-2">
+            <Checkbox
+              id="chase-beam"
+              checked={beam}
+              onCheckedChange={(v) => {
+                setBeam(v === true);
+                setPlaying(false);
+              }}
+            />
+            <Label htmlFor="chase-beam" className="text-sm cursor-pointer">
+              Border beam animation
+            </Label>
+          </div>
         </div>
       </div>
     </ComponentBlock>
