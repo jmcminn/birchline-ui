@@ -148,6 +148,8 @@ export function buildRows(
 // anchored on the newest day.
 export const DAILY_GRID_MAX_POINTS = 56
 export const MIN_LABEL_SPACING_PX = 64
+/** Below this many pixels between gridlines (narrow screens) they thin out to the label positions. */
+export const MIN_GRID_SPACING_PX = 12
 export const Y_AXIS_AND_MARGIN_PX = 70
 
 /** Indices counted back from the last item, returned oldest first. */
@@ -164,10 +166,11 @@ export function gridAndLabelKeys(keys: string[], chartWidth: number): { gridKeys
   const pxPerPoint = n > 1 ? plotWidth / (n - 1) : plotWidth
   // Labels sit on the same anchored grid, spaced so they never overlap.
   const labelStep = gridStep * Math.max(1, Math.ceil(MIN_LABEL_SPACING_PX / (pxPerPoint * gridStep)))
-  return {
-    gridKeys: anchoredIndices(n, gridStep).map((i) => keys[i]),
-    labelTicks: anchoredIndices(n, labelStep).map((i) => keys[i]),
-  }
+  const labelTicks = anchoredIndices(n, labelStep).map((i) => keys[i])
+  // On narrow screens a line per day turns into a dense hatch, so draw them at the labels only.
+  const gridKeys =
+    pxPerPoint * gridStep < MIN_GRID_SPACING_PX ? labelTicks : anchoredIndices(n, gridStep).map((i) => keys[i])
+  return { gridKeys, labelTicks }
 }
 
 const SHORT_DATE: Intl.DateTimeFormatOptions = { month: "short", day: "numeric" }

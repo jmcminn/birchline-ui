@@ -386,7 +386,6 @@ function LineChart({
                         activeDot={false}
                         tooltipType="none"
                         legendType="none"
-                        isAnimationActive={false}
                       />
                     )),
                     ...series.map((s) => (
@@ -417,7 +416,6 @@ function LineChart({
                       activeDot={false}
                       tooltipType="none"
                       legendType="none"
-                      isAnimationActive={false}
                     />,
                     <Line
                       key="line-value"

@@ -153,6 +153,16 @@ describe("gridlines and labels", () => {
     for (const g of gaps) expect(g * pxPerPoint).toBeGreaterThanOrEqual(64)
   })
 
+  it("thins gridlines to the label positions on narrow screens", () => {
+    const keys = visibleWindow(sample(), 4).map((p) => p.key)
+    const narrow = gridAndLabelKeys(keys, 360)
+    expect(narrow.gridKeys).toEqual(narrow.labelTicks)
+    expect(narrow.gridKeys.length).toBeLessThan(keys.length)
+    expect(narrow.gridKeys[narrow.gridKeys.length - 1]).toBe(keys[keys.length - 1])
+    // With room, every day keeps its line.
+    expect(gridAndLabelKeys(keys, 1400).gridKeys).toHaveLength(keys.length)
+  })
+
   it("labels every day when there is room", () => {
     const keys = visibleWindow(sample(), 1).map((p) => p.key)
     expect(gridAndLabelKeys(keys, 1400).labelTicks).toEqual(keys)
