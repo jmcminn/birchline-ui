@@ -308,6 +308,62 @@
       ]
     },
     {
+      "name": "line-chart",
+      "type": "registry:ui",
+      "title": "Line Chart",
+      "description": "Area-filled line chart with cumulative/daily modes, an optional per-series breakdown, week-based zoom and a dark hover card. Built on Recharts 3. Note that Recharts also exports its own LineChart, so alias one of them if you import both.",
+      "dependencies": [
+        "lucide-react@1.14.0",
+        "react-is@19.3.1",
+        "recharts@3.10.1"
+      ],
+      "registryDependencies": [
+        "@birchline/tokens",
+        "@birchline/utils",
+        "@birchline/button",
+        "@birchline/card",
+        "@birchline/checkbox",
+        "@birchline/label",
+        "@birchline/line-chart-data"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/line-chart.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/line-chart.tsx"
+        }
+      ]
+    },
+    {
+      "name": "line-chart-data",
+      "type": "registry:lib",
+      "title": "Line chart data helpers",
+      "description": "Pure helpers behind LineChart: zoom window, cumulative totals, per-series breakdown, day-over-day change and gridline anchoring. No React or Recharts.",
+      "files": [
+        {
+          "path": "src/lib/line-chart-data.ts",
+          "type": "registry:lib",
+          "target": "lib/line-chart-data.ts"
+        }
+      ]
+    },
+    {
+      "name": "line-chart-sample-data",
+      "type": "registry:lib",
+      "title": "Line chart sample data",
+      "description": "Seeded, synthetic daily event counts split by platform (8 weeks) for demos and tests of LineChart. Not real analytics data.",
+      "registryDependencies": [
+        "@birchline/line-chart-data"
+      ],
+      "files": [
+        {
+          "path": "src/lib/line-chart-sample-data.ts",
+          "type": "registry:lib",
+          "target": "lib/line-chart-sample-data.ts"
+        }
+      ]
+    },
+    {
       "name": "navigation-menu",
       "type": "registry:ui",
       "title": "NavigationMenu",

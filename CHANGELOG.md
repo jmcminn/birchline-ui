@@ -24,6 +24,14 @@ the contract too, but the **semantic** tier is what components should consume.
 
 ### Added
 
+- **`line-chart`** — an area-filled line chart ported from the Range Analytics
+  events chart, built on Recharts 3. Cumulative / daily modes, an optional
+  per-series breakdown ("By Platform"), week-based zoom with a range toast,
+  evenly anchored gridlines and a dark hover card with per-series values and
+  day-over-day change. Ships with `line-chart-data` (the pure data helpers) and
+  `line-chart-sample-data` (seeded, synthetic demo data). Adds four semantic
+  **`chart-1` … `chart-5`** series tokens (light and dark). Recharts also exports
+  a `LineChart`, so alias one of the two if you import both.
 - **Public distribution** — the shadcn registry is now published to GitHub Pages
   (auto-rebuilt on every push to `main`) and installable at
   `https://jmcminn.github.io/birchline-ui/r/{name}.json`. Verified end-to-end:

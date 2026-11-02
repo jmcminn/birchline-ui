@@ -110,6 +110,14 @@ export const semantic = {
 
   skeleton: "warm-100",
   "skeleton-highlight": "white",
+
+  // Data-viz series colours. chart-1 is the brand line; 2–5 are the status/accent
+  // hues in a fixed order so multi-series charts stay consistent.
+  "chart-1": "clay",
+  "chart-2": "blue-500",
+  "chart-3": "green-500",
+  "chart-4": "bronze-500",
+  "chart-5": "plum",
 }
 
 /**
@@ -150,6 +158,9 @@ export const modes = {
     "danger-hover": "red-hover-dark",
     info: "blue-400",
     highlight: "highlight-dark",
+    "chart-2": "blue-400",
+    "chart-3": "green-400",
+    "chart-4": "bronze-400",
     "gray-300": "warm-680",
     "gray-500": "warm-500",
   },

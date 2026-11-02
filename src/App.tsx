@@ -67,6 +67,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar"
 import { Progress } from "@/components/ui/progress"
 import { Skeleton } from "@/components/ui/skeleton"
+import { LineChart, type LineChartSeries } from "@/components/ui/line-chart"
+import { createSampleEvents } from "@/lib/line-chart-sample-data"
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, navigationMenuTriggerStyle } from "@/components/ui/navigation-menu"
 import { Toggle } from "@/components/ui/toggle"
@@ -74,7 +76,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
 import { Sidebar, SidebarHeader, SidebarContent, SidebarGroup, SidebarGroupLabel, SidebarItem, SidebarFooter } from "@/components/ui/sidebar"
 import { UserSelector, type User } from "@/components/ui/user-selector"
-import { MoreHorizontal, Plus, Search, Trash2, Copy, Pencil, ArrowRight, Info, PanelRight, Bell, CalendarDays, Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, LayoutGrid, List, Home, Settings, FolderOpen, Inbox, FileText, BarChart3, AlertCircle, CheckCircle, AlertTriangle, InfoIcon, Terminal, ChevronRight, Check, Palette, ArrowUpDown, ArrowUp, ArrowDown, X, GripVertical, Sun, Moon } from "lucide-react"
+import { Apple, Globe, Smartphone, MoreHorizontal, Plus, Search, Trash2, Copy, Pencil, ArrowRight, Info, PanelRight, Bell, CalendarDays, Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, LayoutGrid, List, Home, Settings, FolderOpen, Inbox, FileText, BarChart3, AlertCircle, CheckCircle, AlertTriangle, InfoIcon, Terminal, ChevronRight, Check, Palette, ArrowUpDown, ArrowUp, ArrowDown, X, GripVertical, Sun, Moon } from "lucide-react"
 import {
   useTable,
   tableFeatures,
@@ -704,6 +706,14 @@ const sampleUsers: User[] = [
   { id: "u17", name: "Hannah Berg", email: "hannah@company.com", initials: "HB", role: "Collaborator" },
   { id: "u18", name: "Victor Chang", email: "victor@vendor.com", initials: "VC", role: "Guest" },
   { id: "u19", name: "Priya Sharma", email: "priya@company.com", initials: "PS", role: "Admin" },
+]
+
+// LineChart demo: 8 weeks of synthetic, seeded events split by platform.
+const lineChartSample = createSampleEvents()
+const platformSeries: LineChartSeries[] = [
+  { key: "web", label: "Web", color: "var(--color-chart-2)", tooltipColor: "var(--color-blue-400)", icon: <Globe /> },
+  { key: "ios", label: "iOS", color: "var(--color-chart-3)", tooltipColor: "var(--color-green-400)", icon: <Apple /> },
+  { key: "android", label: "Android", color: "var(--color-chart-4)", tooltipColor: "var(--color-bronze-400)", icon: <Smartphone /> },
 ]
 
 const recentUserIds = ["u1", "u2", "u3", "u4", "u5"]
@@ -2246,6 +2256,17 @@ function App() {
                   {table.getFilteredRowModel().rows.length} of {tasks.length} task(s)
                 </span>
               </div>
+            </div>
+          </ComponentBlock>
+
+          <ComponentBlock name="LineChart" align="start">
+            <div className="w-full">
+              <LineChart
+                data={lineChartSample}
+                title="Events Over Time"
+                unit="events"
+                series={platformSeries}
+              />
             </div>
           </ComponentBlock>
 

@@ -292,6 +292,26 @@
     "$type": "color",
     "$value": "{white}"
   },
+  "chart-1": {
+    "$type": "color",
+    "$value": "{clay}"
+  },
+  "chart-2": {
+    "$type": "color",
+    "$value": "{blue-500}"
+  },
+  "chart-3": {
+    "$type": "color",
+    "$value": "{green-500}"
+  },
+  "chart-4": {
+    "$type": "color",
+    "$value": "{bronze-500}"
+  },
+  "chart-5": {
+    "$type": "color",
+    "$value": "{plum}"
+  },
   "radius": {
     "xs": {
       "$type": "dimension",
@@ -483,6 +503,18 @@
         "highlight": {
           "$type": "color",
           "$value": "{highlight-dark}"
+        },
+        "chart-2": {
+          "$type": "color",
+          "$value": "{blue-400}"
+        },
+        "chart-3": {
+          "$type": "color",
+          "$value": "{green-400}"
+        },
+        "chart-4": {
+          "$type": "color",
+          "$value": "{bronze-400}"
         },
         "gray-300": {
           "$type": "color",

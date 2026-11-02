@@ -84,6 +84,11 @@
   --color-ring: var(--color-clay);
   --color-skeleton: var(--color-warm-100);
   --color-skeleton-highlight: var(--color-white);
+  --color-chart-1: var(--color-clay);
+  --color-chart-2: var(--color-blue-500);
+  --color-chart-3: var(--color-green-500);
+  --color-chart-4: var(--color-bronze-500);
+  --color-chart-5: var(--color-plum);
 
   /* ── Typography ── */
   --font-serif: ui-serif, Georgia, serif;
@@ -147,6 +152,9 @@
   --color-danger-hover: var(--color-red-hover-dark);
   --color-info: var(--color-blue-400);
   --color-highlight: var(--color-highlight-dark);
+  --color-chart-2: var(--color-blue-400);
+  --color-chart-3: var(--color-green-400);
+  --color-chart-4: var(--color-bronze-400);
   --color-gray-300: var(--color-warm-680);
   --color-gray-500: var(--color-warm-500);
 }
