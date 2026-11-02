@@ -29,6 +29,7 @@ Internal dependencies resolve automatically (e.g. `user-selector` pulls
 | DropdownMenu | Contextual action menu (supports submenus) | `dropdown-menu` |
 | Input | Single-line text field (with clear button) | `input` |
 | Label | Accessible form label | `label` |
+| LineChart | Area-filled line chart: cumulative/daily, per-series breakdown, week zoom, hover card (Recharts) | `line-chart` |
 | NavigationMenu | Top-level site navigation with panels | `navigation-menu` |
 | Popover | Free-form floating content anchored to a trigger | `popover` |
 | Progress | Determinate progress bar | `progress` |
