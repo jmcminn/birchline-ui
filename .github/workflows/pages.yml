@@ -1,8 +1,8 @@
-name: Deploy registry to Pages
+name: Deploy demo and registry to Pages
 
-# Publishes the shadcn registry (public/r/*.json) + token artifacts to GitHub
-# Pages so consumers can `npx shadcn add @birchline/*`. Rebuilds on every push
-# to main, so the served registry always matches the source.
+# Publishes the demo app (site root) and the shadcn registry (/r/*.json) to
+# GitHub Pages, so consumers can `npx shadcn add @birchline/*` and anyone can
+# open the live demo. Rebuilds on every push to main.
 
 on:
   push:
@@ -31,10 +31,13 @@ jobs:
       - run: npm ci
       - run: npm run registry:build # regenerates tokens + registry JSON
       - run: touch public/.nojekyll # serve JSON as-is, no Jekyll processing
+      - run: npm run build # demo app -> dist/ (public/ incl. r/ is copied in)
+        env:
+          VITE_BASE: /birchline-ui/
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: public
+          path: dist
 
   deploy:
     needs: build
