@@ -3,6 +3,7 @@ import { format } from "date-fns"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import { TokenInspector } from "@/inspector/token-inspector"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
@@ -76,7 +77,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
 import { Sidebar, SidebarHeader, SidebarContent, SidebarGroup, SidebarGroupLabel, SidebarItem, SidebarFooter } from "@/components/ui/sidebar"
 import { UserSelector, type User } from "@/components/ui/user-selector"
-import { Apple, Globe, Smartphone, MoreHorizontal, Plus, Search, Trash2, Copy, Pencil, ArrowRight, Info, PanelRight, Bell, CalendarDays, Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, LayoutGrid, List, Home, Settings, FolderOpen, Inbox, FileText, BarChart3, AlertCircle, CheckCircle, AlertTriangle, InfoIcon, Terminal, ChevronRight, Check, Palette, ArrowUpDown, ArrowUp, ArrowDown, X, GripVertical, Sun, Moon } from "lucide-react"
+import { Apple, Globe, Smartphone, MoreHorizontal, Plus, Search, Trash2, Copy, Pencil, ArrowRight, Info, PanelRight, Bell, CalendarDays, Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, LayoutGrid, List, Home, Settings, FolderOpen, Inbox, FileText, BarChart3, AlertCircle, CheckCircle, AlertTriangle, InfoIcon, Terminal, ChevronRight, Check, Palette, ArrowUpDown, ArrowUp, ArrowDown, X, GripVertical, Sun, Moon, ScanSearch } from "lucide-react"
 import {
   useTable,
   tableFeatures,
@@ -1313,6 +1314,10 @@ function App() {
     return () => window.removeEventListener("scroll", onScroll)
   }, [])
 
+  // Token inspector: click a component to see the colour/type tokens per state.
+  const [inspecting, setInspecting] = useState(false)
+  const exitInspect = useCallback(() => setInspecting(false), [])
+
   const [checked1, setChecked1] = useState(false)
   const [checked2, setChecked2] = useState(true)
   const [switchOn, setSwitchOn] = useState(true)
@@ -1449,6 +1454,7 @@ function App() {
     <TooltipProvider>
       <div className="max-w-[1280px] mx-auto px-6 py-14">
         <Toaster />
+        <TokenInspector active={inspecting} onExit={exitInspect} />
 
         <header className="mb-12">
           <div className="flex items-start justify-between gap-4 mb-1.5">
@@ -1456,6 +1462,7 @@ function App() {
               Birchline UI
             </h1>
             <div
+              data-inspector-ui
               className={cn(
                 "flex items-center gap-2 shrink-0 transition-[background-color,box-shadow] duration-200",
                 controlsFloating &&
@@ -1468,6 +1475,17 @@ function App() {
                   <TabsTrigger value="default">Muted</TabsTrigger>
                 </TabsList>
               </Tabs>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setInspecting((v) => !v)}
+                aria-pressed={inspecting}
+                aria-label={inspecting ? "Exit token inspector" : "Inspect component tokens"}
+                title={inspecting ? "Exit token inspector (Esc)" : "Inspect component tokens"}
+                className={cn(inspecting && "bg-accent border-gray-500")}
+              >
+                <ScanSearch className="h-4 w-4" />
+              </Button>
               <Button
                 variant="outline"
                 size="icon"
