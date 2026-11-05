@@ -26,7 +26,7 @@ const emitScale = (prefix, obj) =>
 
 const SHIMMER = `/* ── Skeleton shimmer ──
    A highlight band sweeps across the base fill. Both colours come from the
-   --color-skeleton* tokens, so it adapts to palette + mode automatically. The
+   --color-skeleton* tokens, so it adapts to light/dark mode automatically. The
    band is an ::after overlay clipped to the element's rounded shape. */
 .bl-skeleton {
   position: relative;
@@ -89,11 +89,6 @@ ${emitScale("shadow", scales.shadow)}
 ${emitScale("spacing", scales.spacing)}
 }
 
-/* ── Alternative "Bright" scheme — overrides accent-hue primitives only. ── */
-:root[data-theme="bright"] {
-${emitColors(modes.bright)}
-}
-
 /* ── Dark mode — remaps semantic + shifting aliases to dark primitives. ── */
 :root[data-mode="dark"] {
 ${emitColors(modes.dark)}
@@ -122,7 +117,6 @@ const dtcg = {
   $extensions: {
     "com.birchline.shadow": scales.shadow,
     "com.birchline.modes": {
-      bright: mapColors(modes.bright),
       dark: mapColors(modes.dark),
     },
   },

@@ -37,7 +37,7 @@ function useLayoutTick(enabled: boolean) {
     window.addEventListener("scroll", bump, true)
     window.addEventListener("resize", bump)
     const obs = new MutationObserver(bump)
-    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-mode"] })
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-mode"] })
     return () => {
       cancelAnimationFrame(frame)
       window.removeEventListener("scroll", bump, true)

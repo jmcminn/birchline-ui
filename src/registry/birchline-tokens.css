@@ -28,20 +28,20 @@
   --color-warm-975: #141413;
   --color-white: #FFFFFF;
   --color-oat: #E3DACC;
-  --color-clay: #D97757;
-  --color-clay-hover: #C7684C;
-  --color-green-500: #5F7348;
+  --color-clay: #D05E38;
+  --color-clay-hover: #B75331;
+  --color-green-500: #658E3B;
   --color-green-400: #8FB06B;
-  --color-bronze-500: #916426;
+  --color-bronze-500: #C2822A;
   --color-bronze-400: #D69C4E;
-  --color-red-500: #B04A4A;
+  --color-red-500: #C9413F;
   --color-red-400: #C9413F;
-  --color-red-hover: #9A3F3F;
+  --color-red-hover: #B13937;
   --color-red-hover-dark: #B13937;
-  --color-blue-500: #526E92;
+  --color-blue-500: #608AD5;
   --color-blue-400: #7FA3D0;
-  --color-plum: #7B6B8A;
-  --color-teal: #5B8E8A;
+  --color-plum: #9B67B6;
+  --color-teal: #5DB2AC;
   --color-light-yellow: #F5E6B8;
   --color-highlight-dark: #4A3C18;
 
@@ -117,17 +117,6 @@
   --spacing-sp-8: 64px;
 }
 
-/* ── Alternative "Bright" scheme — overrides accent-hue primitives only. ── */
-:root[data-theme="bright"] {
-  --color-clay: #D05E38;
-  --color-green-500: #658E3B;
-  --color-bronze-500: #C2822A;
-  --color-red-500: #C9413F;
-  --color-blue-500: #608AD5;
-  --color-plum: #9B67B6;
-  --color-teal: #5DB2AC;
-}
-
 /* ── Dark mode — remaps semantic + shifting aliases to dark primitives. ── */
 :root[data-mode="dark"] {
   --color-background: var(--color-warm-950);
@@ -161,7 +150,7 @@
 
 /* ── Skeleton shimmer ──
    A highlight band sweeps across the base fill. Both colours come from the
-   --color-skeleton* tokens, so it adapts to palette + mode automatically. The
+   --color-skeleton* tokens, so it adapts to light/dark mode automatically. The
    band is an ::after overlay clipped to the element's rounded shape. */
 .bl-skeleton {
   position: relative;

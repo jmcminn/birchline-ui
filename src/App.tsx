@@ -166,7 +166,7 @@ function ColorSwatch({ token, semantic, noBorder }: { token: string; semantic?: 
     const read = () => setHex(getComputedStyle(document.documentElement).getPropertyValue(cssVar).trim().toUpperCase())
     read()
     const obs = new MutationObserver(read)
-    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-mode"] })
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-mode"] })
     return () => obs.disconnect()
   }, [cssVar])
   return (
@@ -470,19 +470,19 @@ function DatePickerTasksDemo({ showCurrentYear }: { showCurrentYear: boolean }) 
 const birchlineColors = [
   { name: "Ivory", hex: "#FAF9F5", token: "--color-ivory" },
   { name: "White", hex: "#FFFFFF", token: "--color-white" },
-  { name: "Clay", hex: "#D97757", token: "--color-clay" },
+  { name: "Clay", hex: "#D05E38", token: "--color-clay" },
   { name: "Ink", hex: "#141413", token: "--color-ink" },
   { name: "Oat", hex: "#E3DACC", token: "--color-oat" },
   { name: "Gray 100", hex: "#F0EEE6", token: "--color-gray-100" },
   { name: "Gray 300", hex: "#D1CFC5", token: "--color-gray-300" },
   { name: "Gray 500", hex: "#726F66", token: "--color-gray-500" },
   { name: "Gray 700", hex: "#3D3D3A", token: "--color-gray-700" },
-  { name: "Green", hex: "#5F7348", token: "--color-green" },
-  { name: "Bronze", hex: "#916426", token: "--color-bronze" },
-  { name: "Red", hex: "#B04A4A", token: "--color-red" },
-  { name: "Blue", hex: "#526E92", token: "--color-blue" },
-  { name: "Plum", hex: "#7B6B8A", token: "--color-plum" },
-  { name: "Teal", hex: "#5B8E8A", token: "--color-teal" },
+  { name: "Green", hex: "#658E3B", token: "--color-green" },
+  { name: "Bronze", hex: "#C2822A", token: "--color-bronze" },
+  { name: "Red", hex: "#C9413F", token: "--color-red" },
+  { name: "Blue", hex: "#608AD5", token: "--color-blue" },
+  { name: "Plum", hex: "#9B67B6", token: "--color-plum" },
+  { name: "Teal", hex: "#5DB2AC", token: "--color-teal" },
   { name: "Light Yellow", hex: "#F5E6B8", token: "--color-light-yellow" },
 ]
 
@@ -515,7 +515,7 @@ function useResolvedHex(value: string) {
       setResolved(getComputedStyle(document.documentElement).getPropertyValue(varName).trim() || value)
     read()
     const obs = new MutationObserver(read)
-    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-mode"] })
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-mode"] })
     return () => obs.disconnect()
   }, [isVar, value])
   return isVar ? resolved : value
@@ -526,12 +526,12 @@ function readVar(token: string) {
   return getComputedStyle(document.documentElement).getPropertyValue(token).trim()
 }
 
-// Bumps whenever the palette/mode changes so consumers re-read live token values.
+// Bumps whenever the mode changes so consumers re-read live token values.
 function useThemeVersion() {
   const [v, setV] = useState(0)
   useEffect(() => {
     const obs = new MutationObserver(() => setV((x) => x + 1))
-    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-mode"] })
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-mode"] })
     return () => obs.disconnect()
   }, [])
   return v
@@ -1072,12 +1072,12 @@ const CHASE_PALETTES = {
   },
   birchline: {
     label: "Birchline UI",
-    colors: ["#D97757", "#788C5D", "#5B8E8A", "#7B6B8A", "#D97757"],
+    colors: ["#D05E38", "#788C5D", "#5DB2AC", "#9B67B6", "#D05E38"],
     swatches: [
-      { name: "Clay", hex: "#D97757" },
+      { name: "Clay", hex: "#D05E38" },
       { name: "Green", hex: "#788C5D" },
-      { name: "Teal", hex: "#5B8E8A" },
-      { name: "Plum", hex: "#7B6B8A" },
+      { name: "Teal", hex: "#5DB2AC" },
+      { name: "Plum", hex: "#9B67B6" },
     ],
   },
 } as const;
@@ -1280,30 +1280,24 @@ function BorderChaseDemo() {
 
 /* ── Main App ──────────────────────────────────────────────────────── */
 
-type Palette = "default" | "bright"
 type Mode = "light" | "dark"
 
 function App() {
-  // Two independent theme axes: palette (data-theme) × mode (data-mode).
-  const [palette, setPalette] = useState<Palette>(
-    () => (localStorage.getItem("birchline-palette") as Palette) || "bright"
-  )
+  // Theme: light / dark mode (data-mode). The accent palette is fixed (Bright).
   const [mode, setMode] = useState<Mode>(
     () => (localStorage.getItem("birchline-mode") as Mode) || "light"
   )
   useEffect(() => {
     const root = document.documentElement
     root.classList.add("theme-switching")
-    if (palette === "default") root.removeAttribute("data-theme")
-    else root.setAttribute("data-theme", palette)
     if (mode === "dark") root.setAttribute("data-mode", "dark")
     else root.removeAttribute("data-mode")
     // Flush the new colors with transitions suppressed, then re-enable them.
     void root.offsetWidth
     root.classList.remove("theme-switching")
-    localStorage.setItem("birchline-palette", palette)
     localStorage.setItem("birchline-mode", mode)
-  }, [palette, mode])
+    localStorage.removeItem("birchline-palette") // legacy key from the removed Bright/Muted toggle
+  }, [mode])
 
   // Theme controls sit inline at load, then lift into a fixed floating chip on scroll.
   const [controlsFloating, setControlsFloating] = useState(false)
@@ -1469,12 +1463,6 @@ function App() {
                   "fixed top-4 right-6 z-50 rounded-sm border border-border bg-background/80 px-2 py-1.5 shadow-lg backdrop-blur-md"
               )}
             >
-              <Tabs value={palette} onValueChange={(v) => setPalette(v as Palette)}>
-                <TabsList>
-                  <TabsTrigger value="bright">Bright</TabsTrigger>
-                  <TabsTrigger value="default">Muted</TabsTrigger>
-                </TabsList>
-              </Tabs>
               <Button
                 variant="outline"
                 size="icon"
