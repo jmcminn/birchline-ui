@@ -2061,7 +2061,7 @@ function App() {
           <ComponentBlock name="Avatar" gap="gap-16" align="end">
             <LabeledItem label="Image" subtitle="40px">
               <Avatar>
-                <AvatarImage src="https://api.dicebear.com/9.x/initials/svg?seed=JM&backgroundColor=D97757&textColor=ffffff" alt="JM" />
+                <AvatarImage src="https://api.dicebear.com/9.x/initials/svg?seed=JM&backgroundColor=D05E38&textColor=ffffff" alt="JM" />
                 <AvatarFallback>JM</AvatarFallback>
               </Avatar>
             </LabeledItem>
