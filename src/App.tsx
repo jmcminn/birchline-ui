@@ -1758,9 +1758,8 @@ function App() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="body">Body</SelectItem>
-                  <SelectItem value="small">Small</SelectItem>
-                  <SelectItem value="fine">Fine</SelectItem>
+                  <SelectItem value="body">Body (16px)</SelectItem>
+                  <SelectItem value="small">Small (14px)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
