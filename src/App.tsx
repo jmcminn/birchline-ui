@@ -499,6 +499,14 @@ const TYPE_SIZE_SPECS: Record<string, string> = {
   fine: "text-[13px] leading-[1.45]",
   caption: "text-xs leading-[1.4]",
 }
+// Field-size specs for the Input Size control (Input section). Height, text
+// token, line height, and horizontal padding per size. Applied via cn(), so
+// these override the Input component's built-in h-[38px]/px-3/text-sm.
+const INPUT_SIZE_SPECS: Record<string, string> = {
+  lg: "h-11 px-4 text-base leading-[24.8px]",
+  md: "h-[38px] px-3 text-sm leading-[20px]",
+  sm: "h-8 px-2 text-[13px] leading-[18px]",
+}
 const SEPARATOR_COLOR_DEFAULT = "var(--color-border)"
 const SEPARATOR_BG_DEFAULT = "var(--color-card)"
 
@@ -1321,6 +1329,7 @@ function App() {
   const [typeColor, setTypeColor] = useState(TYPE_COLOR_DEFAULT)
   const [showCurrentYear, setShowCurrentYear] = useState(true)
   const [textareaToken, setTextareaToken] = useState("body")
+  const [inputSize, setInputSize] = useState("md")
   const [badgeSize, setBadgeSize] = useState("fine")
   const [removableBadgeSize, setRemovableBadgeSize] = useState("fine")
   const [showMenuName, setShowMenuName] = useState(true)
@@ -1708,21 +1717,35 @@ function App() {
             </LabeledItem>
           </ComponentBlock>
 
-          <ComponentBlock name="Input" align="start">
+          <ComponentBlock name="Input" align="start" headerRight={
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">Input Size</span>
+              <Select value={inputSize} onValueChange={setInputSize}>
+                <SelectTrigger className="w-[140px] h-7 text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="lg">Large (lg)</SelectItem>
+                  <SelectItem value="md">Medium (md)</SelectItem>
+                  <SelectItem value="sm">Small (sm)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          }>
             <LabeledItem label="Placeholder">
               <div className="w-[260px]">
-                <Input placeholder="Search tasks…" />
+                <Input className={INPUT_SIZE_SPECS[inputSize]} placeholder="Search tasks…" />
               </div>
             </LabeledItem>
             <LabeledItem label="Filled">
               <div className="w-[260px]">
-                <Input defaultValue="Weekly planning" />
+                <Input className={INPUT_SIZE_SPECS[inputSize]} defaultValue="Weekly planning" />
               </div>
             </LabeledItem>
             <LabeledItem label="With icon">
               <div className="w-[260px] relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground z-10" />
-                <Input className="pl-9" placeholder="Search…" />
+                <Input className={cn(INPUT_SIZE_SPECS[inputSize], "pl-9")} placeholder="Search…" />
               </div>
             </LabeledItem>
           </ComponentBlock>
