@@ -2,16 +2,19 @@ import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
+// Variant border colors use the important modifier (`!`) because the global
+// `* { border-color: var(--color-border) }` reset in index.css is unlayered and
+// would otherwise override Tailwind's layered border-color utilities.
 const alertVariants = cva(
   "relative w-full rounded-md border border-border p-4 [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground",
   {
     variants: {
       variant: {
-        default: "bg-foreground/6 text-foreground",
-        destructive: "border-danger/50 text-danger [&>svg]:text-danger bg-danger/11",
-        success: "border-success/50 text-success [&>svg]:text-success bg-success/5",
-        warning: "border-warning/50 text-warning [&>svg]:text-warning bg-warning/5",
-        info: "border-info/50 text-info [&>svg]:text-info bg-info/9",
+        default: "border-foreground! bg-foreground/6 text-foreground",
+        destructive: "border-danger! text-danger [&>svg]:text-danger bg-danger/11",
+        success: "border-success! text-success [&>svg]:text-success bg-success/5",
+        warning: "border-warning! text-warning [&>svg]:text-warning bg-warning/5",
+        info: "border-info! text-info [&>svg]:text-info bg-info/9",
       },
     },
     defaultVariants: {
