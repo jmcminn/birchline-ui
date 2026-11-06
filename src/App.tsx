@@ -499,6 +499,22 @@ const TYPE_SIZE_SPECS: Record<string, string> = {
   fine: "text-[13px] leading-[1.45]",
   caption: "text-xs leading-[1.4]",
 }
+// Badge Type Size specs (Badge and Badge — Removable). Fixed whole-number heights
+// with the label centered; kept separate from TYPE_SIZE_SPECS, which the Textarea
+// also uses. Removable badges keep the component's 4px right padding for the ×
+// button (left padding only) and get a whole-pixel × box.
+const BADGE_SIZE_SPECS: Record<string, string> = {
+  body: "h-[28px] py-0 px-3 text-base leading-[1.55]",
+  small: "h-6 py-0 px-3 text-sm leading-[1.5]",
+  fine: "h-[22px] py-0 px-2.5 text-[13px] leading-[1.45]",
+  caption: "h-5 py-0 px-2.5 text-xs leading-[1.4]",
+}
+const BADGE_REMOVABLE_SPECS: Record<string, string> = {
+  body: "h-[28px] py-0 pl-3 text-base leading-[1.55] [&>button]:size-[18px]",
+  small: "h-6 py-0 pl-3 text-sm leading-[1.5] [&>button]:size-4",
+  fine: "h-[22px] py-0 pl-2.5 text-[13px] leading-[1.45] [&>button]:size-4",
+  caption: "h-5 py-0 pl-2.5 text-xs leading-[1.4] [&>button]:size-3.5",
+}
 // Field-size specs for the Input Size control (Input section). Height, text
 // token, line height, and horizontal padding per size. Applied via cn(), so
 // these override the Input component's built-in h-[38px]/px-3/text-sm.
@@ -2088,12 +2104,12 @@ function App() {
               </Select>
             </div>
           }>
-            <LabeledItem label="Default"><Badge variant="default" className={TYPE_SIZE_SPECS[badgeSize]}>Draft</Badge></LabeledItem>
-            <LabeledItem label="Accent"><Badge variant="accent" className={TYPE_SIZE_SPECS[badgeSize]}>In review</Badge></LabeledItem>
-            <LabeledItem label="Success"><Badge variant="success" className={TYPE_SIZE_SPECS[badgeSize]}>Done</Badge></LabeledItem>
-            <LabeledItem label="Warning"><Badge variant="warning" className={TYPE_SIZE_SPECS[badgeSize]}>Overdue</Badge></LabeledItem>
-            <LabeledItem label="Destructive"><Badge variant="destructive" className={TYPE_SIZE_SPECS[badgeSize]}>Failed</Badge></LabeledItem>
-            <LabeledItem label="Info"><Badge variant="info" className={TYPE_SIZE_SPECS[badgeSize]}>Info</Badge></LabeledItem>
+            <LabeledItem label="Default"><Badge variant="default" className={BADGE_SIZE_SPECS[badgeSize]}>Draft</Badge></LabeledItem>
+            <LabeledItem label="Accent"><Badge variant="accent" className={BADGE_SIZE_SPECS[badgeSize]}>In review</Badge></LabeledItem>
+            <LabeledItem label="Success"><Badge variant="success" className={BADGE_SIZE_SPECS[badgeSize]}>Done</Badge></LabeledItem>
+            <LabeledItem label="Warning"><Badge variant="warning" className={BADGE_SIZE_SPECS[badgeSize]}>Overdue</Badge></LabeledItem>
+            <LabeledItem label="Destructive"><Badge variant="destructive" className={BADGE_SIZE_SPECS[badgeSize]}>Failed</Badge></LabeledItem>
+            <LabeledItem label="Info"><Badge variant="info" className={BADGE_SIZE_SPECS[badgeSize]}>Info</Badge></LabeledItem>
           </ComponentBlock>
 
           <ComponentBlock name="Badge — Removable" headerRight={
@@ -2112,12 +2128,12 @@ function App() {
               </Select>
             </div>
           }>
-            <LabeledItem label="Default"><Badge variant="default" className={TYPE_SIZE_SPECS[removableBadgeSize]} onRemove={() => {}} removeLabel="Remove Draft">Draft</Badge></LabeledItem>
-            <LabeledItem label="Accent"><Badge variant="accent" className={TYPE_SIZE_SPECS[removableBadgeSize]} onRemove={() => {}} removeLabel="Remove In review">In review</Badge></LabeledItem>
-            <LabeledItem label="Success"><Badge variant="success" className={TYPE_SIZE_SPECS[removableBadgeSize]} onRemove={() => {}} removeLabel="Remove Done">Done</Badge></LabeledItem>
-            <LabeledItem label="Warning"><Badge variant="warning" className={TYPE_SIZE_SPECS[removableBadgeSize]} onRemove={() => {}} removeLabel="Remove Overdue">Overdue</Badge></LabeledItem>
-            <LabeledItem label="Destructive"><Badge variant="destructive" className={TYPE_SIZE_SPECS[removableBadgeSize]} onRemove={() => {}} removeLabel="Remove Failed">Failed</Badge></LabeledItem>
-            <LabeledItem label="Info"><Badge variant="info" className={TYPE_SIZE_SPECS[removableBadgeSize]} onRemove={() => {}} removeLabel="Remove Info">Info</Badge></LabeledItem>
+            <LabeledItem label="Default"><Badge variant="default" className={BADGE_REMOVABLE_SPECS[removableBadgeSize]} onRemove={() => {}} removeLabel="Remove Draft">Draft</Badge></LabeledItem>
+            <LabeledItem label="Accent"><Badge variant="accent" className={BADGE_REMOVABLE_SPECS[removableBadgeSize]} onRemove={() => {}} removeLabel="Remove In review">In review</Badge></LabeledItem>
+            <LabeledItem label="Success"><Badge variant="success" className={BADGE_REMOVABLE_SPECS[removableBadgeSize]} onRemove={() => {}} removeLabel="Remove Done">Done</Badge></LabeledItem>
+            <LabeledItem label="Warning"><Badge variant="warning" className={BADGE_REMOVABLE_SPECS[removableBadgeSize]} onRemove={() => {}} removeLabel="Remove Overdue">Overdue</Badge></LabeledItem>
+            <LabeledItem label="Destructive"><Badge variant="destructive" className={BADGE_REMOVABLE_SPECS[removableBadgeSize]} onRemove={() => {}} removeLabel="Remove Failed">Failed</Badge></LabeledItem>
+            <LabeledItem label="Info"><Badge variant="info" className={BADGE_REMOVABLE_SPECS[removableBadgeSize]} onRemove={() => {}} removeLabel="Remove Info">Info</Badge></LabeledItem>
           </ComponentBlock>
 
           <ComponentBlock name="Avatar" gap="gap-16" align="end">
