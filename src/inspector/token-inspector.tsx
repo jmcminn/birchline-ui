@@ -16,7 +16,7 @@ import { STATE_LABEL } from "./parse-classes"
 
 const SLOT_SELECTOR = "[data-slot]"
 const UI_SELECTOR = "[data-inspector-ui]"
-const PANEL_WIDTH = 400
+const PANEL_WIDTH = 480
 
 function findSlot(target: EventTarget | null): HTMLElement | null {
   if (!(target instanceof Element)) return null
@@ -199,9 +199,11 @@ function Panel({ el, rect, onClose }: { el: HTMLElement; rect: DOMRect; onClose:
 
       <div className="px-4 pb-4 pt-3 font-mono text-[11.5px] leading-[1.5]">
         <SectionTitle>Colors</SectionTitle>
-        <div className="grid grid-cols-[72px_1fr] gap-y-2.5">
-          {report.states.map((block) => (
-            <StateRows key={block.state} label={STATE_LABEL[block.state]} block={block} />
+        {/* One shared grid: label | token | uses. The token column sizes to the longest
+            token, so every "uses" string starts at the same left edge. */}
+        <div className="grid grid-cols-[72px_max-content_1fr] gap-x-3">
+          {report.states.map((block, i) => (
+            <StateRows key={block.state} label={STATE_LABEL[block.state]} block={block} first={i === 0} />
           ))}
         </div>
 
@@ -230,32 +232,37 @@ function SectionTitle({ children, className = "" }: { children: React.ReactNode;
   return <div className={`mb-2 text-[10px] uppercase tracking-[0.08em] text-muted-foreground ${className}`}>{children}</div>
 }
 
-function StateRows({ label, block }: { label: string; block: InspectReport["states"][number] }) {
+function StateRows({ label, block, first }: { label: string; block: InspectReport["states"][number]; first: boolean }) {
   const empty = block.colors.length === 0
+  const hasNote = empty || block.effects.length > 0
+  // Gap between states, not between rows within a state.
+  const gap = first ? "" : "mt-2.5"
   return (
     <>
-      <div className="text-muted-foreground">{label}</div>
-      <div className="flex flex-col gap-1">
-        {block.colors.map((row) => (
-          <div key={`${row.token}/${row.opacity ?? ""}`} className="grid grid-cols-[minmax(0,auto)_1fr] items-baseline gap-x-3">
-            <span className="flex items-center gap-1.5 whitespace-nowrap">
+      <div className={`text-muted-foreground ${gap}`}>{label}</div>
+      {block.colors.length > 0 ? (
+        block.colors.map((row, i) => (
+          <div key={`${row.token}/${row.opacity ?? ""}`} className="contents">
+            {i > 0 && <div />}
+            <span className={`flex items-center gap-1.5 whitespace-nowrap ${i > 0 ? "mt-1" : gap}`}>
               <Swatch token={row.token} opacity={row.opacity} />
               --{row.token}
               {row.opacity !== undefined && <span className="text-muted-foreground">/{row.opacity}%</span>}
             </span>
-            <span className="text-right text-muted-foreground">
-              {row.uses.join(", ")}
-            </span>
+            <span className={`text-left text-muted-foreground ${i > 0 ? "mt-1" : gap}`}>{row.uses.join(", ")}</span>
           </div>
-        ))}
-        {(empty || block.effects.length > 0) && (
-          <div className="text-muted-foreground">
+        ))
+      ) : null}
+      {hasNote && (
+        <>
+          {block.colors.length > 0 && <div />}
+          <div className={`col-span-2 text-muted-foreground ${block.colors.length > 0 ? "mt-1" : gap}`}>
             {empty && "no new colors"}
             {empty && block.effects.length > 0 && " · "}
             {block.effects.join(" · ")}
           </div>
-        )}
-      </div>
+        </>
+      )}
     </>
   )
 }
