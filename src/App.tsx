@@ -2696,7 +2696,7 @@ function App() {
             <LabeledItem label="App sidebar">
               <Sidebar className="rounded-md border border-border">
                 <SidebarHeader>
-                  <span className="font-serif text-lg font-medium">Range</span>
+                  <span className="font-serif text-lg font-medium">Acme Corp.</span>
                 </SidebarHeader>
                 <SidebarContent>
                   <SidebarGroup>
@@ -2715,8 +2715,8 @@ function App() {
                 </SidebarContent>
                 <SidebarFooter>
                   <div className="flex items-center gap-2">
-                    <Avatar className="h-7 w-7">
-                      <AvatarFallback className="text-[10px]">JM</AvatarFallback>
+                    <Avatar className="h-8 w-8">
+                      <AvatarFallback className="text-[13px]">JM</AvatarFallback>
                     </Avatar>
                     <span className="text-sm">Jason McMinn</span>
                   </div>
