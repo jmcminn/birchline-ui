@@ -2684,10 +2684,10 @@ function App() {
 
           <ComponentBlock name="Toggle">
             <LabeledItem label="Default">
-              <Toggle aria-label="Toggle bold"><Bold className="h-4 w-4" /></Toggle>
+              <Toggle aria-label="Toggle bold" className="h-8 w-8 min-w-0 px-0"><Bold className="h-4 w-4" /></Toggle>
             </LabeledItem>
             <LabeledItem label="Outline">
-              <Toggle variant="outline" aria-label="Toggle italic"><Italic className="h-4 w-4" /></Toggle>
+              <Toggle variant="outline" aria-label="Toggle italic" className="h-8 w-8 min-w-0 px-0"><Italic className="h-4 w-4" /></Toggle>
             </LabeledItem>
             <LabeledItem label="With text">
               <Toggle aria-label="Toggle underline"><Underline className="h-4 w-4 mr-2" /> Underline</Toggle>
@@ -2697,15 +2697,15 @@ function App() {
           <ComponentBlock name="ToggleGroup">
             <LabeledItem label="Text alignment">
               <ToggleGroup type="single" defaultValue="left" variant="outline">
-                <ToggleGroupItem value="left" aria-label="Left"><AlignLeft className="h-4 w-4" /></ToggleGroupItem>
-                <ToggleGroupItem value="center" aria-label="Center"><AlignCenter className="h-4 w-4" /></ToggleGroupItem>
-                <ToggleGroupItem value="right" aria-label="Right"><AlignRight className="h-4 w-4" /></ToggleGroupItem>
+                <ToggleGroupItem value="left" aria-label="Left" className="h-8 w-8 min-w-0 px-0"><AlignLeft className="h-4 w-4" /></ToggleGroupItem>
+                <ToggleGroupItem value="center" aria-label="Center" className="h-8 w-8 min-w-0 px-0"><AlignCenter className="h-4 w-4" /></ToggleGroupItem>
+                <ToggleGroupItem value="right" aria-label="Right" className="h-8 w-8 min-w-0 px-0"><AlignRight className="h-4 w-4" /></ToggleGroupItem>
               </ToggleGroup>
             </LabeledItem>
             <LabeledItem label="View switcher">
               <ToggleGroup type="single" defaultValue="grid" variant="outline">
-                <ToggleGroupItem value="grid" aria-label="Grid"><LayoutGrid className="h-4 w-4" /></ToggleGroupItem>
-                <ToggleGroupItem value="list" aria-label="List"><List className="h-4 w-4" /></ToggleGroupItem>
+                <ToggleGroupItem value="grid" aria-label="Grid" className="h-8 w-8 min-w-0 px-0"><LayoutGrid className="h-4 w-4" /></ToggleGroupItem>
+                <ToggleGroupItem value="list" aria-label="List" className="h-8 w-8 min-w-0 px-0"><List className="h-4 w-4" /></ToggleGroupItem>
               </ToggleGroup>
             </LabeledItem>
           </ComponentBlock>
