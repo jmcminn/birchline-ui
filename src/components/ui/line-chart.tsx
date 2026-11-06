@@ -137,11 +137,11 @@ export function LineChartTooltipContent({ row, series, breakdown, unit, seriesHe
                 const value = breakdown ? cell.plotted : cell.daily
                 return (
                   <tr key={s.key}>
-                    <td className="py-1 pr-2 font-medium">
+                    <td className="py-2 pr-2 font-medium">
                       <SeriesTag series={s} />
                     </td>
-                    <td className="px-2 py-1 text-right font-semibold">{value.toLocaleString()}</td>
-                    <td className={cn("py-1 pl-2 text-right font-semibold", changeClass(cell.change))}>{formatChange(cell.change)}</td>
+                    <td className="px-2 py-2 text-right font-semibold">{value.toLocaleString()}</td>
+                    <td className={cn("py-2 pl-2 text-right font-semibold", changeClass(cell.change))}>{formatChange(cell.change)}</td>
                   </tr>
                 )
               })}
