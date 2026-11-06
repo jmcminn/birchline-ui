@@ -6,15 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Birchline UI — Design System</title>
     <script>
-      // Apply theme (palette × mode) before first paint so the initial render is
+      // Apply the color mode before first paint so the initial render is
       // already themed — avoids a flash and the transition-colors "stuck" state.
       (function () {
         try {
-          // Default to the "bright" palette when nothing is stored yet.
-          var p = localStorage.getItem("birchline-palette") || "bright";
           var m = localStorage.getItem("birchline-mode");
           var root = document.documentElement;
-          if (p !== "default") root.setAttribute("data-theme", p);
           if (m === "dark") root.setAttribute("data-mode", "dark");
         } catch (e) {}
       })();

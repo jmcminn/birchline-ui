@@ -86,15 +86,15 @@
   },
   "clay": {
     "$type": "color",
-    "$value": "#D97757"
+    "$value": "#D05E38"
   },
   "clay-hover": {
     "$type": "color",
-    "$value": "#C7684C"
+    "$value": "#B75331"
   },
   "green-500": {
     "$type": "color",
-    "$value": "#5F7348"
+    "$value": "#658E3B"
   },
   "green-400": {
     "$type": "color",
@@ -102,7 +102,7 @@
   },
   "bronze-500": {
     "$type": "color",
-    "$value": "#916426"
+    "$value": "#C2822A"
   },
   "bronze-400": {
     "$type": "color",
@@ -110,7 +110,7 @@
   },
   "red-500": {
     "$type": "color",
-    "$value": "#B04A4A"
+    "$value": "#C9413F"
   },
   "red-400": {
     "$type": "color",
@@ -118,7 +118,7 @@
   },
   "red-hover": {
     "$type": "color",
-    "$value": "#9A3F3F"
+    "$value": "#B13937"
   },
   "red-hover-dark": {
     "$type": "color",
@@ -126,7 +126,7 @@
   },
   "blue-500": {
     "$type": "color",
-    "$value": "#526E92"
+    "$value": "#608AD5"
   },
   "blue-400": {
     "$type": "color",
@@ -134,11 +134,11 @@
   },
   "plum": {
     "$type": "color",
-    "$value": "#7B6B8A"
+    "$value": "#9B67B6"
   },
   "teal": {
     "$type": "color",
-    "$value": "#5B8E8A"
+    "$value": "#5DB2AC"
   },
   "light-yellow": {
     "$type": "color",
@@ -385,36 +385,6 @@
       "lg": "0 12px 28px rgba(20, 20, 19, 0.12)"
     },
     "com.birchline.modes": {
-      "bright": {
-        "clay": {
-          "$type": "color",
-          "$value": "#D05E38"
-        },
-        "green-500": {
-          "$type": "color",
-          "$value": "#658E3B"
-        },
-        "bronze-500": {
-          "$type": "color",
-          "$value": "#C2822A"
-        },
-        "red-500": {
-          "$type": "color",
-          "$value": "#C9413F"
-        },
-        "blue-500": {
-          "$type": "color",
-          "$value": "#608AD5"
-        },
-        "plum": {
-          "$type": "color",
-          "$value": "#9B67B6"
-        },
-        "teal": {
-          "$type": "color",
-          "$value": "#5DB2AC"
-        }
-      },
       "dark": {
         "background": {
           "$type": "color",

@@ -22,6 +22,22 @@ the contract too, but the **semantic** tier is what components should consume.
 
 ## [Unreleased]
 
+### Removed
+
+- **The Muted theme and the Bright / Muted toggle.** The `:root[data-theme="bright"]`
+  selector, the `bright` token mode (in `tokens/birchline.tokens.json`) and the
+  `birchline-palette` preference are gone. If you set `data-theme="bright"`, just
+  delete the attribute — Bright is now the only palette. (The `muted` /
+  `muted-foreground` color roles are unrelated and unchanged.)
+
+### Changed
+
+- **Accent primitives now equal the former Bright values**: `clay` `#D05E38`,
+  `green-500` `#658E3B`, `bronze-500` `#C2822A`, `red-500` `#C9413F`,
+  `blue-500` `#608AD5`, `plum` `#9B67B6`, `teal` `#5DB2AC`. Consumers who relied on
+  the old Muted values will see an accent color shift. `clay-hover` is recomputed
+  to `#B75331` and `red-hover` to `#B13937` to match.
+
 ### Added
 
 - **`line-chart`** — an area-filled line chart ported from the Range Analytics

@@ -17,6 +17,12 @@
   transition: none !important;
 }
 
+/* Token inspector: crosshair over inspectable components while inspecting. */
+.bl-inspecting [data-slot],
+.bl-inspecting [data-slot] * {
+  cursor: crosshair !important;
+}
+
 body {
   background-color: var(--color-background);
   color: var(--color-foreground);

@@ -1,8 +1,8 @@
 /**
  * Birchline design tokens — single source of truth.
  *
- * Three tiers: primitives → aliases → semantic, plus mode overrides (bright,
- * dark) and non-colour scales. `scripts/build-tokens.mjs` generates both
+ * Three tiers: primitives → aliases → semantic, plus a dark mode override
+ * and non-colour scales. `scripts/build-tokens.mjs` generates both
  * `src/registry/birchline-tokens.css` (the Tailwind v4 @theme file the app and
  * shadcn registry consume) and `dist/birchline.tokens.json` (a portable W3C
  * DTCG document for Figma / native / other-platform tooling) from this file.
@@ -42,20 +42,20 @@ export const primitives = {
   oat: "#E3DACC", // warm accent — intentionally outside the neutral ramp
 
   // Brand + status hues: light (-500) and dark-tuned (-400) values.
-  clay: "#D97757",
-  "clay-hover": "#C7684C",
-  "green-500": "#5F7348",
+  clay: "#D05E38",
+  "clay-hover": "#B75331",
+  "green-500": "#658E3B",
   "green-400": "#8FB06B",
-  "bronze-500": "#916426",
+  "bronze-500": "#C2822A",
   "bronze-400": "#D69C4E",
-  "red-500": "#B04A4A",
+  "red-500": "#C9413F",
   "red-400": "#C9413F",
-  "red-hover": "#9A3F3F",
+  "red-hover": "#B13937",
   "red-hover-dark": "#B13937",
-  "blue-500": "#526E92",
+  "blue-500": "#608AD5",
   "blue-400": "#7FA3D0",
-  plum: "#7B6B8A",
-  teal: "#5B8E8A",
+  plum: "#9B67B6",
+  teal: "#5DB2AC",
   "light-yellow": "#F5E6B8",
   "highlight-dark": "#4A3C18",
 }
@@ -121,20 +121,10 @@ export const semantic = {
 }
 
 /**
- * Mode overrides. `bright` overrides accent-hue PRIMITIVES (flows through the
- * -500 aliases + semantic status). `dark` remaps SEMANTIC + shifting alias
- * tokens to the dark end of the ramp / the -400 hues.
+ * Mode overrides. `dark` remaps SEMANTIC + shifting alias tokens to the dark
+ * end of the ramp / the -400 hues.
  */
 export const modes = {
-  bright: {
-    clay: "#D05E38",
-    "green-500": "#658E3B",
-    "bronze-500": "#C2822A",
-    "red-500": "#C9413F",
-    "blue-500": "#608AD5",
-    plum: "#9B67B6",
-    teal: "#5DB2AC",
-  },
   dark: {
     background: "warm-950",
     foreground: "warm-150",

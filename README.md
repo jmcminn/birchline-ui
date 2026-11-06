@@ -96,8 +96,7 @@ That generates two artifacts (never hand-edit them):
 - [`tokens/birchline.tokens.json`](./tokens/birchline.tokens.json) — a portable
   **W3C DTCG** document for Figma, native, and other-platform tooling.
 
-`build` and `registry:build` regenerate automatically. Theming composes two
-independent axes — palette (`data-theme`: Muted / `bright`) × mode (`data-mode`:
-light / `dark`). See [Foundations](./docs/foundations.md) for the full token
+`build` and `registry:build` regenerate automatically. Theming is driven by a
+single axis — mode (`data-mode`: light / `dark`). See [Foundations](./docs/foundations.md) for the full token
 reference and theming guide, and [CHANGELOG.md](./CHANGELOG.md) for the
 versioning policy (tokens are a public API).

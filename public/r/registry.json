@@ -7,7 +7,7 @@
       "name": "tokens",
       "type": "registry:file",
       "title": "Birchline Tokens",
-      "description": "Design tokens (Tailwind v4 @theme layer + Bright scheme). Install first.",
+      "description": "Design tokens (Tailwind v4 @theme layer). Install first.",
       "files": [
         {
           "path": "src/registry/birchline-tokens.css",

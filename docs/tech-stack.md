@@ -29,7 +29,7 @@ Based on the `package.json`, config files and workflows in `jmcminn/birchline-ui
 
 ## Design tokens
 - A custom `scripts/build-tokens.mjs` generates `src/registry/birchline-tokens.css` and `tokens/birchline.tokens.json` from `tokens/birchline.tokens.mjs`. It runs automatically before each build
-- Three tiers: primitives, aliases, semantic. Light and dark modes, plus Muted and Bright palettes
+- Three tiers: primitives, aliases, semantic. Light and dark modes
 - Chart series tokens `chart-1` to `chart-5` (with dark-mode variants for the blue, green and bronze series)
 
 ## Registry

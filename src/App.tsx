@@ -3,6 +3,7 @@ import { format } from "date-fns"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import { TokenInspector } from "@/inspector/token-inspector"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
@@ -76,7 +77,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
 import { Sidebar, SidebarHeader, SidebarContent, SidebarGroup, SidebarGroupLabel, SidebarItem, SidebarFooter } from "@/components/ui/sidebar"
 import { UserSelector, type User } from "@/components/ui/user-selector"
-import { Apple, Globe, Smartphone, MoreHorizontal, Plus, Search, Trash2, Copy, Pencil, ArrowRight, Info, PanelRight, Bell, CalendarDays, Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, LayoutGrid, List, Home, Settings, FolderOpen, Inbox, FileText, BarChart3, AlertCircle, CheckCircle, AlertTriangle, InfoIcon, Terminal, ChevronRight, Check, Palette, ArrowUpDown, ArrowUp, ArrowDown, X, GripVertical, Sun, Moon } from "lucide-react"
+import { Apple, Globe, Smartphone, MoreHorizontal, Plus, Search, Trash2, Copy, Pencil, ArrowRight, Info, PanelRight, Bell, CalendarDays, Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, LayoutGrid, List, Home, Settings, FolderOpen, Inbox, FileText, BarChart3, AlertCircle, CheckCircle, AlertTriangle, InfoIcon, Terminal, ChevronRight, Check, Palette, ArrowUpDown, ArrowUp, ArrowDown, X, GripVertical, Sun, Moon, ScanSearch } from "lucide-react"
 import {
   useTable,
   tableFeatures,
@@ -165,7 +166,7 @@ function ColorSwatch({ token, semantic, noBorder }: { token: string; semantic?: 
     const read = () => setHex(getComputedStyle(document.documentElement).getPropertyValue(cssVar).trim().toUpperCase())
     read()
     const obs = new MutationObserver(read)
-    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-mode"] })
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-mode"] })
     return () => obs.disconnect()
   }, [cssVar])
   return (
@@ -469,19 +470,19 @@ function DatePickerTasksDemo({ showCurrentYear }: { showCurrentYear: boolean }) 
 const birchlineColors = [
   { name: "Ivory", hex: "#FAF9F5", token: "--color-ivory" },
   { name: "White", hex: "#FFFFFF", token: "--color-white" },
-  { name: "Clay", hex: "#D97757", token: "--color-clay" },
+  { name: "Clay", hex: "#D05E38", token: "--color-clay" },
   { name: "Ink", hex: "#141413", token: "--color-ink" },
   { name: "Oat", hex: "#E3DACC", token: "--color-oat" },
   { name: "Gray 100", hex: "#F0EEE6", token: "--color-gray-100" },
   { name: "Gray 300", hex: "#D1CFC5", token: "--color-gray-300" },
   { name: "Gray 500", hex: "#726F66", token: "--color-gray-500" },
   { name: "Gray 700", hex: "#3D3D3A", token: "--color-gray-700" },
-  { name: "Green", hex: "#5F7348", token: "--color-green" },
-  { name: "Bronze", hex: "#916426", token: "--color-bronze" },
-  { name: "Red", hex: "#B04A4A", token: "--color-red" },
-  { name: "Blue", hex: "#526E92", token: "--color-blue" },
-  { name: "Plum", hex: "#7B6B8A", token: "--color-plum" },
-  { name: "Teal", hex: "#5B8E8A", token: "--color-teal" },
+  { name: "Green", hex: "#658E3B", token: "--color-green" },
+  { name: "Bronze", hex: "#C2822A", token: "--color-bronze" },
+  { name: "Red", hex: "#C9413F", token: "--color-red" },
+  { name: "Blue", hex: "#608AD5", token: "--color-blue" },
+  { name: "Plum", hex: "#9B67B6", token: "--color-plum" },
+  { name: "Teal", hex: "#5DB2AC", token: "--color-teal" },
   { name: "Light Yellow", hex: "#F5E6B8", token: "--color-light-yellow" },
 ]
 
@@ -497,6 +498,14 @@ const TYPE_SIZE_SPECS: Record<string, string> = {
   small: "text-sm leading-[1.5]",
   fine: "text-[13px] leading-[1.45]",
   caption: "text-xs leading-[1.4]",
+}
+// Field-size specs for the Input Size control (Input section). Height, text
+// token, line height, and horizontal padding per size. Applied via cn(), so
+// these override the Input component's built-in h-[38px]/px-3/text-sm.
+const INPUT_SIZE_SPECS: Record<string, string> = {
+  lg: "h-11 px-4 text-base leading-[24.8px]",
+  md: "h-[38px] px-3 text-sm leading-[20px]",
+  sm: "h-8 px-2 text-[13px] leading-[18px]",
 }
 const SEPARATOR_COLOR_DEFAULT = "var(--color-border)"
 const SEPARATOR_BG_DEFAULT = "var(--color-card)"
@@ -514,7 +523,7 @@ function useResolvedHex(value: string) {
       setResolved(getComputedStyle(document.documentElement).getPropertyValue(varName).trim() || value)
     read()
     const obs = new MutationObserver(read)
-    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-mode"] })
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-mode"] })
     return () => obs.disconnect()
   }, [isVar, value])
   return isVar ? resolved : value
@@ -525,12 +534,12 @@ function readVar(token: string) {
   return getComputedStyle(document.documentElement).getPropertyValue(token).trim()
 }
 
-// Bumps whenever the palette/mode changes so consumers re-read live token values.
+// Bumps whenever the mode changes so consumers re-read live token values.
 function useThemeVersion() {
   const [v, setV] = useState(0)
   useEffect(() => {
     const obs = new MutationObserver(() => setV((x) => x + 1))
-    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-mode"] })
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-mode"] })
     return () => obs.disconnect()
   }, [])
   return v
@@ -1071,12 +1080,12 @@ const CHASE_PALETTES = {
   },
   birchline: {
     label: "Birchline UI",
-    colors: ["#D97757", "#788C5D", "#5B8E8A", "#7B6B8A", "#D97757"],
+    colors: ["#D05E38", "#788C5D", "#5DB2AC", "#9B67B6", "#D05E38"],
     swatches: [
-      { name: "Clay", hex: "#D97757" },
+      { name: "Clay", hex: "#D05E38" },
       { name: "Green", hex: "#788C5D" },
-      { name: "Teal", hex: "#5B8E8A" },
-      { name: "Plum", hex: "#7B6B8A" },
+      { name: "Teal", hex: "#5DB2AC" },
+      { name: "Plum", hex: "#9B67B6" },
     ],
   },
 } as const;
@@ -1279,30 +1288,24 @@ function BorderChaseDemo() {
 
 /* ── Main App ──────────────────────────────────────────────────────── */
 
-type Palette = "default" | "bright"
 type Mode = "light" | "dark"
 
 function App() {
-  // Two independent theme axes: palette (data-theme) × mode (data-mode).
-  const [palette, setPalette] = useState<Palette>(
-    () => (localStorage.getItem("birchline-palette") as Palette) || "bright"
-  )
+  // Theme: light / dark mode (data-mode). The accent palette is fixed (Bright).
   const [mode, setMode] = useState<Mode>(
     () => (localStorage.getItem("birchline-mode") as Mode) || "light"
   )
   useEffect(() => {
     const root = document.documentElement
     root.classList.add("theme-switching")
-    if (palette === "default") root.removeAttribute("data-theme")
-    else root.setAttribute("data-theme", palette)
     if (mode === "dark") root.setAttribute("data-mode", "dark")
     else root.removeAttribute("data-mode")
     // Flush the new colors with transitions suppressed, then re-enable them.
     void root.offsetWidth
     root.classList.remove("theme-switching")
-    localStorage.setItem("birchline-palette", palette)
     localStorage.setItem("birchline-mode", mode)
-  }, [palette, mode])
+    localStorage.removeItem("birchline-palette") // legacy key from the removed Bright/Muted toggle
+  }, [mode])
 
   // Theme controls sit inline at load, then lift into a fixed floating chip on scroll.
   const [controlsFloating, setControlsFloating] = useState(false)
@@ -1313,6 +1316,10 @@ function App() {
     return () => window.removeEventListener("scroll", onScroll)
   }, [])
 
+  // Token inspector: click a component to see the colour/type tokens per state.
+  const [inspecting, setInspecting] = useState(false)
+  const exitInspect = useCallback(() => setInspecting(false), [])
+
   const [checked1, setChecked1] = useState(false)
   const [checked2, setChecked2] = useState(true)
   const [switchOn, setSwitchOn] = useState(true)
@@ -1322,6 +1329,7 @@ function App() {
   const [typeColor, setTypeColor] = useState(TYPE_COLOR_DEFAULT)
   const [showCurrentYear, setShowCurrentYear] = useState(true)
   const [textareaToken, setTextareaToken] = useState("body")
+  const [inputSize, setInputSize] = useState("md")
   const [badgeSize, setBadgeSize] = useState("fine")
   const [removableBadgeSize, setRemovableBadgeSize] = useState("fine")
   const [showMenuName, setShowMenuName] = useState(true)
@@ -1449,6 +1457,7 @@ function App() {
     <TooltipProvider>
       <div className="max-w-[1280px] mx-auto px-6 py-14">
         <Toaster />
+        <TokenInspector active={inspecting} onExit={exitInspect} />
 
         <header className="mb-12">
           <div className="flex items-start justify-between gap-4 mb-1.5">
@@ -1456,18 +1465,24 @@ function App() {
               Birchline UI
             </h1>
             <div
+              data-inspector-ui
               className={cn(
                 "flex items-center gap-2 shrink-0 transition-[background-color,box-shadow] duration-200",
                 controlsFloating &&
                   "fixed top-4 right-6 z-50 rounded-sm border border-border bg-background/80 px-2 py-1.5 shadow-lg backdrop-blur-md"
               )}
             >
-              <Tabs value={palette} onValueChange={(v) => setPalette(v as Palette)}>
-                <TabsList>
-                  <TabsTrigger value="bright">Bright</TabsTrigger>
-                  <TabsTrigger value="default">Muted</TabsTrigger>
-                </TabsList>
-              </Tabs>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setInspecting((v) => !v)}
+                aria-pressed={inspecting}
+                aria-label={inspecting ? "Exit token inspector" : "Inspect component tokens"}
+                title={inspecting ? "Exit token inspector (Esc)" : "Inspect component tokens"}
+                className={cn(inspecting && "bg-accent border-gray-500")}
+              >
+                <ScanSearch className="h-4 w-4" />
+              </Button>
               <Button
                 variant="outline"
                 size="icon"
@@ -1702,21 +1717,35 @@ function App() {
             </LabeledItem>
           </ComponentBlock>
 
-          <ComponentBlock name="Input" align="start">
+          <ComponentBlock name="Input" align="start" headerRight={
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">Input Size</span>
+              <Select value={inputSize} onValueChange={setInputSize}>
+                <SelectTrigger className="w-[140px] h-7 text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="lg">Large (lg)</SelectItem>
+                  <SelectItem value="md">Medium (md)</SelectItem>
+                  <SelectItem value="sm">Small (sm)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          }>
             <LabeledItem label="Placeholder">
               <div className="w-[260px]">
-                <Input placeholder="Search tasks…" />
+                <Input className={INPUT_SIZE_SPECS[inputSize]} placeholder="Search tasks…" />
               </div>
             </LabeledItem>
             <LabeledItem label="Filled">
               <div className="w-[260px]">
-                <Input defaultValue="Weekly planning" />
+                <Input className={INPUT_SIZE_SPECS[inputSize]} defaultValue="Weekly planning" />
               </div>
             </LabeledItem>
             <LabeledItem label="With icon">
               <div className="w-[260px] relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground z-10" />
-                <Input className="pl-9" placeholder="Search…" />
+                <Input className={cn(INPUT_SIZE_SPECS[inputSize], "pl-9")} placeholder="Search…" />
               </div>
             </LabeledItem>
           </ComponentBlock>
@@ -1729,9 +1758,8 @@ function App() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="body">Body</SelectItem>
-                  <SelectItem value="small">Small</SelectItem>
-                  <SelectItem value="fine">Fine</SelectItem>
+                  <SelectItem value="body">Body (16px)</SelectItem>
+                  <SelectItem value="small">Small (14px)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -2055,7 +2083,7 @@ function App() {
           <ComponentBlock name="Avatar" gap="gap-16" align="end">
             <LabeledItem label="Image" subtitle="40px">
               <Avatar>
-                <AvatarImage src="https://api.dicebear.com/9.x/initials/svg?seed=JM&backgroundColor=D97757&textColor=ffffff" alt="JM" />
+                <AvatarImage src="https://api.dicebear.com/9.x/initials/svg?seed=JM&backgroundColor=D05E38&textColor=ffffff" alt="JM" />
                 <AvatarFallback>JM</AvatarFallback>
               </Avatar>
             </LabeledItem>

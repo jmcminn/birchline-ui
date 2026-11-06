@@ -80,12 +80,12 @@ Each carries a light (`-500`) and dark-tuned (`-400`) value.
 
 | Token | Light `-500` | Dark `-400` |
 |---|---|---|
-| `clay` / `clay-hover` | `#D97757` / `#C7684C` | (carries through both modes) |
-| `green` | `#5F7348` | `#8FB06B` |
-| `bronze` | `#916426` | `#D69C4E` |
-| `red` | `#B04A4A` | `#C9413F` |
-| `blue` | `#526E92` | `#7FA3D0` |
-| `plum` / `teal` | `#7B6B8A` / `#5B8E8A` | extended accents |
+| `clay` / `clay-hover` | `#D05E38` / `#B75331` | (carries through both modes) |
+| `green` | `#658E3B` | `#8FB06B` |
+| `bronze` | `#C2822A` | `#D69C4E` |
+| `red` | `#C9413F` | `#C9413F` |
+| `blue` | `#608AD5` | `#7FA3D0` |
+| `plum` / `teal` | `#9B67B6` / `#5DB2AC` | extended accents |
 | `white` `#FFFFFF` · `oat` `#E3DACC` · `light-yellow` `#F5E6B8` | | |
 
 Aliases (`ivory` → `warm-50`, `gray-300` → `warm-300`, `green` → `green-500`, …)
@@ -155,20 +155,15 @@ for padding/gaps so rhythm stays consistent.
 
 ## Theming
 
-Two **independent axes** compose on `<html>` — palette (`data-theme`) × mode
-(`data-mode`):
+A single axis composes on `<html>` — mode (`data-mode`):
 
 | Axis | Attribute | Values | Overrides |
 |---|---|---|---|
-| Palette | `data-theme` | *(absent)* = Muted · `bright` | accent-hue **primitives** |
 | Mode | `data-mode` | *(absent)* = light · `dark` | **semantic** surface/neutral roles |
 
-Because they're orthogonal, all four combinations work with no extra blocks:
-Muted + light, Bright + light, Muted + dark, Bright + dark. The Bright block
-overrides only the `-500` accent primitives (which flow through the aliases and
-semantic status), and the Dark block remaps semantic roles + shifting neutral
-aliases to the dark end of the ramp — so brand accents carry through and the two
-axes never conflict.
+The accent palette is fixed (the former "Bright" scheme is now the base
+primitives). The Dark block remaps semantic roles + shifting neutral aliases to
+the dark end of the ramp, so brand accents carry through in both modes.
 
 Apply before first paint to avoid a flash — read the stored choice in a blocking
 `<head>` script and set the attributes (see [`index.html`](../index.html)).
