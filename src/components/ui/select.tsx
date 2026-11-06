@@ -77,7 +77,10 @@ const SelectItem = React.forwardRef<
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex w-full cursor-pointer select-none items-center rounded-xs py-2 pl-8 pr-2 text-sm outline-none whitespace-nowrap overflow-hidden text-ellipsis",
+      "relative flex w-full cursor-pointer select-none items-center rounded-xs py-2 pl-8 pr-2 text-sm outline-none whitespace-nowrap",
+      // Radix ItemText ignores className, so truncate its label from the row:
+      // one line, ellipsis when wider than the menu's max width.
+      "[&>span:last-child]:min-w-0 [&>span:last-child]:truncate",
       "focus:bg-accent focus:text-foreground",
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       className
