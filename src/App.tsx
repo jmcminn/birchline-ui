@@ -1338,7 +1338,7 @@ function App() {
   const [typeColor, setTypeColor] = useState(TYPE_COLOR_DEFAULT)
   const [showCurrentYear, setShowCurrentYear] = useState(true)
   const [textareaToken, setTextareaToken] = useState("body")
-  const [buttonSize, setButtonSize] = useState<"lg" | "md" | "sm">("lg")
+  const [buttonSize, setButtonSize] = useState<"lg" | "md" | "sm">("md")
   const [inputSize, setInputSize] = useState("md")
   const [selectSize, setSelectSize] = useState("md")
   const [badgeSize, setBadgeSize] = useState("fine")
