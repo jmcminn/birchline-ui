@@ -32,6 +32,12 @@ the contract too, but the **semantic** tier is what components should consume.
 
 ### Changed
 
+- **Border-color utilities now take effect in the showcase.** The default
+  `* { border-color }` reset moved into `@layer base`, so classes like
+  `focus-visible:border-ring`, `border-transparent` and `data-[state=checked]:border-ring`
+  work (clay focus border, checked checkbox, borderless switch, white avatar-group
+  separators). Table and settings-row dividers keep the stronger `border-border` gray.
+  Alert variants no longer need the `!` modifier. Registry consumers are unaffected.
 - **Accent primitives now equal the former Bright values**: `clay` `#D05E38`,
   `green-500` `#658E3B`, `bronze-500` `#C2822A`, `red-500` `#C9413F`,
   `blue-500` `#608AD5`, `plum` `#9B67B6`, `teal` `#5DB2AC`. Consumers who relied on

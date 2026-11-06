@@ -1633,7 +1633,7 @@ function App() {
               { cls: "font-sans text-xs leading-[1.4] font-medium text-muted-foreground", name: "Caption", face: "Inter", weight: "500 (Medium)", size: "12", lineSpacing: "1.4", text: "UPDATED 2 HOURS AGO" },
               { cls: "font-mono text-xs leading-[1.4] text-foreground", name: "Code", face: "JetBrains Mono", weight: "400 (Regular)", size: "12", lineSpacing: "1.4", text: "Small type monospaced label" },
             ].map((row, i, arr) => (
-              <div key={row.name} className={`flex items-start justify-between gap-6 px-6 py-5 ${i < arr.length - 1 ? "border-b border-muted" : ""}`}>
+              <div key={row.name} className={`flex items-start justify-between gap-6 px-6 py-5 ${i < arr.length - 1 ? "border-b border-border" : ""}`}>
                 <div className={`flex-1 min-w-0 truncate ${row.cls}`}>
                   {row.text ?? "Plan the week ahead"}
                 </div>
