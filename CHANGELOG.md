@@ -32,6 +32,17 @@ the contract too, but the **semantic** tier is what components should consume.
 
 ### Changed
 
+- **Tooltip showcase triggers are 32x32px** (were 38x38); icons stay 16px.
+- **DropdownMenu showcase triggers are 32x32px** (were 38x38); the three-dot icon stays
+  16px. The `icon` Button size itself is unchanged.
+- **Badge Type Size (showcase, Badge and Badge: Removable) now uses whole-number
+  heights**: Body 28px, Small 24px, Fine 22px, Caption 20px (were 28.8 / 25 / 22.85 /
+  20.8). Body and Small horizontal padding is now 12px (was 10px); Fine and Caption
+  stay at 10px. Removable badges keep 4px right padding, and the × button is a
+  whole-pixel size (18 / 16 / 16 / 14px). The Badge component's own defaults are
+  unchanged.
+- **Select Size: Small now has 12px side padding** (was 8px) in the showcase; Large and
+  Medium are unchanged.
 - **Button sizes are now Large / Medium / Small (`lg` / `md` / `sm`)**: lg 38px tall /
   16px side padding / 14px text (the former default, +2px tall), md 32px / 12px /
   13px (the former `sm`, text +1px), sm 28px / 10px / 12px (new). `size="default"`
