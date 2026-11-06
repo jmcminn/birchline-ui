@@ -4,8 +4,12 @@
 /* Enable `dark:` utilities to respond to our data-mode attribute. */
 @custom-variant dark (&:is([data-mode="dark"] *));
 
-* {
-  border-color: var(--color-border);
+/* Default border color. Must live in @layer base: an unlayered rule would beat
+   Tailwind's layered border-<color> utilities and silently disable them. */
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
 }
 
 /* While switching palette/mode, suppress transitions so var-based colors flip
