@@ -2094,22 +2094,22 @@ function App() {
             </LabeledItem>
             <LabeledItem label="Small" subtitle="32px">
               <Avatar className="h-8 w-8">
-                <AvatarFallback className="text-xs">SR</AvatarFallback>
+                <AvatarFallback className="text-[13px]">SR</AvatarFallback>
               </Avatar>
             </LabeledItem>
             <LabeledItem label="Group" subtitle="32px">
               <div className="flex -space-x-2">
                 <Avatar className="h-8 w-8 border-2 border-card">
-                  <AvatarFallback className="text-xs">JM</AvatarFallback>
+                  <AvatarFallback className="text-[13px]">JM</AvatarFallback>
                 </Avatar>
                 <Avatar className="h-8 w-8 border-2 border-card">
-                  <AvatarFallback className="text-xs">AK</AvatarFallback>
+                  <AvatarFallback className="text-[13px]">AK</AvatarFallback>
                 </Avatar>
                 <Avatar className="h-8 w-8 border-2 border-card">
-                  <AvatarFallback className="text-xs">SR</AvatarFallback>
+                  <AvatarFallback className="text-[13px]">SR</AvatarFallback>
                 </Avatar>
                 <Avatar className="h-8 w-8 border-2 border-card">
-                  <AvatarFallback className="text-xs bg-input text-secondary-foreground">+2</AvatarFallback>
+                  <AvatarFallback className="text-[13px] bg-input text-secondary-foreground">+2</AvatarFallback>
                 </Avatar>
               </div>
             </LabeledItem>
