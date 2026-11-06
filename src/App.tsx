@@ -146,13 +146,13 @@ function ComponentBlock({ name, children, align, headerRight, gap }: { name: str
   )
 }
 
-function LabeledItem({ label, subtitle, children }: { label: string; subtitle?: string; children: React.ReactNode }) {
+function LabeledItem({ label, subtitle, labelClassName, children }: { label: string; subtitle?: string; labelClassName?: string; children: React.ReactNode }) {
   return (
     <div className="flex flex-col items-center gap-2.5">
       {children}
       <div className="flex flex-col items-center">
-        <span className="font-mono text-[11px] text-muted-foreground">{label}</span>
-        {subtitle && <span className="font-mono text-[11px] text-muted-foreground">{subtitle}</span>}
+        <span className={cn("font-mono text-[11px] text-muted-foreground", labelClassName)}>{label}</span>
+        {subtitle && <span className={cn("font-mono text-[11px] text-muted-foreground", labelClassName)}>{subtitle}</span>}
       </div>
     </div>
   )
@@ -2553,13 +2553,13 @@ function App() {
           </ComponentBlock>
 
           <ComponentBlock name="Progress">
-            <LabeledItem label="25%">
+            <LabeledItem label="25%" labelClassName="text-[13px]">
               <div className="w-[260px]"><Progress value={25} /></div>
             </LabeledItem>
-            <LabeledItem label="65%">
+            <LabeledItem label="65%" labelClassName="text-[13px]">
               <div className="w-[260px]"><Progress value={65} /></div>
             </LabeledItem>
-            <LabeledItem label="100%">
+            <LabeledItem label="100%" labelClassName="text-[13px]">
               <div className="w-[260px]"><Progress value={100} /></div>
             </LabeledItem>
           </ComponentBlock>
