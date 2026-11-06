@@ -161,7 +161,7 @@ export const scales = {
   font: {
     serif: "ui-serif, Georgia, serif",
     sans: "'Inter Variable', Inter, system-ui, -apple-system, sans-serif",
-    mono: "ui-monospace, 'SF Mono', Menlo, monospace",
+    mono: "'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace",
   },
   radius: { xs: "4px", sm: "8px", md: "12px", lg: "20px" },
   shadow: {
