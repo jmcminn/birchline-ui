@@ -32,6 +32,8 @@ the contract too, but the **semantic** tier is what components should consume.
 
 ### Changed
 
+- **Toggle and ToggleGroup showcase icon buttons are 32x32px** (were about 40x36); icons stay
+  16px. The "With text" toggle and the Toggle component's own sizes are unchanged.
 - **Tooltip showcase triggers are 32x32px** (were 38x38); icons stay 16px.
 - **DropdownMenu showcase triggers are 32x32px** (were 38x38); the three-dot icon stays
   16px. The `icon` Button size itself is unchanged.
