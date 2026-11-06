@@ -507,6 +507,15 @@ const INPUT_SIZE_SPECS: Record<string, string> = {
   md: "h-[38px] px-3 text-sm leading-[20px]",
   sm: "h-8 px-2 text-[13px] leading-[18px]",
 }
+
+// Field-size specs for the Select Size control. Applied via cn() to all four
+// Select triggers, overriding the component defaults. Width is content-based
+// between a min and max; long values truncate with an ellipsis.
+const SELECT_SIZE_SPECS: Record<string, string> = {
+  lg: "h-11 px-4 text-base leading-[24.8px] w-auto min-w-[120px] max-w-[320px] gap-2",
+  md: "h-[38px] px-3 text-sm leading-[20px] w-auto min-w-[120px] max-w-[320px] gap-2",
+  sm: "h-8 px-2 text-[13px] leading-[18px] w-auto min-w-[120px] max-w-[320px] gap-2",
+}
 const SEPARATOR_COLOR_DEFAULT = "var(--color-border)"
 const SEPARATOR_BG_DEFAULT = "var(--color-card)"
 
@@ -1330,6 +1339,7 @@ function App() {
   const [showCurrentYear, setShowCurrentYear] = useState(true)
   const [textareaToken, setTextareaToken] = useState("body")
   const [inputSize, setInputSize] = useState("md")
+  const [selectSize, setSelectSize] = useState("md")
   const [badgeSize, setBadgeSize] = useState("fine")
   const [removableBadgeSize, setRemovableBadgeSize] = useState("fine")
   const [showMenuName, setShowMenuName] = useState(true)
@@ -1776,10 +1786,24 @@ function App() {
             </LabeledItem>
           </ComponentBlock>
 
-          <ComponentBlock name="Select" align="start">
+          <ComponentBlock name="Select" align="start" headerRight={
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">Select Size</span>
+              <Select value={selectSize} onValueChange={setSelectSize}>
+                <SelectTrigger className="w-[140px] h-7 text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="lg">Large (lg)</SelectItem>
+                  <SelectItem value="md">Medium (md)</SelectItem>
+                  <SelectItem value="sm">Small (sm)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          }>
             <LabeledItem label="Placeholder">
               <Select>
-                <SelectTrigger>
+                <SelectTrigger className={SELECT_SIZE_SPECS[selectSize]}>
                   <SelectValue placeholder="Choose a status…" />
                 </SelectTrigger>
                 <SelectContent>
@@ -1792,7 +1816,7 @@ function App() {
             </LabeledItem>
             <LabeledItem label="Single Select">
               <Select defaultValue="review">
-                <SelectTrigger>
+                <SelectTrigger className={SELECT_SIZE_SPECS[selectSize]}>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -1806,15 +1830,15 @@ function App() {
             <LabeledItem label="Multi-Select">
               <Popover open={multiSelectOpen} onOpenChange={setMultiSelectOpen}>
                 <PopoverTrigger asChild>
-                  <button className="flex h-10 w-[200px] items-center justify-between rounded-sm border border-border bg-card px-3 py-2 text-sm hover:bg-accent transition-colors focus:border-ring focus:ring-[3px] focus:ring-ring/15 focus:outline-none">
-                    <span className={multiSelectValues.length > 0 ? "text-foreground truncate" : "text-muted-foreground"}>
+                  <button className={cn("flex items-center justify-between gap-2 rounded-sm border border-border bg-card hover:bg-accent transition-colors focus:border-ring focus:ring-[3px] focus:ring-ring/40 focus:outline-none", SELECT_SIZE_SPECS[selectSize])}>
+                    <span className={cn("min-w-0 truncate", multiSelectValues.length > 0 ? "text-foreground" : "text-muted-foreground")}>
                       {multiSelectValues.length > 1
                         ? `Sheets (${multiSelectValues.length})`
                         : multiSelectValues.length === 1
                           ? (() => { const labels: Record<string, string> = { "site-plan": "Site Plan", "floor-1": "Floor 1", "floor-2": "Floor 2", "roof": "Roof", "electrical": "Electrical", "plumbing": "Plumbing", "window-schedule": "Window Schedule" }; return labels[multiSelectValues[0]] ?? multiSelectValues[0] })()
                         : "Choose sheets…"}
                     </span>
-                    <ChevronRight className="h-4 w-4 text-muted-foreground rotate-90" />
+                    <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground rotate-90" />
                   </button>
                 </PopoverTrigger>
                 <PopoverContent className="w-fit max-w-[400px] p-1" align="start">
@@ -1829,10 +1853,11 @@ function App() {
                   ].map((item) => (
                     <label
                       key={item.value}
-                      className="flex cursor-pointer items-center gap-2.5 rounded-xs px-3 py-2 text-sm hover:bg-accent transition-colors whitespace-nowrap overflow-hidden text-ellipsis"
+                      className="flex cursor-pointer items-center gap-2.5 rounded-xs px-3 py-2 text-sm hover:bg-accent transition-colors whitespace-nowrap"
                     >
                       <Checkbox
                         checked={multiSelectValues.includes(item.value)}
+                        className="shrink-0"
                         onCheckedChange={(checked) => {
                           setMultiSelectValues(prev =>
                             checked
@@ -1841,7 +1866,7 @@ function App() {
                           )
                         }}
                       />
-                      {item.label}
+                      <span className="min-w-0 truncate">{item.label}</span>
                     </label>
                   ))}
                 </PopoverContent>
@@ -1850,15 +1875,15 @@ function App() {
             <LabeledItem label="Multi-Select w/ Search">
               <Popover open={multiSearchOpen} onOpenChange={(v) => { setMultiSearchOpen(v); if (!v) setMultiSearchQuery("") }}>
                 <PopoverTrigger asChild>
-                  <button className="flex h-10 w-[200px] items-center justify-between rounded-sm border border-border bg-card px-3 py-2 text-sm hover:bg-accent transition-colors focus:border-ring focus:ring-[3px] focus:ring-ring/15 focus:outline-none">
-                    <span className={multiSearchValues.length > 0 ? "text-foreground truncate" : "text-muted-foreground"}>
+                  <button className={cn("flex items-center justify-between gap-2 rounded-sm border border-border bg-card hover:bg-accent transition-colors focus:border-ring focus:ring-[3px] focus:ring-ring/40 focus:outline-none", SELECT_SIZE_SPECS[selectSize])}>
+                    <span className={cn("min-w-0 truncate", multiSearchValues.length > 0 ? "text-foreground" : "text-muted-foreground")}>
                       {multiSearchValues.length > 1
                         ? `Sheets (${multiSearchValues.length})`
                         : multiSearchValues.length === 1
                           ? (() => { const labels: Record<string, string> = { "site-plan": "Site Plan", "floor-1": "Floor 1", "floor-2": "Floor 2", "roof": "Roof", "electrical": "Electrical", "plumbing": "Plumbing", "window-schedule": "Window Schedule" }; return labels[multiSearchValues[0]] ?? multiSearchValues[0] })()
                         : "Choose sheets…"}
                     </span>
-                    <ChevronRight className="h-4 w-4 text-muted-foreground rotate-90" />
+                    <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground rotate-90" />
                   </button>
                 </PopoverTrigger>
                 <PopoverContent className="w-fit max-w-[400px] p-0" align="start">
@@ -1903,8 +1928,8 @@ function App() {
                             }}
                             className="gap-2.5 px-3 py-2"
                           >
-                            <Checkbox checked={multiSearchValues.includes(item.value)} tabIndex={-1} className="pointer-events-none" />
-                            <span><HighlightText text={item.label} query={multiSearchQuery} /></span>
+                            <Checkbox checked={multiSearchValues.includes(item.value)} tabIndex={-1} className="pointer-events-none shrink-0" />
+                            <span className="min-w-0 truncate"><HighlightText text={item.label} query={multiSearchQuery} /></span>
                           </CommandItem>
                         ))}
                       </CommandGroup>
