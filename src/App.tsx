@@ -514,7 +514,7 @@ const INPUT_SIZE_SPECS: Record<string, string> = {
 const SELECT_SIZE_SPECS: Record<string, string> = {
   lg: "h-11 px-4 text-base leading-[24.8px] w-auto min-w-[120px] max-w-[320px] gap-2",
   md: "h-[38px] px-3 text-sm leading-[20px] w-auto min-w-[120px] max-w-[320px] gap-2",
-  sm: "h-8 px-2 text-[13px] leading-[18px] w-auto min-w-[120px] max-w-[320px] gap-2",
+  sm: "h-8 px-3 text-[13px] leading-[18px] w-auto min-w-[120px] max-w-[320px] gap-2",
 }
 const SEPARATOR_COLOR_DEFAULT = "var(--color-border)"
 const SEPARATOR_BG_DEFAULT = "var(--color-card)"
