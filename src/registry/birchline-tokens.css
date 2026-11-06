@@ -93,7 +93,7 @@
   /* ── Typography ── */
   --font-serif: ui-serif, Georgia, serif;
   --font-sans: 'Inter Variable', Inter, system-ui, -apple-system, sans-serif;
-  --font-mono: ui-monospace, 'SF Mono', Menlo, monospace;
+  --font-mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 
   /* ── Border Radius ── */
   --radius-xs: 4px;
