@@ -1137,7 +1137,7 @@ function BorderChaseDemo() {
   const paletteDropdown = (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-2">
+        <Button variant="outline" size="md" className="gap-2">
           <div className="flex -space-x-1">
             {activePalette.swatches.slice(0, 4).map((s) => (
               <div
@@ -1252,7 +1252,7 @@ function BorderChaseDemo() {
 
         <div className="flex gap-3">
           <Button
-            size="sm"
+            size="md"
             onClick={beam && playing ? handleEnd : handlePlay}
             disabled={playing && !beam}
           >
@@ -1260,7 +1260,7 @@ function BorderChaseDemo() {
           </Button>
           <Button
             variant="outline"
-            size="sm"
+            size="md"
             onClick={() => {
               setStrokeWidth(CHASE_DEFAULTS.strokeWidth);
               setSegmentPercent(CHASE_DEFAULTS.segmentPercent);
@@ -1338,6 +1338,7 @@ function App() {
   const [typeColor, setTypeColor] = useState(TYPE_COLOR_DEFAULT)
   const [showCurrentYear, setShowCurrentYear] = useState(true)
   const [textareaToken, setTextareaToken] = useState("body")
+  const [buttonSize, setButtonSize] = useState<"lg" | "md" | "sm">("md")
   const [inputSize, setInputSize] = useState("md")
   const [selectSize, setSelectSize] = useState("md")
   const [badgeSize, setBadgeSize] = useState("fine")
@@ -1519,7 +1520,7 @@ function App() {
             <h2 className="font-serif text-[26px] font-medium tracking-tight">Color</h2>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="gap-2">
+                <Button variant="outline" size="md" className="gap-2">
                   <div className="w-4 h-4 rounded-xs border border-border" style={{ backgroundColor: colorSectionBg }} />
                   <span className="text-xs text-muted-foreground">{colorSectionName ?? "Background"}</span>
                 </Button>
@@ -1582,7 +1583,7 @@ function App() {
               {/* Text color menu */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="gap-2">
+                  <Button variant="outline" size="md" className="gap-2">
                     <div className="w-4 h-4 rounded-xs border border-border" style={{ backgroundColor: typeColor }} />
                     <span className="text-xs text-muted-foreground">{typeColorName ?? "Text"}</span>
                   </Button>
@@ -1601,7 +1602,7 @@ function App() {
               {/* Background color menu */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="gap-2">
+                  <Button variant="outline" size="md" className="gap-2">
                     <div className="w-4 h-4 rounded-xs border border-border" style={{ backgroundColor: typeSectionBg }} />
                     <span className="text-xs text-muted-foreground">{typeSectionName ?? "Background"}</span>
                   </Button>
@@ -1716,14 +1717,28 @@ function App() {
 
         {/* ── COMPONENTS ── */}
         <Section id="components" title="Core Components">
-          <ComponentBlock name="Button">
-            <LabeledItem label="Primary"><Button>Create task</Button></LabeledItem>
-            <LabeledItem label="Secondary"><Button variant="secondary">Cancel</Button></LabeledItem>
-            <LabeledItem label="Ghost"><Button variant="ghost">Skip</Button></LabeledItem>
-            <LabeledItem label="Destructive"><Button variant="destructive">Delete</Button></LabeledItem>
-            <LabeledItem label="Outline"><Button variant="outline">Export</Button></LabeledItem>
+          <ComponentBlock name="Button" headerRight={
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">Button Size</span>
+              <Select value={buttonSize} onValueChange={(v) => setButtonSize(v as "lg" | "md" | "sm")}>
+                <SelectTrigger className="w-[140px] h-7 text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="lg">Large (lg)</SelectItem>
+                  <SelectItem value="md">Medium (md)</SelectItem>
+                  <SelectItem value="sm">Small (sm)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          }>
+            <LabeledItem label="Primary"><Button size={buttonSize}>Create task</Button></LabeledItem>
+            <LabeledItem label="Secondary"><Button size={buttonSize} variant="secondary">Cancel</Button></LabeledItem>
+            <LabeledItem label="Ghost"><Button size={buttonSize} variant="ghost">Skip</Button></LabeledItem>
+            <LabeledItem label="Destructive"><Button size={buttonSize} variant="destructive">Delete</Button></LabeledItem>
+            <LabeledItem label="Outline"><Button size={buttonSize} variant="outline">Export</Button></LabeledItem>
             <LabeledItem label="With icon">
-              <Button><Plus className="mr-2 h-4 w-4" /> New task</Button>
+              <Button size={buttonSize}><Plus className="mr-2 h-4 w-4" /> New task</Button>
             </LabeledItem>
           </ComponentBlock>
 
@@ -2325,7 +2340,7 @@ function App() {
                   {(sorting.length > 0 || globalFilter) && (
                     <Button
                       variant="ghost"
-                      size="sm"
+                      size="md"
                       className="h-7 text-xs"
                       onClick={() => { setSorting([]); setGlobalFilter(""); setColumnFilters([]) }}
                     >
@@ -2484,8 +2499,8 @@ function App() {
                 </div>
               </CardContent>
               <CardFooter className="justify-between">
-                <Button variant="ghost" size="sm">Skip</Button>
-                <Button size="sm">Continue <ArrowRight className="ml-2 h-4 w-4" /></Button>
+                <Button variant="ghost" size="md">Skip</Button>
+                <Button size="md">Continue <ArrowRight className="ml-2 h-4 w-4" /></Button>
               </CardFooter>
             </Card>
             </LabeledItem>
@@ -2760,7 +2775,7 @@ function App() {
                 {/* Separator color menu */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="sm" className="gap-2">
+                    <Button variant="outline" size="md" className="gap-2">
                       <div className="w-4 h-4 rounded-xs border border-border" style={{ backgroundColor: separatorColor }} />
                       <span className="text-xs text-muted-foreground">{separatorColorName ?? "Separator"}</span>
                     </Button>
@@ -2779,7 +2794,7 @@ function App() {
                 {/* Background color menu */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="sm" className="gap-2">
+                    <Button variant="outline" size="md" className="gap-2">
                       <div className="w-4 h-4 rounded-xs border border-border" style={{ backgroundColor: separatorBg }} />
                       <span className="text-xs text-muted-foreground">{separatorBgName ?? "Background"}</span>
                     </Button>

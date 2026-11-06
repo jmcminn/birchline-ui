@@ -32,6 +32,11 @@ the contract too, but the **semantic** tier is what components should consume.
 
 ### Changed
 
+- **Button sizes are now Large / Medium / Small (`lg` / `md` / `sm`)**: lg 38px tall /
+  16px side padding / 14px text (the former default, +2px tall), md 32px / 12px /
+  13px (the former `sm`, text +1px), sm 28px / 10px / 12px (new). `size="default"`
+  remains as an alias of `lg`; `icon` is 38x38. The former 40px `lg` (24px padding)
+  is replaced by the new `lg`. The showcase gets a Button Size control.
 - **Border-color utilities now take effect in the showcase.** The default
   `* { border-color }` reset moved into `@layer base`, so classes like
   `focus-visible:border-ring`, `border-transparent` and `data-[state=checked]:border-ring`
