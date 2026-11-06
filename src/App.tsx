@@ -2405,8 +2405,8 @@ function App() {
                                   <HighlightText text={val} query={globalFilter} />
                                 </Badge>
                               ) : colId === "assignee" ? (
-                                <Avatar className="h-7 w-7">
-                                  <AvatarFallback className="text-[10px]">{val}</AvatarFallback>
+                                <Avatar className="h-8 w-8">
+                                  <AvatarFallback className="text-[13px]">{val}</AvatarFallback>
                                 </Avatar>
                               ) : (
                                 <HighlightText text={val} query={globalFilter} />
