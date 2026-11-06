@@ -32,6 +32,7 @@ the contract too, but the **semantic** tier is what components should consume.
 
 ### Changed
 
+- **Tooltip showcase triggers are 32x32px** (were 38x38); icons stay 16px.
 - **DropdownMenu showcase triggers are 32x32px** (were 38x38); the three-dot icon stays
   16px. The `icon` Button size itself is unchanged.
 - **Badge Type Size (showcase, Badge and Badge: Removable) now uses whole-number

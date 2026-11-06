@@ -2175,7 +2175,7 @@ function App() {
             <LabeledItem label="Info">
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button variant="outline" size="icon">
+                  <Button variant="outline" size="icon" className="h-8 w-8">
                     <Info className="h-4 w-4" />
                   </Button>
                 </TooltipTrigger>
@@ -2187,7 +2187,7 @@ function App() {
             <LabeledItem label="Notification">
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button variant="outline" size="icon">
+                  <Button variant="outline" size="icon" className="h-8 w-8">
                     <Bell className="h-4 w-4" />
                   </Button>
                 </TooltipTrigger>
