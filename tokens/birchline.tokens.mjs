@@ -160,7 +160,7 @@ export const modes = {
 export const scales = {
   font: {
     serif: "ui-serif, Georgia, serif",
-    sans: "system-ui, -apple-system, sans-serif",
+    sans: "'Inter Variable', Inter, system-ui, -apple-system, sans-serif",
     mono: "ui-monospace, 'SF Mono', Menlo, monospace",
   },
   radius: { xs: "4px", sm: "8px", md: "12px", lg: "20px" },

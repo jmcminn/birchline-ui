@@ -126,7 +126,7 @@ cue (icon or clear label) so meaning never rests on color alone. Borders
 ## Typography
 
 Families: `--font-serif` (Georgia) for display/headings, `--font-sans`
-(system-ui) for UI/body, `--font-mono` for code/labels.
+(Inter, falling back to system-ui) for UI/body, `--font-mono` for code/labels.
 
 | Style | Font | Size / Line / Weight |
 |---|---|---|
