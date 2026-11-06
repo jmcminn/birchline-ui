@@ -1338,6 +1338,7 @@ function App() {
   const [typeColor, setTypeColor] = useState(TYPE_COLOR_DEFAULT)
   const [showCurrentYear, setShowCurrentYear] = useState(true)
   const [textareaToken, setTextareaToken] = useState("body")
+  const [buttonSize, setButtonSize] = useState<"lg" | "md" | "sm">("md")
   const [inputSize, setInputSize] = useState("md")
   const [selectSize, setSelectSize] = useState("md")
   const [badgeSize, setBadgeSize] = useState("fine")
@@ -1716,14 +1717,28 @@ function App() {
 
         {/* ── COMPONENTS ── */}
         <Section id="components" title="Core Components">
-          <ComponentBlock name="Button">
-            <LabeledItem label="Primary"><Button>Create task</Button></LabeledItem>
-            <LabeledItem label="Secondary"><Button variant="secondary">Cancel</Button></LabeledItem>
-            <LabeledItem label="Ghost"><Button variant="ghost">Skip</Button></LabeledItem>
-            <LabeledItem label="Destructive"><Button variant="destructive">Delete</Button></LabeledItem>
-            <LabeledItem label="Outline"><Button variant="outline">Export</Button></LabeledItem>
+          <ComponentBlock name="Button" headerRight={
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">Button Size</span>
+              <Select value={buttonSize} onValueChange={(v) => setButtonSize(v as "lg" | "md" | "sm")}>
+                <SelectTrigger className="w-[140px] h-7 text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="lg">Large (lg)</SelectItem>
+                  <SelectItem value="md">Medium (md)</SelectItem>
+                  <SelectItem value="sm">Small (sm)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          }>
+            <LabeledItem label="Primary"><Button size={buttonSize}>Create task</Button></LabeledItem>
+            <LabeledItem label="Secondary"><Button size={buttonSize} variant="secondary">Cancel</Button></LabeledItem>
+            <LabeledItem label="Ghost"><Button size={buttonSize} variant="ghost">Skip</Button></LabeledItem>
+            <LabeledItem label="Destructive"><Button size={buttonSize} variant="destructive">Delete</Button></LabeledItem>
+            <LabeledItem label="Outline"><Button size={buttonSize} variant="outline">Export</Button></LabeledItem>
             <LabeledItem label="With icon">
-              <Button><Plus className="mr-2 h-4 w-4" /> New task</Button>
+              <Button size={buttonSize}><Plus className="mr-2 h-4 w-4" /> New task</Button>
             </LabeledItem>
           </ComponentBlock>
 
