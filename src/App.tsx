@@ -179,9 +179,9 @@ function ColorSwatch({ token, semantic, noBorder }: { token: string; semantic?: 
         }}
       />
       <div>
-        <span className="font-mono text-xs text-secondary-foreground block">{hex}</span>
-        <span className="font-mono text-[11px] text-muted-foreground block">{token}</span>
-        {semantic && <span className="font-mono text-[11px] text-muted-foreground block">{semantic}</span>}
+        <span className="font-mono text-sm text-secondary-foreground block">{hex}</span>
+        <span className="font-mono text-sm text-muted-foreground block">{token}</span>
+        {semantic && <span className="font-mono text-xs text-muted-foreground block">{semantic}</span>}
       </div>
     </div>
   )
