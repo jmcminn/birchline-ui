@@ -32,6 +32,8 @@ the contract too, but the **semantic** tier is what components should consume.
 
 ### Changed
 
+- **DropdownMenu showcase triggers are 32x32px** (were 38x38); the three-dot icon stays
+  16px. The `icon` Button size itself is unchanged.
 - **Badge Type Size (showcase, Badge and Badge: Removable) now uses whole-number
   heights**: Body 28px, Small 24px, Fine 22px, Caption 20px (were 28.8 / 25 / 22.85 /
   20.8). Body and Small horizontal padding is now 12px (was 10px); Fine and Caption
