@@ -18,7 +18,7 @@ const SLOT_SELECTOR = "[data-slot]"
 const UI_SELECTOR = "[data-inspector-ui]"
 const PANEL_WIDTH = 540
 /** Rough panel height, used to decide whether it opens below or above its target. */
-const PANEL_EST_HEIGHT = 560
+const PANEL_EST_HEIGHT = 640
 
 function findSlot(target: EventTarget | null): HTMLElement | null {
   if (!(target instanceof Element)) return null
@@ -219,7 +219,7 @@ function Panel({ el, rect, onClose }: { el: HTMLElement; rect: DOMRect; onClose:
         {report.type.length > 0 && (
           <>
             <SectionTitle className="mt-4">Text</SectionTitle>
-            <div className="grid grid-cols-[72px_1fr] gap-y-1">
+            <div className="grid grid-cols-[72px_1fr] gap-y-2">
               {report.type.map((t) => (
                 <div key={t.type} className="contents">
                   <div className="text-muted-foreground capitalize">{t.type}</div>
@@ -245,7 +245,7 @@ function StateRows({ label, block, first }: { label: string; block: InspectRepor
   const empty = block.colors.length === 0
   const hasNote = empty || block.effects.length > 0
   // Gap between states, not between rows within a state.
-  const gap = first ? "" : "mt-2.5"
+  const gap = first ? "" : "mt-5"
   return (
     <>
       <div className={`leading-6 text-muted-foreground ${gap}`}>{label}</div>
@@ -253,19 +253,19 @@ function StateRows({ label, block, first }: { label: string; block: InspectRepor
         block.colors.map((row, i) => (
           <div key={`${row.token}/${row.opacity ?? ""}`} className="contents">
             {i > 0 && <div />}
-            <span className={`mr-3 flex items-center gap-1.5 whitespace-nowrap ${i > 0 ? "mt-1" : gap}`}>
+            <span className={`mr-3 flex items-center gap-1.5 whitespace-nowrap ${i > 0 ? "mt-2" : gap}`}>
               <Swatch token={row.token} opacity={row.opacity} />
               --{row.token}
               {row.opacity !== undefined && <span className="text-muted-foreground">/{row.opacity}%</span>}
             </span>
-            <span className={`text-left leading-6 text-muted-foreground ${i > 0 ? "mt-1" : gap}`}>{row.uses.join(", ")}</span>
+            <span className={`text-left leading-6 text-muted-foreground ${i > 0 ? "mt-2" : gap}`}>{row.uses.join(", ")}</span>
           </div>
         ))
       ) : null}
       {hasNote && (
         <>
           {block.colors.length > 0 && <div />}
-          <div className={`col-span-2 leading-6 text-muted-foreground ${block.colors.length > 0 ? "mt-1" : gap}`}>
+          <div className={`col-span-2 leading-6 text-muted-foreground ${block.colors.length > 0 ? "mt-2" : gap}`}>
             {empty && "no new colors"}
             {empty && block.effects.length > 0 && " · "}
             {block.effects.join(" · ")}

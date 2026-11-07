@@ -38,7 +38,8 @@ the contract too, but the **semantic** tier is what components should consume.
   10px regular). Color swatches are 24px (were 10px) and only the swatches that show --white or --ivory
   (including tokens that resolve to them, such as --background, --card, --primary-foreground)
   keep a 1px stroke. The panel opens on whichever side of its target has more room and caps
-  its height to stay inside the window, scrolling only if it has to.
+  its height to stay inside the window, scrolling only if it has to. Vertical spacing is doubled: 8px between color rows (was 4px), 20px between
+  states (was 10px), and 8px between Text rows (was 4px).
 - **Input showcase fields are 200px wide** (were 260px); heights and padding follow the Input
   Size menu as before.
 - **Toggle and ToggleGroup showcase icon buttons are 32x32px** (were about 40x36); icons stay
