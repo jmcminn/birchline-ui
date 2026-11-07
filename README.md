@@ -7,6 +7,7 @@ shadcn/ui components reskinned with [Birchline](https://github.com/jmcminn/birch
 - [Foundations](./docs/foundations.md) — token architecture, color roles, type ramp, spacing, theming, focus.
 - [Components](./docs/components.md) — index, install commands, and "which one do I use?" guidance.
 - [Tech stack](./docs/tech-stack.md) — frameworks, libraries, tooling, CI, and the decisions behind pinned versions.
+- [Token inspector](./docs/token-inspector.md) — the showcase dev tool that lists each component's tokens, and the `data-slot` convention behind it.
 - [Changelog](./CHANGELOG.md) — notable changes and the token versioning policy.
 
 ## Stack
