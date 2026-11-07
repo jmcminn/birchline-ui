@@ -1011,7 +1011,7 @@ function BorderChaseCard({
     : { opacity: 0 };
 
   return (
-    <div ref={containerRef} className="relative w-full h-full">
+    <div ref={containerRef} data-slot="border-chase" className="relative w-full h-full">
       {playing && animKey > 0 && <style>{keyframesCSS}</style>}
       <Card className="w-full h-full">
         <CardHeader>

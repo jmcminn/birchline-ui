@@ -16,10 +16,12 @@
  */
 import { useCallback, useEffect, useRef, useState } from "react"
 import { X } from "lucide-react"
-import { inspectElement, type InspectReport } from "./inspect-element"
+import { ADOPTED_SELECTOR, inspectElement, slotOf, type InspectReport } from "./inspect-element"
 import { STATE_LABEL } from "./parse-classes"
 
 const SLOT_SELECTOR = "[data-slot]"
+/** data-slot roots plus adopted third-party roots (e.g. Sonner toasts). */
+const HIT_SELECTOR = `${SLOT_SELECTOR}, ${ADOPTED_SELECTOR}`
 const UI_SELECTOR = "[data-inspector-ui]"
 /** A Radix overlay (menu, select, popover, tooltip, dialog, sheet) is open when
  *  one of its portalled content/overlay parts is mounted with data-state=open.
@@ -33,7 +35,7 @@ const PANEL_EST_HEIGHT = 640
 function findSlot(target: EventTarget | null): HTMLElement | null {
   if (!(target instanceof Element)) return null
   if (target.closest(UI_SELECTOR)) return null
-  return target.closest<HTMLElement>(SLOT_SELECTOR)
+  return target.closest<HTMLElement>(HIT_SELECTOR)
 }
 
 /** Re-render on scroll/resize and on palette/mode switches. */
@@ -164,7 +166,7 @@ export function TokenInspector({ active, onExit }: { active: boolean; onExit: ()
 }
 
 function labelFor(el: HTMLElement) {
-  const slot = el.getAttribute("data-slot") ?? ""
+  const slot = slotOf(el) ?? ""
   return `<${slot.replace(/(^|-)(\w)/g, (_, __, c: string) => c.toUpperCase())} />`
 }
 

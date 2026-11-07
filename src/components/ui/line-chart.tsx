@@ -114,7 +114,7 @@ export function LineChartTooltipContent({ row, series, breakdown, unit, seriesHe
   const hasSeries = !!series?.length
   const th = "px-2 py-1 text-xs font-medium text-white/70"
   return (
-    <div className={cn("rounded-xl border border-ink bg-ink p-2 text-white shadow-[0_10px_40px_rgba(0,0,0,0.5)]", hasSeries ? "min-w-60" : "min-w-44")}>
+    <div data-slot="line-chart-tooltip" className={cn("rounded-xl border border-ink bg-ink p-2 text-white shadow-[0_10px_40px_rgba(0,0,0,0.5)]", hasSeries ? "min-w-60" : "min-w-44")}>
       <div className="mb-2 flex items-center gap-2 px-2 pb-2 pt-1 text-base font-semibold">
         <Calendar className="size-4" strokeWidth={1.5} aria-hidden="true" />
         {formatTooltipDate(row.date)}
@@ -434,7 +434,7 @@ function LineChart({
       </div>
 
       {showBreakdown && series ? (
-        <ul className="mt-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 border-t border-border pt-3">
+        <ul data-slot="line-chart-legend" className="mt-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 border-t border-border pt-3">
           {series.map((s) => (
             <li key={s.key} className="flex items-center gap-2 text-sm font-medium text-secondary-foreground">
               <span className="size-3 rounded-full" style={{ backgroundColor: s.color }} aria-hidden="true" />
