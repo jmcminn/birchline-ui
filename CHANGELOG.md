@@ -32,6 +32,7 @@ the contract too, but the **semantic** tier is what components should consume.
 
 ### Changed
 
+- **Textarea showcase Type Size menu opens on Small (14px)** (was Body).
 - **Token inspector toggle**: the on state is now a clay tint (15% `--primary` fill, 2px
   `--primary` border, `--primary` icon) instead of a gray fill, so it stands out from hover.
 - **Token inspector panel**: the "uses" text in the Colors section is now left-aligned in one
