@@ -18,6 +18,7 @@ const DropdownMenuSubTrigger = React.forwardRef<
 >(({ className, inset, children, ...props }, ref) => (
   <DropdownMenuPrimitive.SubTrigger
     ref={ref}
+    data-slot="dropdown-menu-sub-trigger"
     className={cn(
       "flex cursor-default select-none items-center gap-2 rounded-xs px-3 py-2 text-sm outline-none focus:bg-accent",
       inset && "pl-8",
@@ -37,6 +38,7 @@ const DropdownMenuSubContent = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DropdownMenuPrimitive.SubContent
     ref={ref}
+    data-slot="dropdown-menu-sub-content"
     className={cn(
       "z-50 min-w-[8rem] overflow-hidden rounded-md border border-border bg-popover px-2 py-1.5 text-foreground shadow-md",
       className
@@ -54,6 +56,7 @@ const DropdownMenuContent = React.forwardRef<
     <DropdownMenuPrimitive.Content
       ref={ref}
       sideOffset={sideOffset}
+      data-slot="dropdown-menu-content"
       className={cn(
         "z-50 min-w-[8rem] overflow-hidden rounded-md border border-border bg-popover px-2 py-1.5 text-foreground shadow-md",
         className
@@ -72,6 +75,7 @@ const DropdownMenuItem = React.forwardRef<
 >(({ className, inset, ...props }, ref) => (
   <DropdownMenuPrimitive.Item
     ref={ref}
+    data-slot="dropdown-menu-item"
     className={cn(
       "relative flex cursor-pointer select-none items-center gap-2 rounded-xs px-3 py-2 text-sm outline-none transition-colors",
       "focus:bg-accent focus:text-foreground",
@@ -90,6 +94,7 @@ const DropdownMenuCheckboxItem = React.forwardRef<
 >(({ className, children, checked, ...props }, ref) => (
   <DropdownMenuPrimitive.CheckboxItem
     ref={ref}
+    data-slot="dropdown-menu-checkbox-item"
     className={cn(
       "relative flex cursor-pointer select-none items-center rounded-xs py-2 pl-8 pr-2 text-sm outline-none transition-colors",
       "focus:bg-accent focus:text-foreground",
@@ -115,6 +120,7 @@ const DropdownMenuRadioItem = React.forwardRef<
 >(({ className, children, ...props }, ref) => (
   <DropdownMenuPrimitive.RadioItem
     ref={ref}
+    data-slot="dropdown-menu-radio-item"
     className={cn(
       "relative flex cursor-pointer select-none items-center rounded-xs py-2 pl-8 pr-2 text-sm outline-none transition-colors",
       "focus:bg-accent focus:text-foreground",
@@ -141,6 +147,7 @@ const DropdownMenuLabel = React.forwardRef<
 >(({ className, inset, ...props }, ref) => (
   <DropdownMenuPrimitive.Label
     ref={ref}
+    data-slot="dropdown-menu-label"
     className={cn(
       "px-3 py-1.5 text-xs font-semibold text-muted-foreground",
       inset && "pl-8",
@@ -157,6 +164,7 @@ const DropdownMenuSeparator = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DropdownMenuPrimitive.Separator
     ref={ref}
+    data-slot="dropdown-menu-separator"
     className={cn("-mx-1 my-1 h-px bg-border", className)}
     {...props}
   />

@@ -21,6 +21,11 @@ import { STATE_LABEL } from "./parse-classes"
 
 const SLOT_SELECTOR = "[data-slot]"
 const UI_SELECTOR = "[data-inspector-ui]"
+/** A Radix overlay (menu, select, popover, tooltip, dialog, sheet) is open when
+ *  one of its portalled content/overlay parts is mounted with data-state=open.
+ *  Used so Esc closes the overlay before it exits inspect mode. */
+const OVERLAY_OPEN_SELECTOR =
+  '[data-slot$="-content"][data-state="open"], [data-slot$="-overlay"][data-state="open"]'
 const PANEL_WIDTH = 540
 /** Rough panel height, used to decide whether it opens below or above its target. */
 const PANEL_EST_HEIGHT = 640
@@ -81,6 +86,9 @@ export function TokenInspector({ active, onExit }: { active: boolean; onExit: ()
 
     const onMove = (e: MouseEvent) => setHovered(findSlot(e.target))
     const onClick = (e: MouseEvent) => {
+      // Alt/Option-click passes through so menus, selects, popovers, dialogs and
+      // sheets can be opened while inspecting, then their parts inspected.
+      if (e.altKey) return
       if (e.target instanceof Element && e.target.closest(UI_SELECTOR)) return
       const slot = findSlot(e.target)
       if (slot) {
@@ -91,30 +99,45 @@ export function TokenInspector({ active, onExit }: { active: boolean; onExit: ()
         setPinned(null)
       }
     }
-    // Swallow press events too so Radix triggers (which open on pointerdown) stay put.
+    // Swallow press events too so Radix triggers (open on pointerdown) and items
+    // (select/close on pointerup) stay put — unless Alt is held, which lets the
+    // control open. All of down/up/mouse are covered so nothing slips through.
     const onPress = (e: Event) => {
+      if ((e as MouseEvent).altKey) return
       if (findSlot(e.target)) {
         e.preventDefault()
         e.stopPropagation()
       }
     }
+    // Capture phase so unpinning wins over Radix's own Esc handler: order is
+    // unpin → close the open overlay (let Radix handle it) → exit inspect mode.
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== "Escape") return
-      if (pinnedRef.current) setPinned(null)
-      else onExit()
+      if (pinnedRef.current) {
+        e.preventDefault()
+        e.stopPropagation()
+        setPinned(null)
+        return
+      }
+      if (document.querySelector(OVERLAY_OPEN_SELECTOR)) return // let Radix close it
+      onExit()
     }
     document.addEventListener("mousemove", onMove, true)
     document.addEventListener("click", onClick, true)
     document.addEventListener("pointerdown", onPress, true)
+    document.addEventListener("pointerup", onPress, true)
     document.addEventListener("mousedown", onPress, true)
-    document.addEventListener("keydown", onKey)
+    document.addEventListener("mouseup", onPress, true)
+    document.addEventListener("keydown", onKey, true)
     return () => {
       root.classList.remove("bl-inspecting")
       document.removeEventListener("mousemove", onMove, true)
       document.removeEventListener("click", onClick, true)
       document.removeEventListener("pointerdown", onPress, true)
+      document.removeEventListener("pointerup", onPress, true)
       document.removeEventListener("mousedown", onPress, true)
-      document.removeEventListener("keydown", onKey)
+      document.removeEventListener("mouseup", onPress, true)
+      document.removeEventListener("keydown", onKey, true)
     }
   }, [active, onExit])
 
@@ -132,8 +155,8 @@ export function TokenInspector({ active, onExit }: { active: boolean; onExit: ()
       {pinRect && <Outline rect={pinRect} />}
       {pinned && pinRect && <Panel el={pinned} rect={pinRect} onClose={close} onPin={setPinned} />}
       {!pinned && (
-        <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-[60] rounded-sm border border-border bg-popover px-3 py-1.5 font-mono text-[11px] text-muted-foreground shadow-md">
-          Inspect mode — click a component · Esc to exit
+        <div className="pointer-events-none fixed bottom-5 left-1/2 -translate-x-1/2 z-[101] rounded-sm border border-border bg-popover px-3 py-1.5 font-mono text-[11px] text-muted-foreground shadow-md">
+          Inspect mode — click a component · Alt-click to open menus · Esc to exit
         </div>
       )}
     </div>
@@ -148,7 +171,7 @@ function labelFor(el: HTMLElement) {
 function Outline({ rect, label, dashed }: { rect: DOMRect; label?: string; dashed?: boolean }) {
   return (
     <div
-      className="pointer-events-none fixed z-[60] rounded-[3px]"
+      className="pointer-events-none fixed z-[100] rounded-[3px]"
       style={{
         top: rect.top - 3,
         left: rect.left - 3,
@@ -209,8 +232,12 @@ function Panel({
     <div
       role="dialog"
       aria-label={`Tokens for ${report.component}`}
-      className="fixed z-[61] overflow-y-auto rounded-md border border-border bg-popover text-popover-foreground shadow-lg"
+      className="pointer-events-auto fixed z-[101] overflow-y-auto rounded-md border border-border bg-popover text-popover-foreground shadow-lg"
       style={style}
+      // Keep presses on the panel from reaching Radix's outside-click dismisser,
+      // so a dialog/menu stays open while you read or step through its parts.
+      onPointerDown={(e) => e.stopPropagation()}
+      onMouseDown={(e) => e.stopPropagation()}
     >
       <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
         <div className="font-mono text-[14px]">
