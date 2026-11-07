@@ -35,7 +35,7 @@ the contract too, but the **semantic** tier is what components should consume.
 - **Token inspector panel**: the "uses" text in the Colors section is now left-aligned in one
   shared column (was right-aligned per row), and the panel is 540px wide (was 400px). The gap between the token and uses columns is 24px.
   Body text is 13px (was 11.5px) and the COLORS / TEXT headings are 14px Inter semi-bold in
-  `--primary` (were 10px mono regular, muted). Color swatches are 24px (were 10px) and only the swatches that show --white or --ivory
+  `--primary` (were 10px mono regular, muted). The panel title is 14px (was 13px). Color swatches are 24px (were 10px) and only the swatches that show --white or --ivory
   (including tokens that resolve to them, such as --background, --card, --primary-foreground)
   keep a 1px stroke. The panel opens on whichever side of its target has more room and caps
   its height to stay inside the window, scrolling only if it has to. Vertical spacing is doubled: 8px between color rows (was 4px), 20px between

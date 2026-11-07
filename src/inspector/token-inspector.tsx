@@ -192,7 +192,7 @@ function Panel({ el, rect, onClose }: { el: HTMLElement; rect: DOMRect; onClose:
       style={style}
     >
       <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
-        <div className="font-mono text-[13px]">
+        <div className="font-mono text-[14px]">
           &lt;{report.component} /&gt;
           {subtitle && <span className="ml-2 text-muted-foreground">{subtitle}</span>}
         </div>
