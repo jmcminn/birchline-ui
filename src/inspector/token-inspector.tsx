@@ -230,7 +230,7 @@ function Panel({ el, rect, onClose }: { el: HTMLElement; rect: DOMRect; onClose:
 }
 
 function SectionTitle({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <div className={`mb-2 text-xs font-medium uppercase tracking-[0.08em] text-muted-foreground ${className}`}>{children}</div>
+  return <div className={`mb-2 text-xs font-bold uppercase tracking-[0.08em] text-muted-foreground ${className}`}>{children}</div>
 }
 
 function StateRows({ label, block, first }: { label: string; block: InspectReport["states"][number]; first: boolean }) {
