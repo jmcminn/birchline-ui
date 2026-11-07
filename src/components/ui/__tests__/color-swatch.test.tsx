@@ -1,4 +1,4 @@
-import { render, screen, waitFor, fireEvent } from "@testing-library/react"
+import { render, screen, waitFor, fireEvent, act } from "@testing-library/react"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { ColorSwatch } from "@/App"
 
@@ -50,5 +50,73 @@ describe("ColorSwatch copy-to-clipboard", () => {
     const targets = screen.getAllByRole("button", { name: "Copy hex #FFFFFF for --white" })
     fireEvent.click(targets[1])
     await waitFor(() => expect(writeText).toHaveBeenCalledWith("#FFFFFF"))
+  })
+})
+
+describe("ColorSwatch copy tooltip sequence", () => {
+  let writeText: ReturnType<typeof vi.fn>
+  beforeEach(() => {
+    vi.useFakeTimers()
+    writeText = vi.fn().mockResolvedValue(undefined)
+    Object.defineProperty(navigator, "clipboard", { value: { writeText }, configurable: true })
+  })
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  const advance = (ms: number) => act(async () => { await vi.advanceTimersByTimeAsync(ms) })
+  const square = () => screen.getAllByRole("button", { name: "Copy hex #FFFFFF for --white" })[0]
+  const clickCopy = async () => {
+    await act(async () => { fireEvent.click(square()) })
+    await advance(50)
+  }
+
+  it("shows Copied, then fades out and closes, and never returns to Copy hex code", async () => {
+    renderSwatch()
+    await clickCopy()
+    expect(screen.getAllByText("Copied to clipboard").length).toBeGreaterThan(0)
+    expect(square()).not.toHaveAttribute("data-spent") // still animating
+
+    await advance(500)
+    expect(square()).toHaveAttribute("data-spent") // animation done: cursor reverts
+
+    await advance(1000) // rest over: fading begins
+    const tip = document.querySelector("[data-slot=tooltip-content]") as HTMLElement
+    expect(tip.style.opacity).toBe("0")
+    expect(tip.style.transition).toContain("300ms")
+
+    await advance(400) // fade done: closed for good
+    expect(document.querySelector("[data-slot=tooltip-content]")).toBeNull()
+    expect(screen.queryByText("Copy hex code")).toBeNull()
+    expect(square()).toHaveAttribute("data-spent")
+  })
+
+  it("ignores clicks and stays closed while the pointer remains after copying", async () => {
+    renderSwatch()
+    await clickCopy()
+    await advance(2000)
+    expect(writeText).toHaveBeenCalledTimes(1)
+
+    fireEvent.click(square()) // spent: ignored
+    fireEvent.pointerEnter(square()) // still hovering: does not reopen
+    await advance(1000)
+    expect(writeText).toHaveBeenCalledTimes(1)
+    expect(document.querySelector("[data-slot=tooltip-content]")).toBeNull()
+  })
+
+  it("re-arms after the pointer leaves and comes back", async () => {
+    renderSwatch()
+    await clickCopy()
+    await advance(2000)
+
+    fireEvent.pointerLeave(square())
+    expect(square()).not.toHaveAttribute("data-spent")
+    fireEvent.pointerEnter(square())
+    await advance(800)
+    expect(screen.getAllByText("Copy hex code").length).toBeGreaterThan(0)
+
+    fireEvent.click(square())
+    await advance(50)
+    expect(writeText).toHaveBeenCalledTimes(2)
   })
 })
