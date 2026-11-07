@@ -158,10 +158,25 @@ function LabeledItem({ label, subtitle, labelClassName, children }: { label: str
   )
 }
 
-function ColorSwatch({ token, semantic, noBorder }: { token: string; semantic?: string; noBorder?: boolean }) {
+/** Hover/focus "Click to copy" tooltip for a swatch's copy target. Driven by Radix
+ *  hover intent, but force-closed while `suppressed` (the Copied bubble is showing)
+ *  so the two bubbles never stack. */
+function CopyTooltip({ label, suppressed, children }: { label: string; suppressed: boolean; children: React.ReactNode }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <Tooltip open={open && !suppressed} onOpenChange={setOpen}>
+      <TooltipTrigger asChild>{children}</TooltipTrigger>
+      <TooltipContent>{label}</TooltipContent>
+    </Tooltip>
+  )
+}
+
+export function ColorSwatch({ token, semantic, noBorder }: { token: string; semantic?: string; noBorder?: boolean }) {
   // Read the live value of the token so the swatch reflects the active theme.
   const cssVar = token.replace("--", "--color-")
   const [hex, setHex] = useState("")
+  const [copied, setCopied] = useState(false)
+  const timer = useRef<number | null>(null)
   useEffect(() => {
     const read = () => setHex(getComputedStyle(document.documentElement).getPropertyValue(cssVar).trim().toUpperCase())
     read()
@@ -169,17 +184,59 @@ function ColorSwatch({ token, semantic, noBorder }: { token: string; semantic?: 
     obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-mode"] })
     return () => obs.disconnect()
   }, [cssVar])
+  useEffect(() => () => { if (timer.current) window.clearTimeout(timer.current) }, [])
+
+  // Copy the live hex (uppercase, mode-aware) and flash the Copied bubble for 1.5s.
+  const copy = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(hex)
+    } catch {
+      // Clipboard blocked (permissions/insecure context) — still flash so the
+      // interaction feels responsive; the value simply wasn't written.
+    }
+    setCopied(true)
+    if (timer.current) window.clearTimeout(timer.current)
+    timer.current = window.setTimeout(() => setCopied(false), 1500)
+  }, [hex])
+
+  const copyLabel = `Copy hex ${hex} for ${token}`
+
   return (
     <div className="flex items-center gap-4">
-      <div
-        className="w-20 h-20 rounded-sm shrink-0"
-        style={{
-          backgroundColor: `var(${cssVar})`,
-          border: noBorder ? "1.5px solid transparent" : "1.5px solid var(--color-border)",
-        }}
-      />
+      {/* Square is a copy target; its wrapper anchors the Copied bubble. */}
+      <div className="relative shrink-0">
+        <CopyTooltip label="Click to copy" suppressed={copied}>
+          <button
+            type="button"
+            onClick={copy}
+            aria-label={copyLabel}
+            className="block h-20 w-20 cursor-pointer rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            style={{
+              backgroundColor: `var(${cssVar})`,
+              border: noBorder ? "1.5px solid transparent" : "1.5px solid var(--color-border)",
+            }}
+          />
+        </CopyTooltip>
+        {copied && (
+          <div
+            role="status"
+            className="pointer-events-none absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded-sm border border-border bg-popover px-2.5 py-1 font-mono text-xs text-popover-foreground shadow-md animate-[bl-copied_1.5s_ease_forwards] motion-reduce:animate-none"
+          >
+            Copied to clipboard
+          </div>
+        )}
+      </div>
       <div>
-        <span className="font-mono text-sm text-secondary-foreground block">{hex}</span>
+        <CopyTooltip label="Click to copy" suppressed={copied}>
+          <button
+            type="button"
+            onClick={copy}
+            aria-label={copyLabel}
+            className="block cursor-pointer rounded-xs font-mono text-sm text-secondary-foreground underline-offset-2 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            {hex}
+          </button>
+        </CopyTooltip>
         <span className="font-mono text-sm text-muted-foreground block">{token}</span>
         {semantic && <span className="font-mono text-xs text-muted-foreground block">{semantic}</span>}
       </div>

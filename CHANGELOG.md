@@ -77,6 +77,11 @@ the contract too, but the **semantic** tier is what components should consume.
 
 ### Added
 
+- **Click-to-copy on the Color palette swatches.** In the showcase's Color section, each
+  swatch's color square and hex value are now buttons that copy the live hex (the
+  mode-aware value shown) to the clipboard. Hovering shows a "Click to copy" tooltip; on
+  click a "Copied to clipboard" bubble appears over the swatch for 1.5s and fades out.
+  Keyboard-accessible with labelled buttons and an `aria-live` announcement. Showcase only.
 - **Token inspector covers the in-page components, not just Button.** Every exported
   component and part now carries a `data-slot` attribute (shadcn/ui v4 naming, e.g.
   `card-header`, `table-row`, `select-trigger`) plus `data-variant` / `data-size` where it
