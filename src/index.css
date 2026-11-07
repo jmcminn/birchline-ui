@@ -42,12 +42,13 @@ body {
   margin-top: 3px;
 }
 
-/* Color-swatch "Copied to clipboard" bubble: pop in, hold, then fade out over 1.5s.
-   Keeps the -50% X so it stays centered over the swatch (the Tailwind
-   -translate-x-1/2 is the reduced-motion fallback when this animation is off). */
-@keyframes bl-copied {
-  0%   { opacity: 0; transform: translate(-50%, 4px); }
-  12%  { opacity: 1; transform: translate(-50%, 0); }
-  78%  { opacity: 1; transform: translate(-50%, 0); }
-  100% { opacity: 0; transform: translate(-50%, -2px); }
+/* Color-swatch copy tooltip: the label crossfades (0.5s) between "Click to copy" and
+   "Copied to clipboard" while the tooltip animates its width to fit. */
+@keyframes bl-text-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes bl-text-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
 }
