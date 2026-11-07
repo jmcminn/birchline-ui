@@ -79,7 +79,7 @@ the contract too, but the **semantic** tier is what components should consume.
 
 - **Click-to-copy on the Color palette swatches.** In the showcase's Color section, each
   swatch's color square and hex value are now buttons that copy the live hex (the
-  mode-aware value shown) to the clipboard. Hovering shows a "Click to copy" tooltip; on
+  mode-aware value shown) to the clipboard. Hovering shows a "Click to copy hex code" tooltip; on
   click the same tooltip stays open and its label dissolves (0.5s) to "Copied to
   clipboard" while the tooltip animates its width to fit, then dissolves back after 1.5s.
   Keyboard-accessible with labelled buttons and an `aria-live` announcement; respects

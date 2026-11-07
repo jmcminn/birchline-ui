@@ -42,7 +42,7 @@ body {
   margin-top: 3px;
 }
 
-/* Color-swatch copy tooltip: the label crossfades (0.5s) between "Click to copy" and
+/* Color-swatch copy tooltip: the label crossfades (0.5s) between "Click to copy hex code" and
    "Copied to clipboard" while the tooltip animates its width to fit. */
 @keyframes bl-text-in {
   from { opacity: 0; }
