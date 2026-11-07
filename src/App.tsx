@@ -211,7 +211,7 @@ function MorphTooltipText({ text }: { text: string }) {
 }
 
 /** A copy target (the square or the hex) rendered as the tooltip trigger button. The
- *  tooltip reads "Click to copy" and, on click, stays open while its label morphs to
+ *  tooltip reads "Click to copy hex code" and, on click, stays open while its label morphs to
  *  "Copied to clipboard" for 1.5s. Open state is self-managed (700ms hover delay, instant
  *  on focus) so the click doesn't dismiss the tooltip the way Radix's press-to-close would. */
 function CopyTooltip({
@@ -279,7 +279,7 @@ function CopyTooltip({
           {children}
         </TooltipTrigger>
         <TooltipContent>
-          <MorphTooltipText text={copied ? "Copied to clipboard" : "Click to copy"} />
+          <MorphTooltipText text={copied ? "Copied to clipboard" : "Click to copy hex code"} />
         </TooltipContent>
       </Tooltip>
       <span aria-live="polite" className="sr-only">{copied ? `Copied ${hex} to clipboard` : ""}</span>
