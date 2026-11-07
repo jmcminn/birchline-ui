@@ -278,7 +278,7 @@ function LineChart({
               disabled={weeks <= 1}
               onClick={() => zoomTo(weeks - 1)}
             >
-              <Plus className="size-4" strokeWidth={1.5} />
+              <Plus className="size-4" strokeWidth={2} />
             </Button>
             <Button
               variant="outline"
@@ -288,7 +288,7 @@ function LineChart({
               disabled={weeks >= maxWeeks}
               onClick={() => zoomTo(weeks + 1)}
             >
-              <Minus className="size-4" strokeWidth={1.5} />
+              <Minus className="size-4" strokeWidth={2} />
             </Button>
           </div>
         </div>
