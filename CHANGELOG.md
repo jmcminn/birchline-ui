@@ -32,6 +32,7 @@ the contract too, but the **semantic** tier is what components should consume.
 
 ### Changed
 
+- **LineChart zoom (+ / −) icons use a 2px stroke** (was 1.5px), matching the default Lucide icon weight used elsewhere, e.g. the Button arrow.
 - **Avatar showcase "Image" initials match the fallback.** The sample image's baked-in initials
   (DiceBear) rendered larger and bolder than the fallback's 15px / medium text; the URL now sets
   `fontSize=40&fontWeight=500` so the two read the same. Showcase only.
