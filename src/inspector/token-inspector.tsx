@@ -238,7 +238,7 @@ function Panel({ el, rect, onClose }: { el: HTMLElement; rect: DOMRect; onClose:
 }
 
 function SectionTitle({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <div className={`mb-2 text-sm font-extrabold uppercase tracking-[0.08em] text-primary ${className}`}>{children}</div>
+  return <div className={`mb-2 font-sans text-sm font-semibold uppercase tracking-[0.08em] text-primary ${className}`}>{children}</div>
 }
 
 function StateRows({ label, block, first }: { label: string; block: InspectReport["states"][number]; first: boolean }) {
