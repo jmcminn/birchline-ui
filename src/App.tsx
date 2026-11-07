@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, useEffect, useCallback } from "react"
+import { useState, useMemo, useRef, useEffect, useCallback, useLayoutEffect } from "react"
 import { format } from "date-fns"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
@@ -158,16 +158,132 @@ function LabeledItem({ label, subtitle, labelClassName, children }: { label: str
   )
 }
 
-/** Hover/focus "Click to copy" tooltip for a swatch's copy target. Driven by Radix
- *  hover intent, but force-closed while `suppressed` (the Copied bubble is showing)
- *  so the two bubbles never stack. */
-function CopyTooltip({ label, suppressed, children }: { label: string; suppressed: boolean; children: React.ReactNode }) {
-  const [open, setOpen] = useState(false)
+/** Tooltip text that crossfades between labels and animates its width to fit the new
+ *  one. The incoming label fades in and the outgoing fades out over 0.5s; an invisible
+ *  in-flow copy of the current label gives the measured width the container transitions to.
+ *  The first label appears at its natural width (no animation) because width starts unset. */
+function MorphTooltipText({ text }: { text: string }) {
+  const sizer = useRef<HTMLSpanElement>(null)
+  const prev = useRef(text)
+  const [width, setWidth] = useState<number>()
+  const [outgoing, setOutgoing] = useState<string | null>(null)
+
+  useLayoutEffect(() => {
+    if (prev.current !== text) {
+      setOutgoing(prev.current)
+      prev.current = text
+    }
+    if (sizer.current) setWidth(sizer.current.offsetWidth)
+  }, [text])
+
+  useEffect(() => {
+    if (outgoing == null) return
+    const t = window.setTimeout(() => setOutgoing(null), 500)
+    return () => window.clearTimeout(t)
+  }, [outgoing])
+
   return (
-    <Tooltip open={open && !suppressed} onOpenChange={setOpen}>
-      <TooltipTrigger asChild>{children}</TooltipTrigger>
-      <TooltipContent>{label}</TooltipContent>
-    </Tooltip>
+    <span
+      className="relative block overflow-hidden transition-[width] duration-500 ease-out motion-reduce:transition-none"
+      style={{ width }}
+    >
+      {/* Invisible, in-flow: sizes the box so width can be measured and transitioned. */}
+      <span ref={sizer} aria-hidden className="invisible whitespace-nowrap">{text}</span>
+      {/* Current label fades in. */}
+      <span
+        key={`in-${text}`}
+        className="absolute inset-0 whitespace-nowrap animate-[bl-text-in_0.5s_ease] motion-reduce:animate-none"
+      >
+        {text}
+      </span>
+      {/* Previous label fades out, then unmounts. */}
+      {outgoing && (
+        <span
+          key={`out-${outgoing}`}
+          aria-hidden
+          className="absolute inset-0 whitespace-nowrap animate-[bl-text-out_0.5s_ease_forwards] motion-reduce:hidden"
+        >
+          {outgoing}
+        </span>
+      )}
+    </span>
+  )
+}
+
+/** A copy target (the square or the hex) rendered as the tooltip trigger button. The
+ *  tooltip reads "Click to copy" and, on click, stays open while its label morphs to
+ *  "Copied to clipboard" for 1.5s. Open state is self-managed (700ms hover delay, instant
+ *  on focus) so the click doesn't dismiss the tooltip the way Radix's press-to-close would. */
+function CopyTooltip({
+  hex,
+  token,
+  className,
+  style,
+  children,
+}: {
+  hex: string
+  token: string
+  className?: string
+  style?: React.CSSProperties
+  children?: React.ReactNode
+}) {
+  const [open, setOpen] = useState(false)
+  const [copied, setCopied] = useState(false)
+  const openTimer = useRef<number | null>(null)
+  const copyTimer = useRef<number | null>(null)
+  useEffect(
+    () => () => {
+      if (openTimer.current) window.clearTimeout(openTimer.current)
+      if (copyTimer.current) window.clearTimeout(copyTimer.current)
+    },
+    [],
+  )
+
+  const show = (delay: number) => {
+    if (openTimer.current) window.clearTimeout(openTimer.current)
+    if (delay === 0) setOpen(true)
+    else openTimer.current = window.setTimeout(() => setOpen(true), delay)
+  }
+  const hide = () => {
+    if (openTimer.current) window.clearTimeout(openTimer.current)
+    setOpen(false)
+  }
+
+  const doCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(hex)
+    } catch {
+      // Clipboard blocked (permissions/insecure context) — still show the confirmation
+      // so the interaction feels responsive; the value simply wasn't written.
+    }
+    setOpen(true)
+    setCopied(true)
+    if (copyTimer.current) window.clearTimeout(copyTimer.current)
+    copyTimer.current = window.setTimeout(() => setCopied(false), 1500)
+  }
+
+  return (
+    <>
+      <Tooltip open={open || copied}>
+        <TooltipTrigger
+          type="button"
+          aria-label={`Copy hex ${hex} for ${token}`}
+          className={className}
+          style={style}
+          onClick={doCopy}
+          onPointerEnter={() => show(700)}
+          onPointerLeave={hide}
+          onFocus={() => show(0)}
+          onBlur={hide}
+        >
+          {children}
+        </TooltipTrigger>
+        <TooltipContent>
+          <MorphTooltipText text={copied ? "Copied to clipboard" : "Click to copy"} />
+        </TooltipContent>
+      </Tooltip>
+      <span aria-live="polite" className="sr-only">{copied ? `Copied ${hex} to clipboard` : ""}</span>
+    </>
   )
 }
 
@@ -175,8 +291,6 @@ export function ColorSwatch({ token, semantic, noBorder }: { token: string; sema
   // Read the live value of the token so the swatch reflects the active theme.
   const cssVar = token.replace("--", "--color-")
   const [hex, setHex] = useState("")
-  const [copied, setCopied] = useState(false)
-  const timer = useRef<number | null>(null)
   useEffect(() => {
     const read = () => setHex(getComputedStyle(document.documentElement).getPropertyValue(cssVar).trim().toUpperCase())
     read()
@@ -184,58 +298,25 @@ export function ColorSwatch({ token, semantic, noBorder }: { token: string; sema
     obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-mode"] })
     return () => obs.disconnect()
   }, [cssVar])
-  useEffect(() => () => { if (timer.current) window.clearTimeout(timer.current) }, [])
-
-  // Copy the live hex (uppercase, mode-aware) and flash the Copied bubble for 1.5s.
-  const copy = useCallback(async () => {
-    try {
-      await navigator.clipboard.writeText(hex)
-    } catch {
-      // Clipboard blocked (permissions/insecure context) — still flash so the
-      // interaction feels responsive; the value simply wasn't written.
-    }
-    setCopied(true)
-    if (timer.current) window.clearTimeout(timer.current)
-    timer.current = window.setTimeout(() => setCopied(false), 1500)
-  }, [hex])
-
-  const copyLabel = `Copy hex ${hex} for ${token}`
 
   return (
     <div className="flex items-center gap-4">
-      {/* Square is a copy target; its wrapper anchors the Copied bubble. */}
-      <div className="relative shrink-0">
-        <CopyTooltip label="Click to copy" suppressed={copied}>
-          <button
-            type="button"
-            onClick={copy}
-            aria-label={copyLabel}
-            className="block h-20 w-20 cursor-pointer rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-            style={{
-              backgroundColor: `var(${cssVar})`,
-              border: noBorder ? "1.5px solid transparent" : "1.5px solid var(--color-border)",
-            }}
-          />
-        </CopyTooltip>
-        {copied && (
-          <div
-            role="status"
-            className="pointer-events-none absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded-sm border border-border bg-popover px-2.5 py-1 font-mono text-xs text-popover-foreground shadow-md animate-[bl-copied_1.5s_ease_forwards] motion-reduce:animate-none"
-          >
-            Copied to clipboard
-          </div>
-        )}
-      </div>
+      <CopyTooltip
+        hex={hex}
+        token={token}
+        className="block h-20 w-20 shrink-0 cursor-pointer rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        style={{
+          backgroundColor: `var(${cssVar})`,
+          border: noBorder ? "1.5px solid transparent" : "1.5px solid var(--color-border)",
+        }}
+      />
       <div>
-        <CopyTooltip label="Click to copy" suppressed={copied}>
-          <button
-            type="button"
-            onClick={copy}
-            aria-label={copyLabel}
-            className="block cursor-pointer rounded-xs font-mono text-sm text-secondary-foreground underline-offset-2 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-ring"
-          >
-            {hex}
-          </button>
+        <CopyTooltip
+          hex={hex}
+          token={token}
+          className="block cursor-pointer rounded-xs font-mono text-sm text-secondary-foreground underline-offset-2 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          {hex}
         </CopyTooltip>
         <span className="font-mono text-sm text-muted-foreground block">{token}</span>
         {semantic && <span className="font-mono text-xs text-muted-foreground block">{semantic}</span>}

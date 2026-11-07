@@ -80,8 +80,10 @@ the contract too, but the **semantic** tier is what components should consume.
 - **Click-to-copy on the Color palette swatches.** In the showcase's Color section, each
   swatch's color square and hex value are now buttons that copy the live hex (the
   mode-aware value shown) to the clipboard. Hovering shows a "Click to copy" tooltip; on
-  click a "Copied to clipboard" bubble appears over the swatch for 1.5s and fades out.
-  Keyboard-accessible with labelled buttons and an `aria-live` announcement. Showcase only.
+  click the same tooltip stays open and its label dissolves (0.5s) to "Copied to
+  clipboard" while the tooltip animates its width to fit, then dissolves back after 1.5s.
+  Keyboard-accessible with labelled buttons and an `aria-live` announcement; respects
+  `prefers-reduced-motion`. Showcase only.
 - **Token inspector covers the in-page components, not just Button.** Every exported
   component and part now carries a `data-slot` attribute (shadcn/ui v4 naming, e.g.
   `card-header`, `table-row`, `select-trigger`) plus `data-variant` / `data-size` where it

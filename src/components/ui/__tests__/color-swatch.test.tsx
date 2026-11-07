@@ -32,13 +32,16 @@ describe("ColorSwatch copy-to-clipboard", () => {
     expect(targets).toHaveLength(2)
   })
 
-  it("copies the hex and flashes the Copied bubble when the square is clicked", async () => {
+  it("copies the hex and morphs the tooltip to Copied when the square is clicked", async () => {
     renderSwatch()
     await waitFor(() => expect(screen.getByText("#FFFFFF")).toBeInTheDocument())
     const [square] = screen.getAllByRole("button", { name: "Copy hex #FFFFFF for --white" })
     fireEvent.click(square)
     await waitFor(() => expect(writeText).toHaveBeenCalledWith("#FFFFFF"))
-    expect(await screen.findByRole("status")).toHaveTextContent("Copied to clipboard")
+    // Tooltip label becomes "Copied to clipboard" (rendered in the open tooltip).
+    expect((await screen.findAllByText("Copied to clipboard")).length).toBeGreaterThan(0)
+    // Screen-reader announcement.
+    expect(screen.getByText("Copied #FFFFFF to clipboard")).toBeInTheDocument()
   })
 
   it("also copies when the hex text is clicked", async () => {
