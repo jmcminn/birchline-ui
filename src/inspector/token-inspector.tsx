@@ -6,6 +6,11 @@
  * The click is swallowed so inspecting a button doesn't trigger it.
  * Esc unpins, then exits.
  *
+ * Every exported component (and each exported part, e.g. CardHeader, TableRow)
+ * carries its own `data-slot`, shadcn v4 style. A pinned part names its parent
+ * ("in Card") and offers an ↑ button to inspect the enclosing component; nested
+ * components are listed under "Contains" rather than mixed into the report.
+ *
  * Lives outside `src/components/ui` on purpose: it's a docs tool, not a
  * registry component.
  */
@@ -125,7 +130,7 @@ export function TokenInspector({ active, onExit }: { active: boolean; onExit: ()
     <div data-inspector-ui>
       {hoverRect && <Outline rect={hoverRect} label={labelFor(hovered!)} dashed />}
       {pinRect && <Outline rect={pinRect} />}
-      {pinned && pinRect && <Panel el={pinned} rect={pinRect} onClose={close} />}
+      {pinned && pinRect && <Panel el={pinned} rect={pinRect} onClose={close} onPin={setPinned} />}
       {!pinned && (
         <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-[60] rounded-sm border border-border bg-popover px-3 py-1.5 font-mono text-[11px] text-muted-foreground shadow-md">
           Inspect mode — click a component · Esc to exit
@@ -161,10 +166,22 @@ function Outline({ rect, label, dashed }: { rect: DOMRect; label?: string; dashe
   )
 }
 
-function Panel({ el, rect, onClose }: { el: HTMLElement; rect: DOMRect; onClose: () => void }) {
+function Panel({
+  el,
+  rect,
+  onClose,
+  onPin,
+}: {
+  el: HTMLElement
+  rect: DOMRect
+  onClose: () => void
+  onPin: (el: HTMLElement) => void
+}) {
   // Cheap to compute; re-run every render so theme/mode switches (which bump the
   // parent's tick) pick up dark: variants and the inherited font.
   const report: InspectReport = inspectElement(el)
+  // Nearest enclosing component, so a part (CardContent) can step up to its parent (Card).
+  const ancestor = el.parentElement?.closest<HTMLElement>(SLOT_SELECTOR) ?? null
 
   const vw = window.innerWidth
   const vh = window.innerHeight
@@ -180,7 +197,11 @@ function Panel({ el, rect, onClose }: { el: HTMLElement; rect: DOMRect; onClose:
     ? { top: rect.bottom + 10, left, width: PANEL_WIDTH, maxHeight }
     : { bottom: vh - rect.top + 10, left, width: PANEL_WIDTH, maxHeight }
 
-  const subtitle = [report.variant, report.size && report.size !== "default" ? `size ${report.size}` : null]
+  const subtitle = [
+    report.parent ? `in ${report.parent}` : null,
+    report.variant,
+    report.size && report.size !== "default" ? `size ${report.size}` : null,
+  ]
     .filter(Boolean)
     .join(" · ")
 
@@ -196,6 +217,15 @@ function Panel({ el, rect, onClose }: { el: HTMLElement; rect: DOMRect; onClose:
           &lt;{report.component} /&gt;
           {subtitle && <span className="ml-2 text-muted-foreground">{subtitle}</span>}
         </div>
+        {ancestor && (
+          <button
+            onClick={() => onPin(ancestor)}
+            title="Inspect the enclosing component"
+            className="ml-auto mr-1 rounded-xs px-1.5 py-0.5 font-mono text-[12px] text-muted-foreground hover:bg-accent hover:text-foreground cursor-pointer"
+          >
+            ↑ {labelFor(ancestor)}
+          </button>
+        )}
         <button
           onClick={onClose}
           aria-label="Close inspector"
@@ -212,7 +242,7 @@ function Panel({ el, rect, onClose }: { el: HTMLElement; rect: DOMRect; onClose:
             gap plus the token's mr-3 gives 24px between token and uses. */}
         <div className="grid grid-cols-[72px_max-content_1fr] gap-x-3">
           {report.states.map((block, i) => (
-            <StateRows key={block.state} label={STATE_LABEL[block.state]} block={block} first={i === 0} />
+            <StateRows key={block.state} label={STATE_LABEL[block.state]} block={block} first={i === 0} isRest={block.state === "rest"} />
           ))}
         </div>
 
@@ -232,6 +262,16 @@ function Panel({ el, rect, onClose }: { el: HTMLElement; rect: DOMRect; onClose:
             </div>
           </>
         )}
+
+        {report.contains.length > 0 && (
+          <>
+            <SectionTitle className="mt-4">Contains</SectionTitle>
+            <div className="leading-6">
+              {report.contains.map((c) => `<${c} />`).join("  ")}
+              <span className="text-muted-foreground"> · inspect separately</span>
+            </div>
+          </>
+        )}
       </div>
     </div>
   )
@@ -241,7 +281,17 @@ function SectionTitle({ children, className = "" }: { children: React.ReactNode;
   return <div className={`mb-2 font-sans text-sm font-semibold uppercase tracking-[0.08em] text-primary ${className}`}>{children}</div>
 }
 
-function StateRows({ label, block, first }: { label: string; block: InspectReport["states"][number]; first: boolean }) {
+function StateRows({
+  label,
+  block,
+  first,
+  isRest,
+}: {
+  label: string
+  block: InspectReport["states"][number]
+  first: boolean
+  isRest: boolean
+}) {
   const empty = block.colors.length === 0
   const hasNote = empty || block.effects.length > 0
   // Gap between states, not between rows within a state.
@@ -251,11 +301,18 @@ function StateRows({ label, block, first }: { label: string; block: InspectRepor
       <div className={`leading-6 text-muted-foreground ${gap}`}>{label}</div>
       {block.colors.length > 0 ? (
         block.colors.map((row, i) => (
-          <div key={`${row.token}/${row.opacity ?? ""}`} className="contents">
+          <div key={`${row.raw ? "raw:" : ""}${row.token}/${row.opacity ?? ""}`} className="contents">
             {i > 0 && <div />}
             <span className={`mr-3 flex items-center gap-1.5 whitespace-nowrap ${i > 0 ? "mt-2" : gap}`}>
-              <Swatch token={row.token} opacity={row.opacity} />
-              --{row.token}
+              <Swatch token={row.token} opacity={row.opacity} raw={row.raw} />
+              {row.raw ? (
+                <>
+                  {row.token}
+                  <span className="text-muted-foreground">not a token</span>
+                </>
+              ) : (
+                <>--{row.token}</>
+              )}
               {row.opacity !== undefined && <span className="text-muted-foreground">/{row.opacity}%</span>}
             </span>
             <span className={`text-left leading-6 text-muted-foreground ${i > 0 ? "mt-2" : gap}`}>{row.uses.join(", ")}</span>
@@ -266,7 +323,7 @@ function StateRows({ label, block, first }: { label: string; block: InspectRepor
         <>
           {block.colors.length > 0 && <div />}
           <div className={`col-span-2 leading-6 text-muted-foreground ${block.colors.length > 0 ? "mt-2" : gap}`}>
-            {empty && "no new colors"}
+            {empty && (isRest ? "no color tokens" : "no new colors")}
             {empty && block.effects.length > 0 && " · "}
             {block.effects.join(" · ")}
           </div>
@@ -285,11 +342,13 @@ function needsStroke(token: string): boolean {
   return value !== "" && (value === norm(cs.getPropertyValue("--color-white")) || value === norm(cs.getPropertyValue("--color-ivory")))
 }
 
-function Swatch({ token, opacity }: { token: string; opacity?: number }) {
+function Swatch({ token, opacity, raw }: { token: string; opacity?: number; raw?: boolean }) {
+  // Raw (non-token) colours always get a stroke: we can't tell how light they are.
+  const stroke = raw || (needsStroke(token) && opacity === undefined)
   return (
     <span
-      className={`inline-block h-6 w-6 shrink-0 rounded-[4px] ${needsStroke(token) && opacity === undefined ? "border border-border" : ""}`}
-      style={{ background: `var(--color-${token})`, opacity: opacity !== undefined ? opacity / 100 : undefined }}
+      className={`inline-block h-6 w-6 shrink-0 rounded-[4px] ${stroke ? "border border-border" : ""}`}
+      style={{ background: raw ? token : `var(--color-${token})`, opacity: opacity !== undefined ? opacity / 100 : undefined }}
     />
   )
 }

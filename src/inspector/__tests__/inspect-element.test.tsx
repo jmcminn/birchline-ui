@@ -96,3 +96,74 @@ describe("inspectElement · Button", () => {
     expect(dark.states.find((s) => s.state === "hover")!.effects).toEqual(["brightness 125%"])
   })
 })
+
+describe("parseClass · extra states", () => {
+  it("maps menu highlight, validation, placeholder and off states", () => {
+    expect(parseClass("data-[highlighted]:bg-accent", isColorToken)).toMatchObject({ state: "hover", token: "accent" })
+    expect(parseClass("aria-invalid:border-danger", isColorToken)).toMatchObject({ state: "invalid", prop: "border", token: "danger" })
+    expect(parseClass("peer-disabled:opacity-70", isColorToken)).toMatchObject({ kind: "effect", state: "disabled" })
+    expect(parseClass("data-[active=true]:bg-accent", isColorToken)).toMatchObject({ state: "selected" })
+    expect(parseClass("data-[state=unchecked]:bg-input", isColorToken)).toMatchObject({ state: "rest" })
+    expect(parseClass("placeholder:text-muted-foreground", isColorToken)).toMatchObject({
+      state: "rest", prop: "text", token: "muted-foreground", pseudo: "placeholder",
+    })
+    expect(parseClass("placeholder:text-sm", isColorToken)).toBeNull()
+  })
+})
+
+describe("inspectElement · parts, nesting, inline colours", () => {
+  it("names the parent of a part", () => {
+    const { container } = render(<div data-slot="select-item" className="text-foreground">One</div>)
+    const r = inspectElement(container.firstElementChild!, { isColorToken, hasBorder, dark: false })
+    expect(r.component).toBe("SelectItem")
+    expect(r.parent).toBe("Select")
+    const { container: c2 } = render(<div data-slot="alert-dialog-content" />)
+    expect(inspectElement(c2.firstElementChild!, { isColorToken, hasBorder, dark: false }).parent).toBe("AlertDialog")
+    const { container: c3 } = render(<div data-slot="card" />)
+    expect(inspectElement(c3.firstElementChild!, { isColorToken, hasBorder, dark: false }).parent).toBeUndefined()
+  })
+
+  it("stops at nested components and lists them under contains", () => {
+    const { container } = render(
+      <div data-slot="card" className="bg-card text-card-foreground">
+        <p className="text-muted-foreground">Body</p>
+        <Button>Go</Button>
+      </div>,
+    )
+    const r = inspectElement(container.firstElementChild!, { isColorToken, hasBorder, dark: false })
+    expect(r.contains).toEqual(["Button"])
+    const tokens = r.states.flatMap((s) => s.colors.map((c) => c.token))
+    expect(tokens).toContain("card")
+    expect(tokens).toContain("muted-foreground")
+    expect(tokens).not.toContain("primary") // the Button's own colours are not mixed in
+  })
+
+  it("reads placeholder colours, inline var() colours and flags raw values", () => {
+    const { container } = render(
+      <div data-slot="line-chart">
+        <input className="placeholder:text-muted-foreground" placeholder="Search" />
+        <svg>
+          <line stroke="var(--color-border)" />
+          <rect fill="#ff0000" />
+          <path fill="none" stroke="currentColor" />
+        </svg>
+        <span style={{ backgroundColor: "rgba(208, 94, 56, 0.15)" }}>tint</span>
+      </div>,
+    )
+    const r = inspectElement(container.firstElementChild!, { isColorToken, hasBorder, dark: false })
+    const rest = r.states.find((s) => s.state === "rest")!.colors
+    expect(rest).toContainEqual({ token: "muted-foreground", uses: ["placeholder text"] })
+    expect(rest).toContainEqual({ token: "border", uses: ["line stroke"] })
+    expect(rest).toContainEqual({ token: "#ff0000", raw: true, uses: ["rect fill"] })
+    expect(rest.some((c) => c.raw && c.token.startsWith("rgba(208, 94, 56"))).toBe(true)
+    expect(rest.some((c) => c.token === "none" || c.token === "currentColor")).toBe(false)
+  })
+
+  it("reports an Invalid state", () => {
+    const { container } = render(
+      <input data-slot="input" className="border border-input aria-invalid:border-danger" />,
+    )
+    const r = inspectElement(container.firstElementChild!, { isColorToken, hasBorder, dark: false })
+    expect(r.states.find((s) => s.state === "invalid")?.colors).toEqual([{ token: "danger", uses: ["input border"] }])
+  })
+})

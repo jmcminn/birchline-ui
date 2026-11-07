@@ -246,7 +246,7 @@ function LineChart({
   const gradientId = `${uid}-fill`
 
   return (
-    <Card className={cn("p-4", className)}>
+    <Card data-slot="line-chart" className={cn("p-4", className)}>
       <div className="mb-4 flex flex-wrap items-start justify-between gap-x-4 gap-y-3">
         <div className="min-w-0">
           <h3 className="font-serif text-lg font-semibold text-foreground">{title}</h3>

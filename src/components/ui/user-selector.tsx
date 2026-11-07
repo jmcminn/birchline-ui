@@ -159,6 +159,7 @@ function UserSelector({
     <Popover open={open} onOpenChange={(v) => { setOpen(v); if (!v) setSearch("") }}>
       <PopoverTrigger asChild>
         <button
+          data-slot="user-selector"
           className={cn(
             "flex items-center gap-2 h-10 px-2 rounded-sm border border-border bg-card text-sm",
             "hover:bg-accent transition-colors",

@@ -76,6 +76,19 @@ the contract too, but the **semantic** tier is what components should consume.
 
 ### Added
 
+- **Token inspector covers the in-page components, not just Button.** Every exported
+  component and part now carries a `data-slot` attribute (shadcn/ui v4 naming, e.g.
+  `card-header`, `table-row`, `select-trigger`) plus `data-variant` / `data-size` where it
+  has variants: Badge, Input, Textarea, Checkbox, Switch, Toggle, ToggleGroup, Tabs, Avatar,
+  Alert, Card, Progress, Separator, Skeleton, Label, Breadcrumb, Table, Select trigger,
+  NavigationMenu trigger, UserSelector and the LineChart root. These attributes ship to
+  registry consumers; visual output is unchanged.
+- Inspector engine: nested components are listed under **Contains** instead of being mixed
+  into the report; a pinned part names its parent ("in Card") with an ↑ button to inspect
+  it; inline-style and SVG `fill` / `stroke` colors are read, with non-token values shown as
+  "not a token"; new **Invalid** state (`aria-invalid:`), menu highlight
+  (`data-[highlighted]`) as Hover, `placeholder:` colors, `peer-disabled:`, `data-[active=true]`
+  and explicit off states; repeated uses collapse to `×n`.
 - **`line-chart`** — an area-filled line chart ported from the Range Analytics
   events chart, built on Recharts 3. Cumulative / daily modes, an optional
   per-series breakdown ("By Platform"), week-based zoom with a range toast,

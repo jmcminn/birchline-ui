@@ -45,7 +45,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     }
 
     return (
-      <div className={cn("relative w-full", wrapperClassName)}>
+      <div data-slot="input" className={cn("relative w-full", wrapperClassName)}>
         <input
           type={type}
           className={cn(
