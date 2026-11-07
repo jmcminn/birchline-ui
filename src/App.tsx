@@ -158,61 +158,70 @@ function LabeledItem({ label, subtitle, labelClassName, children }: { label: str
   )
 }
 
-/** Tooltip text that crossfades between labels and animates its width to fit the new
- *  one. The incoming label fades in and the outgoing fades out over 0.5s; an invisible
- *  in-flow copy of the current label gives the measured width the container transitions to.
- *  The first label appears at its natural width (no animation) because width starts unset. */
-function MorphTooltipText({ text }: { text: string }) {
-  const sizer = useRef<HTMLSpanElement>(null)
-  const prev = useRef(text)
-  const [width, setWidth] = useState<number>()
-  const [outgoing, setOutgoing] = useState<string | null>(null)
+const COPY_LABEL = "Copy hex code"
+const COPIED_LABEL = "Copied to clipboard"
+
+/** Body of the swatch copy tooltip, built from the Figma frames "Copy hex code" (73:10) and
+ *  "Copied to clipboard" (73:5): a 24px icon and a 13px label, 12px/6px padding, 8px gap.
+ *  Idle shows the copy icon on the foreground tooltip. On copy, success green ripples out of
+ *  the icon, the check draws itself, and the label springs open to the longer text, which is
+ *  unmasked left to right. The motion is all CSS (`.bl-ct-*` in index.css) keyed off
+ *  `data-copied`; the label width is measured here so it can be transitioned. */
+function CopyTipBody({ copied }: { copied: boolean }) {
+  const aRef = useRef<HTMLSpanElement>(null)
+  const bRef = useRef<HTMLSpanElement>(null)
+  const [widths, setWidths] = useState<{ a: number; b: number }>()
+  // Start un-copied for two frames so a tooltip that opens already copied still animates in.
+  const [on, setOn] = useState(false)
 
   useLayoutEffect(() => {
-    if (prev.current !== text) {
-      setOutgoing(prev.current)
-      prev.current = text
-    }
-    if (sizer.current) setWidth(sizer.current.offsetWidth)
-  }, [text])
+    const a = aRef.current
+    const b = bRef.current
+    if (!a || !b) return
+    // offsetWidth ignores the tooltip's scale-in transform, unlike getBoundingClientRect.
+    const measure = () => setWidths({ a: a.offsetWidth + 1, b: b.offsetWidth + 1 })
+    measure()
+    if (typeof ResizeObserver === "undefined") return
+    const ro = new ResizeObserver(measure)
+    ro.observe(a)
+    ro.observe(b)
+    return () => ro.disconnect()
+  }, [])
 
   useEffect(() => {
-    if (outgoing == null) return
-    const t = window.setTimeout(() => setOutgoing(null), 500)
-    return () => window.clearTimeout(t)
-  }, [outgoing])
+    let second = 0
+    const first = requestAnimationFrame(() => {
+      second = requestAnimationFrame(() => setOn(copied))
+    })
+    return () => {
+      cancelAnimationFrame(first)
+      cancelAnimationFrame(second)
+    }
+  }, [copied])
 
   return (
-    <span
-      className="relative block overflow-hidden transition-[width] duration-500 ease-out motion-reduce:transition-none"
-      style={{ width }}
-    >
-      {/* Invisible, in-flow: sizes the box so width can be measured and transitioned. */}
-      <span ref={sizer} aria-hidden className="invisible whitespace-nowrap">{text}</span>
-      {/* Current label fades in. */}
-      <span
-        key={`in-${text}`}
-        className="absolute inset-0 whitespace-nowrap animate-[bl-text-in_0.5s_ease] motion-reduce:animate-none"
-      >
-        {text}
+    <div data-copied={on ? "" : undefined} className="relative isolate flex items-center gap-2 px-3 py-1.5">
+      <span aria-hidden className="bl-ct-bg" />
+      <span aria-hidden className="bl-ct-ico">
+        <svg className="bl-ct-cp" viewBox="0 0 24 24">
+          <path d="M7.78115 7.78115C7.28099 8.28131 7 8.95967 7 9.667V18.333C7 18.6832 7.06898 19.03 7.20301 19.3536C7.33704 19.6772 7.53349 19.9712 7.78115 20.2189C8.0288 20.4665 8.32281 20.663 8.64638 20.797C8.96996 20.931 9.31676 21 9.667 21H18.333C18.6832 21 19.03 20.931 19.3536 20.797C19.6772 20.663 19.9712 20.4665 20.2189 20.2189C20.4665 19.9712 20.663 19.6772 20.797 19.3536C20.931 19.03 21 18.6832 21 18.333V9.667C21 9.31676 20.931 8.96996 20.797 8.64638C20.663 8.32281 20.4665 8.0288 20.2189 7.78115C19.9712 7.53349 19.6772 7.33704 19.3536 7.20301C19.03 7.06898 18.6832 7 18.333 7H9.667C8.95967 7 8.28131 7.28099 7.78115 7.78115Z" />
+          <path d="M4.012 16.737C3.70534 16.5622 3.45027 16.3095 3.27258 16.0045C3.09488 15.6995 3.00085 15.353 3 15V5C3 3.9 3.9 3 5 3H15C15.75 3 16.158 3.385 16.5 4" />
+        </svg>
+        <svg className="bl-ct-ck" viewBox="0 0 24 24">
+          <path pathLength={1} d="M5 12L10 17L20 7" />
+        </svg>
       </span>
-      {/* Previous label fades out, then unmounts. */}
-      {outgoing && (
-        <span
-          key={`out-${outgoing}`}
-          aria-hidden
-          className="absolute inset-0 whitespace-nowrap animate-[bl-text-out_0.5s_ease_forwards] motion-reduce:hidden"
-        >
-          {outgoing}
-        </span>
-      )}
-    </span>
+      <span className="bl-ct-lbl" style={{ width: widths ? (on ? widths.b : widths.a) : undefined }}>
+        <span ref={aRef} className="bl-ct-a">{COPY_LABEL}</span>
+        <span ref={bRef} className="bl-ct-b">{COPIED_LABEL}</span>
+      </span>
+    </div>
   )
 }
 
 /** A copy target (the square or the hex) rendered as the tooltip trigger button. The
- *  tooltip reads "Click to copy hex code" and, on click, stays open while its label morphs to
- *  "Copied to clipboard" for 1.5s. Open state is self-managed (700ms hover delay, instant
+ *  tooltip reads "Copy hex code" and, on click, stays open and animates to "Copied to
+ *  clipboard" for 1.5s. Open state is self-managed (700ms hover delay, instant
  *  on focus) so the click doesn't dismiss the tooltip the way Radix's press-to-close would. */
 function CopyTooltip({
   hex,
@@ -278,8 +287,8 @@ function CopyTooltip({
         >
           {children}
         </TooltipTrigger>
-        <TooltipContent>
-          <MorphTooltipText text={copied ? "Copied to clipboard" : "Click to copy hex code"} />
+        <TooltipContent className="rounded-sm border-0 p-0 shadow-none">
+          <CopyTipBody copied={copied} />
         </TooltipContent>
       </Tooltip>
       <span aria-live="polite" className="sr-only">{copied ? `Copied ${hex} to clipboard` : ""}</span>

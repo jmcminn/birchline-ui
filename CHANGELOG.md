@@ -79,11 +79,13 @@ the contract too, but the **semantic** tier is what components should consume.
 
 - **Click-to-copy on the Color palette swatches.** In the showcase's Color section, each
   swatch's color square and hex value are now buttons that copy the live hex (the
-  mode-aware value shown) to the clipboard. Hovering shows a "Click to copy hex code" tooltip; on
-  click the same tooltip stays open and its label dissolves (0.5s) to "Copied to
-  clipboard" while the tooltip animates its width to fit, then dissolves back after 1.5s.
-  Keyboard-accessible with labelled buttons and an `aria-live` announcement; respects
-  `prefers-reduced-motion`. Showcase only.
+  mode-aware value shown) to the clipboard. Hovering shows a "Copy hex code" tooltip (copy
+  icon on the foreground tooltip, per the Figma frame). On click the same tooltip stays
+  open and becomes "Copied to clipboard" on `--color-success`: the green ripples out of the
+  icon, the check draws itself, and the pill springs open to the longer text, which is
+  unmasked left to right. After 1.5s it reverses over 300ms. Keyboard-accessible with
+  labelled buttons and an `aria-live` announcement; `prefers-reduced-motion` gets a plain
+  crossfade. Showcase only.
 - **Token inspector covers the in-page components, not just Button.** Every exported
   component and part now carries a `data-slot` attribute (shadcn/ui v4 naming, e.g.
   `card-header`, `table-row`, `select-trigger`) plus `data-variant` / `data-size` where it

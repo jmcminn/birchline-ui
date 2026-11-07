@@ -42,13 +42,52 @@ body {
   margin-top: 3px;
 }
 
-/* Color-swatch copy tooltip: the label crossfades (0.5s) between "Click to copy hex code" and
-   "Copied to clipboard" while the tooltip animates its width to fit. */
-@keyframes bl-text-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+/* Color-swatch copy tooltip ("Copy hex code" -> "Copied to clipboard"), from the Figma frames
+   73:10 / 73:5. Idle: foreground tooltip with the copy icon. Copied (`data-copied`): success
+   green ripples out of the icon, the check draws itself, the label springs open and the new
+   text is unmasked left to right. The way back is a plain 300ms reverse. */
+.bl-ct-bg {
+  position: absolute; inset: 0; z-index: -1;
+  background: var(--color-success);
+  clip-path: circle(0 at 24px 50%);
+  transition: clip-path 300ms cubic-bezier(.4, 0, .2, 1);
 }
-@keyframes bl-text-out {
-  from { opacity: 1; }
-  to   { opacity: 0; }
+[data-copied] > .bl-ct-bg { clip-path: circle(170% at 24px 50%); transition-duration: 340ms; }
+
+.bl-ct-ico { position: relative; width: 24px; height: 24px; flex: none; }
+.bl-ct-ico svg {
+  position: absolute; inset: 0; width: 24px; height: 24px;
+  fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round;
+  transform-origin: 50% 50%;
+}
+.bl-ct-cp { stroke-width: 1.25; transition: opacity 120ms, transform 120ms; }
+[data-copied] .bl-ct-cp { opacity: 0; transform: scale(.6); }
+.bl-ct-ck { stroke-width: 1.5; }
+.bl-ct-ck path { stroke-dasharray: 1 2; stroke-dashoffset: 1.05; transition: stroke-dashoffset 120ms; }
+[data-copied] .bl-ct-ck path { stroke-dashoffset: 0; transition: stroke-dashoffset 240ms cubic-bezier(.3, 0, .2, 1) 100ms; }
+
+.bl-ct-lbl {
+  position: relative; display: block; flex: none; overflow: hidden;
+  height: 18.85px; line-height: 18.85px;
+  transition: width 300ms cubic-bezier(.4, 0, .2, 1);
+}
+[data-copied] .bl-ct-lbl { transition: width 480ms cubic-bezier(.34, 1.45, .5, 1); }
+.bl-ct-a, .bl-ct-b { position: absolute; left: 0; top: 0; white-space: nowrap; }
+.bl-ct-a { transition: opacity 120ms; }
+[data-copied] .bl-ct-a { opacity: 0; }
+.bl-ct-b { clip-path: inset(0 100% 0 0); transition: clip-path 200ms ease; }
+[data-copied] .bl-ct-b { clip-path: inset(0); transition: clip-path 340ms cubic-bezier(.3, 0, .2, 1) 120ms; }
+
+/* Reduced motion: skip the ripple, draw, spring and reveal; just crossfade the two states. */
+@media (prefers-reduced-motion: reduce) {
+  .bl-ct-bg { clip-path: none; opacity: 0; transition: opacity 150ms linear; }
+  [data-copied] > .bl-ct-bg { clip-path: none; opacity: 1; transition-duration: 150ms; }
+  .bl-ct-cp, [data-copied] .bl-ct-cp { transform: none; transition: opacity 150ms linear; }
+  .bl-ct-ck path, [data-copied] .bl-ct-ck path { stroke-dashoffset: 0; transition: none; }
+  .bl-ct-ck { opacity: 0; transition: opacity 150ms linear; }
+  [data-copied] .bl-ct-ck { opacity: 1; }
+  .bl-ct-lbl, [data-copied] .bl-ct-lbl { transition: none; }
+  .bl-ct-a, [data-copied] .bl-ct-a { transition: opacity 150ms linear; }
+  .bl-ct-b, [data-copied] .bl-ct-b { clip-path: none; opacity: 0; transition: opacity 150ms linear; }
+  [data-copied] .bl-ct-b { opacity: 1; }
 }
