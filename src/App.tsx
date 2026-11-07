@@ -66,6 +66,7 @@ import {
 import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem, CommandShortcut, CommandSeparator } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
+import { IconCalendar } from "@tabler/icons-react"
 import { Progress } from "@/components/ui/progress"
 import { Skeleton } from "@/components/ui/skeleton"
 import { LineChart, type LineChartSeries } from "@/components/ui/line-chart"
@@ -77,7 +78,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
 import { Sidebar, SidebarHeader, SidebarContent, SidebarGroup, SidebarGroupLabel, SidebarItem, SidebarFooter } from "@/components/ui/sidebar"
 import { UserSelector, type User } from "@/components/ui/user-selector"
-import { Apple, Globe, Smartphone, MoreHorizontal, Plus, Search, Trash2, Copy, Pencil, ArrowRight, Info, PanelRight, Bell, CalendarDays, Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, LayoutGrid, List, Home, Settings, FolderOpen, Inbox, FileText, BarChart3, AlertCircle, CheckCircle, AlertTriangle, InfoIcon, Terminal, ChevronRight, Check, Palette, ArrowUpDown, ArrowUp, ArrowDown, X, GripVertical, Sun, Moon, ScanSearch } from "lucide-react"
+import { Apple, Globe, Smartphone, MoreHorizontal, Plus, Search, Trash2, Copy, Pencil, ArrowRight, Info, PanelRight, Bell, Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, LayoutGrid, List, Home, Settings, FolderOpen, Inbox, FileText, BarChart3, AlertCircle, CheckCircle, AlertTriangle, InfoIcon, Terminal, ChevronRight, Check, Palette, ArrowUpDown, ArrowUp, ArrowDown, X, GripVertical, Sun, Moon, ScanSearch } from "lucide-react"
 import {
   useTable,
   tableFeatures,
@@ -543,7 +544,7 @@ function DatePickerDemo({ showCurrentYear }: { showCurrentYear: boolean }) {
     >
       <PopoverTrigger asChild>
         <Button variant="outline" className={cn("w-auto justify-start text-left font-normal px-2", !date && "text-muted-foreground")}>
-          <CalendarDays className="mr-2 h-4 w-4" />
+          <IconCalendar className="mr-2 h-4 w-4" stroke={2} />
           {date ? formatSelectedDate(date, showCurrentYear) : "Pick a date"}
           {date && (
             <span
@@ -606,7 +607,7 @@ function DatePickerTasksDemo({ showCurrentYear }: { showCurrentYear: boolean }) 
     >
       <PopoverTrigger asChild>
         <Button variant="outline" className={cn("w-auto justify-start text-left font-normal px-2", !date && "text-muted-foreground")}>
-          <CalendarDays className="mr-2 h-4 w-4" />
+          <IconCalendar className="mr-2 h-4 w-4" stroke={2} />
           {date ? formatSelectedDate(date, showCurrentYear) : "Pick a date"}
           {date && (
             <span
