@@ -18,7 +18,7 @@ const SLOT_SELECTOR = "[data-slot]"
 const UI_SELECTOR = "[data-inspector-ui]"
 const PANEL_WIDTH = 540
 /** Rough panel height, used to decide whether it opens below or above its target. */
-const PANEL_EST_HEIGHT = 480
+const PANEL_EST_HEIGHT = 560
 
 function findSlot(target: EventTarget | null): HTMLElement | null {
   if (!(target instanceof Element)) return null
@@ -169,10 +169,16 @@ function Panel({ el, rect, onClose }: { el: HTMLElement; rect: DOMRect; onClose:
   const vw = window.innerWidth
   const vh = window.innerHeight
   const left = Math.min(Math.max(12, rect.left), vw - PANEL_WIDTH - 12)
-  const below = vh - rect.bottom > PANEL_EST_HEIGHT || rect.top < PANEL_EST_HEIGHT
+  // Open on whichever side has room for the whole panel; if neither does, take the
+  // roomier side and cap the height so the panel scrolls instead of leaving the window.
+  const margin = 12
+  const spaceBelow = vh - rect.bottom - 10 - margin
+  const spaceAbove = rect.top - 10 - margin
+  const below = spaceBelow >= PANEL_EST_HEIGHT || spaceBelow >= spaceAbove
+  const maxHeight = Math.max(200, Math.min(vh * 0.85, below ? spaceBelow : spaceAbove))
   const style: React.CSSProperties = below
-    ? { top: rect.bottom + 10, left, width: PANEL_WIDTH }
-    : { bottom: vh - rect.top + 10, left, width: PANEL_WIDTH }
+    ? { top: rect.bottom + 10, left, width: PANEL_WIDTH, maxHeight }
+    : { bottom: vh - rect.top + 10, left, width: PANEL_WIDTH, maxHeight }
 
   const subtitle = [report.variant, report.size && report.size !== "default" ? `size ${report.size}` : null]
     .filter(Boolean)
@@ -182,7 +188,7 @@ function Panel({ el, rect, onClose }: { el: HTMLElement; rect: DOMRect; onClose:
     <div
       role="dialog"
       aria-label={`Tokens for ${report.component}`}
-      className="fixed z-[61] max-h-[85vh] overflow-y-auto rounded-md border border-border bg-popover text-popover-foreground shadow-lg"
+      className="fixed z-[61] overflow-y-auto rounded-md border border-border bg-popover text-popover-foreground shadow-lg"
       style={style}
     >
       <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
@@ -242,7 +248,7 @@ function StateRows({ label, block, first }: { label: string; block: InspectRepor
   const gap = first ? "" : "mt-2.5"
   return (
     <>
-      <div className={`text-muted-foreground ${gap}`}>{label}</div>
+      <div className={`leading-6 text-muted-foreground ${gap}`}>{label}</div>
       {block.colors.length > 0 ? (
         block.colors.map((row, i) => (
           <div key={`${row.token}/${row.opacity ?? ""}`} className="contents">
@@ -252,14 +258,14 @@ function StateRows({ label, block, first }: { label: string; block: InspectRepor
               --{row.token}
               {row.opacity !== undefined && <span className="text-muted-foreground">/{row.opacity}%</span>}
             </span>
-            <span className={`text-left text-muted-foreground ${i > 0 ? "mt-1" : gap}`}>{row.uses.join(", ")}</span>
+            <span className={`text-left leading-6 text-muted-foreground ${i > 0 ? "mt-1" : gap}`}>{row.uses.join(", ")}</span>
           </div>
         ))
       ) : null}
       {hasNote && (
         <>
           {block.colors.length > 0 && <div />}
-          <div className={`col-span-2 text-muted-foreground ${block.colors.length > 0 ? "mt-1" : gap}`}>
+          <div className={`col-span-2 leading-6 text-muted-foreground ${block.colors.length > 0 ? "mt-1" : gap}`}>
             {empty && "no new colors"}
             {empty && block.effects.length > 0 && " · "}
             {block.effects.join(" · ")}
@@ -270,10 +276,19 @@ function StateRows({ label, block, first }: { label: string; block: InspectRepor
   )
 }
 
+/** Colour tokens that are light enough to need a stroke: --white and --ivory, plus any
+ *  token that resolves to the same value (e.g. --card, --background). */
+function needsStroke(token: string): boolean {
+  const cs = getComputedStyle(document.documentElement)
+  const norm = (v: string) => v.trim().toLowerCase()
+  const value = norm(cs.getPropertyValue(`--color-${token}`))
+  return value !== "" && (value === norm(cs.getPropertyValue("--color-white")) || value === norm(cs.getPropertyValue("--color-ivory")))
+}
+
 function Swatch({ token, opacity }: { token: string; opacity?: number }) {
   return (
     <span
-      className="inline-block h-4 w-4 shrink-0 rounded-[3px] border border-border"
+      className={`inline-block h-6 w-6 shrink-0 rounded-[4px] ${needsStroke(token) && opacity === undefined ? "border border-border" : ""}`}
       style={{ background: `var(--color-${token})`, opacity: opacity !== undefined ? opacity / 100 : undefined }}
     />
   )

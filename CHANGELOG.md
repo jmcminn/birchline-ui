@@ -35,8 +35,10 @@ the contract too, but the **semantic** tier is what components should consume.
 - **Token inspector panel**: the "uses" text in the Colors section is now left-aligned in one
   shared column (was right-aligned per row), and the panel is 540px wide (was 400px). The gap between the token and uses columns is 24px.
   Body text is 13px (was 11.5px) and the COLORS / TEXT headings are 12px bold (were
-  10px regular). Color swatches are 16px (were 10px). The panel opens above its target when there
-  isn't room below, and can grow to 85% of the window height before scrolling.
+  10px regular). Color swatches are 24px (were 10px) and only the swatches that show --white or --ivory
+  (including tokens that resolve to them, such as --background, --card, --primary-foreground)
+  keep a 1px stroke. The panel opens on whichever side of its target has more room and caps
+  its height to stay inside the window, scrolling only if it has to.
 - **Input showcase fields are 200px wide** (were 260px); heights and padding follow the Input
   Size menu as before.
 - **Toggle and ToggleGroup showcase icon buttons are 32x32px** (were about 40x36); icons stay
