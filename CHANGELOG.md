@@ -102,6 +102,10 @@ the contract too, but the **semantic** tier is what components should consume.
   `--border` like any other component. SidebarItem also gains a `data-active` attribute.
   Known: the LineChart tooltip is `pointer-events:none` (Recharts), so it is listed under the
   chart's **Contains** rather than clicked directly.
+- **Token inspector docs and a coverage guard.** A new [Token inspector](./docs/token-inspector.md)
+  doc covers how to use it, the `data-slot` convention and the known limitations, and a coverage
+  test freezes the full set of `data-slot` names and renders a sample (opened overlays included)
+  so a component can't silently lose its slot.
 - Inspector engine: nested components are listed under **Contains** instead of being mixed
   into the report; a pinned part names its parent ("in Card") with an ↑ button to inspect
   it; inline-style and SVG `fill` / `stroke` colors are read, with non-token values shown as

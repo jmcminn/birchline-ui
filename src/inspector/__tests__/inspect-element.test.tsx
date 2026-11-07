@@ -3,7 +3,7 @@ import { Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { semantic, aliases } from "../../../tokens/birchline.tokens.mjs"
 import { parseClass, splitVariants } from "../parse-classes"
-import { inspectElement } from "../inspect-element"
+import { inspectElement, slotOf } from "../inspect-element"
 
 // jsdom doesn't load the Tailwind theme, so feed the real token names.
 const TOKENS = new Set<string>([...Object.keys(semantic), ...Object.keys(aliases)])
@@ -39,6 +39,15 @@ describe("parseClass", () => {
 
   it("reports effects", () => {
     expect(parseClass("disabled:opacity-50", isColorToken)).toMatchObject({ kind: "effect", state: "disabled", effect: "opacity 50%" })
+  })
+
+  it("reads Sonner's group scoping variants as resting colours", () => {
+    expect(parseClass("group-[.toaster]:bg-popover", isColorToken)).toMatchObject({
+      kind: "color", state: "rest", prop: "bg", token: "popover",
+    })
+    expect(parseClass("group-[.toast]:text-muted-foreground", isColorToken)).toMatchObject({
+      kind: "color", state: "rest", prop: "text", token: "muted-foreground",
+    })
   })
 })
 
@@ -165,5 +174,37 @@ describe("inspectElement · parts, nesting, inline colours", () => {
     )
     const r = inspectElement(container.firstElementChild!, { isColorToken, hasBorder, dark: false })
     expect(r.states.find((s) => s.state === "invalid")?.colors).toEqual([{ token: "danger", uses: ["input border"] }])
+  })
+
+  it("names a part's parent component", () => {
+    const { container } = render(<div data-slot="select-item" className="text-foreground" />)
+    const r = inspectElement(container.firstElementChild!, { isColorToken, hasBorder, dark: false })
+    expect(r.component).toBe("SelectItem")
+    expect(r.parent).toBe("Select")
+  })
+})
+
+describe("inspectElement · adopted third-party roots", () => {
+  it("adopts a Sonner toast (no data-slot) and reads its scoped tokens", () => {
+    const { container } = render(
+      <div data-sonner-toast="" className="group toast group-[.toaster]:bg-popover group-[.toaster]:text-foreground group-[.toaster]:border-border border">
+        <div className="group-[.toast]:text-muted-foreground">Description</div>
+      </div>,
+    )
+    const root = container.firstElementChild!
+    expect(slotOf(root)).toBe("toast")
+    const r = inspectElement(root, { isColorToken, hasBorder, dark: false })
+    expect(r.component).toBe("Toast")
+    expect(r.parent).toBeUndefined()
+    const rest = r.states.find((s) => s.state === "rest")!.colors.map((c) => c.token)
+    expect(rest).toContain("popover")
+    expect(rest).toContain("foreground")
+    expect(rest).toContain("border")
+    expect(rest).toContain("muted-foreground")
+  })
+
+  it("returns undefined for an element with no slot and no adoption", () => {
+    const { container } = render(<div className="bg-primary" />)
+    expect(slotOf(container.firstElementChild!)).toBeUndefined()
   })
 })
