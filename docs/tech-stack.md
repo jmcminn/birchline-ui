@@ -12,7 +12,7 @@ Based on the `package.json`, config files and workflows in `jmcminn/birchline-ui
 - Radix UI primitives: alert dialog, avatar, checkbox, collapsible, dialog, dropdown menu, label, navigation menu, popover, progress, scroll area, select, separator, slot, switch, tabs, toggle, toggle group, tooltip
 - shadcn/ui conventions: `components.json`, `registry.json`, and a `shadcn build` step (shadcn pinned to 4.23.0) that writes the registry to `public/r/`
 - class-variance-authority, clsx, and tailwind-merge for variants and class handling
-- lucide-react for icons
+- lucide-react for icons; @tabler/icons-react for the date-picker calendar icon (`IconCalendar`, stroke 2)
 - cmdk for the command palette
 - sonner for toasts
 - react-day-picker 10 with date-fns 4 for the calendar and dates
