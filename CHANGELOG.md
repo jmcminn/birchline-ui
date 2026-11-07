@@ -32,6 +32,8 @@ the contract too, but the **semantic** tier is what components should consume.
 
 ### Changed
 
+- **Token inspector toggle**: the on state is now a clay tint (15% `--primary` fill, 2px
+  `--primary` border, `--primary` icon) instead of a gray fill, so it stands out from hover.
 - **Token inspector panel**: the "uses" text in the Colors section is now left-aligned in one
   shared column (was right-aligned per row), and the panel is 540px wide (was 400px). The gap between the token and uses columns is 24px.
   Body text is 13px (was 11.5px) and the COLORS / TEXT headings are 14px Inter semi-bold in
