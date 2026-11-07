@@ -39,6 +39,7 @@ const SelectContent = React.forwardRef<
   <SelectPrimitive.Portal>
     <SelectPrimitive.Content
       ref={ref}
+      data-slot="select-content"
       className={cn(
         "relative z-50 max-h-96 min-w-[8rem] max-w-[400px] w-fit overflow-hidden rounded-md border border-border bg-popover text-foreground shadow-md",
         "data-[state=open]:animate-in data-[state=closed]:animate-out",
@@ -77,6 +78,7 @@ const SelectItem = React.forwardRef<
 >(({ className, children, ...props }, ref) => (
   <SelectPrimitive.Item
     ref={ref}
+    data-slot="select-item"
     className={cn(
       "relative flex w-full cursor-pointer select-none items-center rounded-xs py-2 pl-8 pr-2 text-sm outline-none whitespace-nowrap",
       // Radix ItemText ignores className, so truncate its label from the row:
@@ -104,6 +106,7 @@ const SelectSeparator = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.Separator
     ref={ref}
+    data-slot="select-separator"
     className={cn("-mx-1 my-1 h-px bg-border", className)}
     {...props}
   />

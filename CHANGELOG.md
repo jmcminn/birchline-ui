@@ -84,6 +84,15 @@ the contract too, but the **semantic** tier is what components should consume.
   Alert, Card, Progress, Separator, Skeleton, Label, Breadcrumb, Table, Select trigger,
   NavigationMenu trigger, UserSelector and the LineChart root. These attributes ship to
   registry consumers; visual output is unchanged.
+- **Token inspector reaches overlay components.** The parts of Select, DropdownMenu,
+  Popover, Tooltip, Dialog, AlertDialog, Sheet, Command and NavigationMenu now carry
+  `data-slot` (e.g. `select-content`, `dropdown-menu-item`, `dialog-title`,
+  `command-item`, `navigation-menu-link`), so they can be inspected like any other
+  component. While inspecting, **Alt-click (Option-click) passes through** to open a menu,
+  select, popover, dialog or sheet, then its contents inspect with a normal click. Esc now
+  unpins first, then closes an open overlay, then exits inspect mode, and the inspector
+  panel sits above overlays and stays interactive inside a modal dialog without dismissing
+  it. These attributes ship to registry consumers; visual output is unchanged.
 - Inspector engine: nested components are listed under **Contains** instead of being mixed
   into the report; a pinned part names its parent ("in Card") with an ↑ button to inspect
   it; inline-style and SVG `fill` / `stroke` colors are read, with non-token values shown as
