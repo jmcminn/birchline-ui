@@ -162,7 +162,7 @@ const COPY_LABEL = "Copy hex code"
 const COPIED_LABEL = "Copied to clipboard"
 
 /** Body of the swatch copy tooltip, built from the Figma frames "Copy hex code" (73:10) and
- *  "Copied to clipboard" (73:5): a 24px icon and a 13px label, 12px/6px padding, 8px gap.
+ *  "Copied to clipboard" (73:5): a 12px icon and a 13px label, 12px/6px padding, 8px gap.
  *  Idle shows the copy icon on the foreground tooltip. On copy, success green ripples out of
  *  the icon, the check draws itself, and the label springs open to the longer text, which is
  *  unmasked left to right. The motion is all CSS (`.bl-ct-*` in index.css) keyed off
@@ -219,10 +219,21 @@ function CopyTipBody({ copied }: { copied: boolean }) {
   )
 }
 
+// Copy-tooltip timeline, measured from the click (ms). The entry animation (width spring,
+// ripple, check draw, text reveal) finishes by ~480ms, the confirmation rests until 1500ms,
+// then the tooltip fades out over 300ms and stays closed until the pointer or focus
+// leaves the target and comes back.
+const COPY_SPENT_MS = 500
+const COPY_REST_MS = 1500
+const COPY_FADE_MS = 300
+
 /** A copy target (the square or the hex) rendered as the tooltip trigger button. The
  *  tooltip reads "Copy hex code" and, on click, stays open and animates to "Copied to
- *  clipboard" for 1.5s. Open state is self-managed (700ms hover delay, instant
- *  on focus) so the click doesn't dismiss the tooltip the way Radix's press-to-close would. */
+ *  clipboard". It is a one-way sequence: once the animation finishes the target is spent
+ *  (standard cursor, clicks ignored), after the rest the tooltip fades out, and it does not
+ *  return to "Copy hex code" while the pointer stays put. Leaving and re-entering re-arms it.
+ *  Open state is self-managed (700ms hover delay, instant on focus) so the click doesn't
+ *  dismiss the tooltip the way Radix's press-to-close would. */
 function CopyTooltip({
   hex,
   token,
@@ -238,47 +249,72 @@ function CopyTooltip({
 }) {
   const [open, setOpen] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [spent, setSpent] = useState(false) // entry animation finished: cursor reverts, clicks ignored
+  const [fading, setFading] = useState(false) // tooltip is fading out
+  const [done, setDone] = useState(false) // sequence over: stay closed until re-entered
   const openTimer = useRef<number | null>(null)
-  const copyTimer = useRef<number | null>(null)
+  const seqTimers = useRef<number[]>([])
+
+  const clearSequence = () => {
+    seqTimers.current.forEach((t) => window.clearTimeout(t))
+    seqTimers.current = []
+  }
   useEffect(
     () => () => {
       if (openTimer.current) window.clearTimeout(openTimer.current)
-      if (copyTimer.current) window.clearTimeout(copyTimer.current)
+      seqTimers.current.forEach((t) => window.clearTimeout(t))
     },
     [],
   )
 
   const show = (delay: number) => {
+    if (done) return
     if (openTimer.current) window.clearTimeout(openTimer.current)
     if (delay === 0) setOpen(true)
     else openTimer.current = window.setTimeout(() => setOpen(true), delay)
   }
+  // Leaving (or blurring) closes the tooltip and re-arms the target from scratch.
   const hide = () => {
     if (openTimer.current) window.clearTimeout(openTimer.current)
+    clearSequence()
     setOpen(false)
+    setCopied(false)
+    setSpent(false)
+    setFading(false)
+    setDone(false)
   }
 
   const doCopy = async () => {
+    if (spent || done) return
     try {
       await navigator.clipboard.writeText(hex)
     } catch {
       // Clipboard blocked (permissions/insecure context) — still show the confirmation
       // so the interaction feels responsive; the value simply wasn't written.
     }
+    if (openTimer.current) window.clearTimeout(openTimer.current)
+    clearSequence()
     setOpen(true)
     setCopied(true)
-    if (copyTimer.current) window.clearTimeout(copyTimer.current)
-    copyTimer.current = window.setTimeout(() => setCopied(false), 1500)
+    setFading(false)
+    const at = (ms: number, fn: () => void) => seqTimers.current.push(window.setTimeout(fn, ms))
+    at(COPY_SPENT_MS, () => setSpent(true))
+    at(COPY_REST_MS, () => setFading(true))
+    at(COPY_REST_MS + COPY_FADE_MS, () => {
+      setOpen(false)
+      setDone(true)
+    })
   }
 
   return (
     <>
-      <Tooltip open={open || copied}>
+      <Tooltip open={open}>
         <TooltipTrigger
           type="button"
           aria-label={`Copy hex ${hex} for ${token}`}
           className={className}
           style={style}
+          data-spent={spent || done ? "" : undefined}
           onClick={doCopy}
           onPointerEnter={() => show(700)}
           onPointerLeave={hide}
@@ -287,7 +323,10 @@ function CopyTooltip({
         >
           {children}
         </TooltipTrigger>
-        <TooltipContent className="rounded-sm border-0 p-0 shadow-none">
+        <TooltipContent
+          className="rounded-sm border-0 p-0 shadow-none"
+          style={fading ? { opacity: 0, transition: `opacity ${COPY_FADE_MS}ms ease` } : undefined}
+        >
           <CopyTipBody copied={copied} />
         </TooltipContent>
       </Tooltip>
@@ -313,7 +352,7 @@ export function ColorSwatch({ token, semantic, noBorder }: { token: string; sema
       <CopyTooltip
         hex={hex}
         token={token}
-        className="block h-20 w-20 shrink-0 cursor-pointer rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        className="block h-20 w-20 shrink-0 cursor-pointer data-[spent]:cursor-default rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         style={{
           backgroundColor: `var(${cssVar})`,
           border: noBorder ? "1.5px solid transparent" : "1.5px solid var(--color-border)",
@@ -323,7 +362,7 @@ export function ColorSwatch({ token, semantic, noBorder }: { token: string; sema
         <CopyTooltip
           hex={hex}
           token={token}
-          className="block cursor-pointer rounded-xs font-mono text-sm text-secondary-foreground underline-offset-2 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-ring"
+          className="block cursor-pointer data-[spent]:cursor-default rounded-xs font-mono text-sm text-secondary-foreground underline-offset-2 outline-none hover:underline data-[spent]:hover:no-underline focus-visible:ring-2 focus-visible:ring-ring"
         >
           {hex}
         </CopyTooltip>

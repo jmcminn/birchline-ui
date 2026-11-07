@@ -43,26 +43,28 @@ body {
 }
 
 /* Color-swatch copy tooltip ("Copy hex code" -> "Copied to clipboard"), from the Figma frames
-   73:10 / 73:5. Idle: foreground tooltip with the copy icon. Copied (`data-copied`): success
+   73:10 / 73:5, with the icons at 12px. Idle: foreground tooltip with the copy icon. Copied (`data-copied`): success
    green ripples out of the icon, the check draws itself, the label springs open and the new
    text is unmasked left to right. The way back is a plain 300ms reverse. */
 .bl-ct-bg {
   position: absolute; inset: 0; z-index: -1;
   background: var(--color-success);
-  clip-path: circle(0 at 24px 50%);
+  clip-path: circle(0 at 18px 50%);
   transition: clip-path 300ms cubic-bezier(.4, 0, .2, 1);
 }
-[data-copied] > .bl-ct-bg { clip-path: circle(170% at 24px 50%); transition-duration: 340ms; }
+[data-copied] > .bl-ct-bg { clip-path: circle(170% at 18px 50%); transition-duration: 340ms; }
 
-.bl-ct-ico { position: relative; width: 24px; height: 24px; flex: none; }
+.bl-ct-ico { position: relative; width: 12px; height: 12px; flex: none; }
 .bl-ct-ico svg {
-  position: absolute; inset: 0; width: 24px; height: 24px;
+  position: absolute; inset: 0; width: 12px; height: 12px;
   fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round;
   transform-origin: 50% 50%;
 }
-.bl-ct-cp { stroke-width: 1.25; transition: opacity 120ms, transform 120ms; }
+/* The 24-unit icon art is drawn at 12px, so stroke widths are doubled to keep the
+   1.25px / 1.5px weights from the Figma frames. */
+.bl-ct-cp { stroke-width: 2.5; transition: opacity 120ms, transform 120ms; }
 [data-copied] .bl-ct-cp { opacity: 0; transform: scale(.6); }
-.bl-ct-ck { stroke-width: 1.5; }
+.bl-ct-ck { stroke-width: 3; }
 .bl-ct-ck path { stroke-dasharray: 1 2; stroke-dashoffset: 1.05; transition: stroke-dashoffset 120ms; }
 [data-copied] .bl-ct-ck path { stroke-dashoffset: 0; transition: stroke-dashoffset 240ms cubic-bezier(.3, 0, .2, 1) 100ms; }
 

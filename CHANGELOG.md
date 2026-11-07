@@ -79,11 +79,14 @@ the contract too, but the **semantic** tier is what components should consume.
 
 - **Click-to-copy on the Color palette swatches.** In the showcase's Color section, each
   swatch's color square and hex value are now buttons that copy the live hex (the
-  mode-aware value shown) to the clipboard. Hovering shows a "Copy hex code" tooltip (copy
-  icon on the foreground tooltip, per the Figma frame). On click the same tooltip stays
+  mode-aware value shown) to the clipboard. Hovering shows a "Copy hex code" tooltip (12px
+  copy icon on the foreground tooltip, per the Figma frame). On click the same tooltip stays
   open and becomes "Copied to clipboard" on `--color-success`: the green ripples out of the
   icon, the check draws itself, and the pill springs open to the longer text, which is
-  unmasked left to right. After 1.5s it reverses over 300ms. Keyboard-accessible with
+  unmasked left to right. It is a one-way sequence: once the animation finishes (~0.5s) the
+  cursor reverts to the standard arrow and further clicks are ignored; after the 1.5s rest
+  the tooltip fades out over 300ms and does not return to "Copy hex code" while the pointer
+  stays put. Leaving the target and coming back re-arms it. Keyboard-accessible with
   labelled buttons and an `aria-live` announcement; `prefers-reduced-motion` gets a plain
   crossfade. Showcase only.
 - **Token inspector covers the in-page components, not just Button.** Every exported
