@@ -9,6 +9,7 @@ const Checkbox = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <CheckboxPrimitive.Root
     ref={ref}
+    data-slot="checkbox"
     className={cn(
       "peer h-[18px] w-[18px] shrink-0 rounded-[5px] border-[1.5px] border-border bg-card",
       "focus-visible:outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/40",

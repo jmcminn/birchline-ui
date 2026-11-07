@@ -24,8 +24,11 @@ import {
 } from "./parse-classes"
 
 export interface ColorRow {
+  /** Token name (`primary`), or the raw CSS value when `raw` is set. */
   token: string
   opacity?: number
+  /** True when the colour is not a Birchline token (e.g. a hard-coded hex). */
+  raw?: boolean
   /** Where it's used, e.g. `"Create task" bg`, `plus icon`. */
   uses: string[]
 }
@@ -44,6 +47,10 @@ export interface TypeRow {
 
 export interface InspectReport {
   component: string
+  /** Parent component for a part, e.g. "Select" for `select-item`. */
+  parent?: string
+  /** Nested components (their own `data-slot`), reported separately. */
+  contains: string[]
   variant?: string
   size?: string
   label: string
@@ -83,15 +90,94 @@ export function describeTarget(el: Element): string {
     if (lucide) return `${lucide.slice(7).replace(/-/g, " ")} icon`
     return el.getAttribute("aria-label") ? `${el.getAttribute("aria-label")} icon` : "icon"
   }
-  const text = (el.textContent ?? "").replace(/\s+/g, " ").trim()
+  // SVG text (chart axes) groups as one row instead of one per tick.
+  if (el.tagName.toLowerCase() === "text" || el.tagName.toLowerCase() === "tspan") return "tick label"
+  const text = textOf(el)
   if (text) return `"${truncate(text, 28)}"`
   const aria = el.getAttribute("aria-label") ?? el.getAttribute("title")
   if (aria) return `"${truncate(aria, 28)}"`
   return el.tagName.toLowerCase()
 }
 
+/** Visible-ish text with a space between text nodes, so `<span>CH</span>Carol`
+ *  reads "CH Carol" rather than "CHCarol". */
+function textOf(el: Element): string {
+  const parts: string[] = []
+  const walker = el.ownerDocument.createTreeWalker(el, NodeFilter.SHOW_TEXT)
+  for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+    const t = n.textContent?.trim()
+    if (t) parts.push(t)
+  }
+  return parts.join(" ").replace(/\s+/g, " ").trim()
+}
+
 function truncate(s: string, n: number) {
   return s.length > n ? `${s.slice(0, n - 1)}…` : s
+}
+
+/** Component families whose parts are named `<family>-<part>` (shadcn v4 style).
+ *  Longest first so `alert-dialog-content` resolves to AlertDialog, not Alert. */
+const FAMILIES = [
+  "alert-dialog", "dropdown-menu", "navigation-menu", "toggle-group", "user-selector", "line-chart",
+  "alert", "avatar", "badge", "breadcrumb", "calendar", "card", "command", "dialog", "popover",
+  "progress", "select", "sheet", "sidebar", "table", "tabs", "toast", "tooltip",
+]
+
+export function pascal(slot: string): string {
+  return slot.replace(/(^|-)(\w)/g, (_, __, c: string) => c.toUpperCase())
+}
+
+export function parentOf(slot: string): string | undefined {
+  const fam = FAMILIES.find((f) => slot.startsWith(`${f}-`))
+  return fam ? pascal(fam) : undefined
+}
+
+/** Descendants that belong to this component: stops at nested `data-slot` roots. */
+function ownElements(root: Element): { elements: Element[]; contains: string[] } {
+  const elements: Element[] = [root]
+  const contains: string[] = []
+  const walk = (el: Element) => {
+    for (const child of Array.from(el.children)) {
+      const slot = child.getAttribute("data-slot")
+      if (slot) {
+        const name = pascal(slot)
+        if (!contains.includes(name)) contains.push(name)
+        continue
+      }
+      elements.push(child)
+      walk(child)
+    }
+  }
+  walk(root)
+  return { elements, contains }
+}
+
+/** Inline-style and SVG-attribute colours (charts, computed tints). */
+const STYLE_PROPS: [string, ColorProp][] = [
+  ["background-color", "bg"], ["background", "bg"], ["color", "text"], ["border-color", "border"],
+  ["fill", "fill"], ["stroke", "stroke"],
+]
+const IGNORED_VALUES = /^(none|currentcolor|transparent|inherit|initial|unset|auto)$|^url\(/i
+
+function nonClassColors(el: Element): { prop: ColorProp; value: string }[] {
+  const out: { prop: ColorProp; value: string }[] = []
+  const style = (el as HTMLElement).style
+  for (const [css, prop] of STYLE_PROPS) {
+    const v = style?.getPropertyValue?.(css)?.trim()
+    if (v && !IGNORED_VALUES.test(v) && !out.some((o) => o.prop === prop)) out.push({ prop, value: v })
+  }
+  for (const attr of ["fill", "stroke"] as const) {
+    const v = el.getAttribute(attr)?.trim()
+    if (v && !IGNORED_VALUES.test(v) && !out.some((o) => o.prop === attr)) out.push({ prop: attr, value: v })
+  }
+  return out
+}
+
+/** ["line stroke", "line stroke", "x icon"] → ["line stroke ×2", "x icon"]. */
+function countUses(uses: string[]): string[] {
+  const counts = new Map<string, number>()
+  for (const u of uses) counts.set(u, (counts.get(u) ?? 0) + 1)
+  return Array.from(counts, ([u, n]) => (n > 1 ? `${u} ×${n}` : u))
 }
 
 const TYPE_ORDER: TypeKind[] = ["family", "size", "weight", "leading", "tracking"]
@@ -100,11 +186,14 @@ export function inspectElement(root: Element, opts: InspectOptions = {}): Inspec
   const isColorToken = opts.isColorToken ?? defaultIsColorToken
   const dark = opts.dark ?? document.documentElement.getAttribute("data-mode") === "dark"
 
-  const elements = [root, ...Array.from(root.querySelectorAll("*"))]
+  const { elements, contains } = ownElements(root)
 
   // value[state]["<elIndex>|<prop>"] = token(+opacity); later classes win, dark
   // variants win over light ones in dark mode (mirrors CSS order in Tailwind v4).
-  type Slot = { token: string; opacity?: number; el: number; prop: ColorProp; specificity: number }
+  type Slot = {
+    token: string; opacity?: number; el: number; prop: ColorProp; specificity: number
+    raw?: boolean; placeholder?: boolean
+  }
   const colors = new Map<StateKey, Map<string, Slot>>()
   const effects = new Map<StateKey, Map<string, { effect: string; specificity: number }>>()
   const type = new Map<TypeKind, { token: string; specificity: number }>()
@@ -121,10 +210,13 @@ export function inspectElement(root: Element, opts: InspectOptions = {}): Inspec
       if (p.dark && !dark) continue
       const specificity = p.dark ? 1 : 0
       if (p.kind === "color") {
-        const key = `${i}|${p.prop}`
+        const key = `${i}|${p.prop}${p.pseudo ? "|placeholder" : ""}`
         const prev = colors.get(p.state)!.get(key)
         if (!prev || specificity >= prev.specificity)
-          colors.get(p.state)!.set(key, { token: p.token, opacity: p.opacity, el: i, prop: p.prop, specificity })
+          colors.get(p.state)!.set(key, {
+            token: p.token, opacity: p.opacity, el: i, prop: p.prop, specificity,
+            ...(p.pseudo ? { placeholder: true } : {}),
+          })
       } else if (p.kind === "effect") {
         // effects are reported for the component root only
         if (i !== 0) continue
@@ -134,6 +226,17 @@ export function inspectElement(root: Element, opts: InspectOptions = {}): Inspec
         const prev = type.get(p.type)
         if (!prev || specificity >= prev.specificity) type.set(p.type, { token: p.token, specificity })
       }
+    }
+  })
+
+  // Inline styles and SVG attributes beat classes. `var(--color-x)` resolves to a
+  // token; anything else (hex, rgb, a computed tint) is listed as "not a token".
+  elements.forEach((el, i) => {
+    for (const { prop, value } of nonClassColors(el)) {
+      const m = value.match(/^var\(--color-([\w-]+)\)$/)
+      const key = `${i}|${prop}`
+      if (m && isColorToken(m[1])) colors.get("rest")!.set(key, { token: m[1], el: i, prop, specificity: 2 })
+      else if (!m) colors.get("rest")!.set(key, { token: value, el: i, prop, specificity: 2, raw: true })
     }
   })
 
@@ -180,17 +283,24 @@ export function inspectElement(root: Element, opts: InspectOptions = {}): Inspec
 
     const rows: ColorRow[] = []
     for (const slot of slots) {
-      const uses = [`${labels[slot.el]} ${PROP_LABEL[slot.prop]}`]
+      const uses = [slot.placeholder ? "placeholder text" : `${labels[slot.el]} ${PROP_LABEL[slot.prop]}`]
       if (slot.prop === "text") for (const icon of inheritsText.get(slot.el) ?? []) uses.push(labels[icon])
-      const existing = rows.find((r) => r.token === slot.token && r.opacity === slot.opacity)
+      const existing = rows.find((r) => r.token === slot.token && r.opacity === slot.opacity && !!r.raw === !!slot.raw)
       if (existing) existing.uses.push(...uses)
-      else rows.push({ token: slot.token, ...(slot.opacity !== undefined ? { opacity: slot.opacity } : {}), uses })
+      else
+        rows.push({
+          token: slot.token,
+          ...(slot.opacity !== undefined ? { opacity: slot.opacity } : {}),
+          ...(slot.raw ? { raw: true } : {}),
+          uses,
+        })
     }
 
     const fx = Array.from(effects.get(state)!.entries())
       .filter(([key, v]) => state === "rest" || restEffects.get(key)?.effect !== v.effect)
       .map(([, v]) => v.effect)
 
+    for (const row of rows) row.uses = countUses(row.uses)
     return { state, colors: rows, effects: fx }
   }).filter((b) => b.state === "rest" || b.colors.length > 0 || b.effects.length > 0)
 
@@ -214,8 +324,11 @@ export function inspectElement(root: Element, opts: InspectOptions = {}): Inspec
   }))
 
   const slotName = root.getAttribute("data-slot") ?? root.tagName.toLowerCase()
+  const parent = parentOf(slotName)
   return {
-    component: slotName.replace(/(^|-)(\w)/g, (_, __, c: string) => c.toUpperCase()),
+    component: pascal(slotName),
+    ...(parent ? { parent } : {}),
+    contains,
     variant: root.getAttribute("data-variant") ?? undefined,
     size: root.getAttribute("data-size") ?? undefined,
     label: labels[0],

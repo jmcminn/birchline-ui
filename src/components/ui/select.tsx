@@ -13,6 +13,7 @@ const SelectTrigger = React.forwardRef<
 >(({ className, children, ...props }, ref) => (
   <SelectPrimitive.Trigger
     ref={ref}
+    data-slot="select-trigger"
     className={cn(
       "flex h-[38px] w-[180px] items-center justify-between rounded-sm border border-border bg-card px-3 text-sm text-foreground",
       "placeholder:text-muted-foreground",

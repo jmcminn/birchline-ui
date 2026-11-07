@@ -11,9 +11,9 @@
  * inspector UI, docs generators or CI checks.
  */
 
-export type StateKey = "rest" | "hover" | "focus" | "pressed" | "selected" | "disabled"
+export type StateKey = "rest" | "hover" | "focus" | "pressed" | "selected" | "invalid" | "disabled"
 
-export const STATE_ORDER: StateKey[] = ["rest", "hover", "focus", "pressed", "selected", "disabled"]
+export const STATE_ORDER: StateKey[] = ["rest", "hover", "focus", "pressed", "selected", "invalid", "disabled"]
 
 export const STATE_LABEL: Record<StateKey, string> = {
   rest: "At Rest",
@@ -21,6 +21,7 @@ export const STATE_LABEL: Record<StateKey, string> = {
   focus: "Focus",
   pressed: "Pressed",
   selected: "Selected",
+  invalid: "Invalid",
   disabled: "Disabled",
 }
 
@@ -29,7 +30,7 @@ export type ColorProp = "bg" | "text" | "border" | "ring" | "outline" | "fill" |
 export type TypeKind = "family" | "size" | "weight" | "tracking" | "leading"
 
 export type ParsedClass =
-  | { kind: "color"; state: StateKey; dark: boolean; prop: ColorProp; token: string; opacity?: number }
+  | { kind: "color"; state: StateKey; dark: boolean; prop: ColorProp; token: string; opacity?: number; pseudo?: "placeholder" }
   | { kind: "effect"; state: StateKey; dark: boolean; effect: string; key: string }
   | { kind: "type"; state: StateKey; dark: boolean; type: TypeKind; token: string }
 
@@ -56,6 +57,27 @@ const STATE_VARIANTS: Record<string, StateKey> = {
   "data-[state=open]": "selected",
   "data-[selected=true]": "selected",
   checked: "selected",
+  // Menu / select / command items: highlighted by pointer or keyboard.
+  "data-[highlighted]": "hover",
+  "data-highlighted": "hover",
+  // Sidebar menu buttons, nav links.
+  "data-[active=true]": "selected",
+  "data-active": "selected",
+  // Chevrons and other children that react to an open parent.
+  "group-data-[state=open]": "selected",
+  // Labels that dim with their control.
+  "peer-disabled": "disabled",
+  "group-data-[disabled=true]": "disabled",
+  // Validation.
+  "aria-invalid": "invalid",
+  "aria-[invalid=true]": "invalid",
+  "data-[invalid]": "invalid",
+  "data-invalid": "invalid",
+  // Explicit "off" states are the resting look.
+  "data-[state=unchecked]": "rest",
+  "data-[state=closed]": "rest",
+  "data-[state=inactive]": "rest",
+  "data-[state=off]": "rest",
 }
 
 const COLOR_PREFIXES: [string, ColorProp][] = [
@@ -103,9 +125,14 @@ export function parseClass(cls: string, isColorToken: (name: string) => boolean)
   const { variants, utility: raw } = splitVariants(cls)
   let dark = false
   let state: StateKey = "rest"
+  let pseudo: "placeholder" | undefined
   for (const v of variants) {
     if (v === "dark") {
       dark = true
+      continue
+    }
+    if (v === "placeholder") {
+      pseudo = "placeholder"
       continue
     }
     const s = STATE_VARIANTS[v]
@@ -127,9 +154,12 @@ export function parseClass(cls: string, isColorToken: (name: string) => boolean)
       return {
         kind: "color", state, dark, prop, token: name,
         ...(opacity !== undefined && !Number.isNaN(opacity) ? { opacity } : {}),
+        ...(pseudo ? { pseudo } : {}),
       }
     }
   }
+
+  if (pseudo) return null // only placeholder colours are reported
 
   // ── Typography ──
   if (utility.startsWith("text-")) {

@@ -43,6 +43,7 @@ const NavigationMenuTrigger = React.forwardRef<
 >(({ className, children, ...props }, ref) => (
   <NavigationMenuPrimitive.Trigger
     ref={ref}
+    data-slot="navigation-menu-trigger"
     className={cn(navigationMenuTriggerStyle(), "group", className)}
     {...props}
   >

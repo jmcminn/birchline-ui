@@ -13,6 +13,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, React.TextareaHTMLAttribu
           className
         )}
         ref={ref}
+        data-slot="textarea"
         {...props}
       />
     )

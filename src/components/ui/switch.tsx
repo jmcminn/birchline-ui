@@ -16,6 +16,7 @@ const Switch = React.forwardRef<
     )}
     {...props}
     ref={ref}
+    data-slot="switch"
   >
     <SwitchPrimitives.Thumb
       className={cn(

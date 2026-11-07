@@ -49,6 +49,8 @@ function Badge({
   const removable = typeof onRemove === "function"
   return (
     <div
+      data-slot="badge"
+      data-variant={variant ?? "default"}
       className={cn(
         badgeVariants({ variant }),
         removable && "gap-1 pr-1",
