@@ -127,6 +127,20 @@ export function pascal(slot: string): string {
   return slot.replace(/(^|-)(\w)/g, (_, __, c: string) => c.toUpperCase())
 }
 
+/** Third-party roots we can't put a `data-slot` on, recognised by their own markup. */
+const ADOPTED_SLOTS: [string, string][] = [["[data-sonner-toast]", "toast"]]
+
+/** CSS selector that matches any adopted third-party root (for the inspector's hit-test). */
+export const ADOPTED_SELECTOR = ADOPTED_SLOTS.map(([sel]) => sel).join(", ")
+
+/** Slot name for a root: its own `data-slot`, or an adopted third-party root, else undefined. */
+export function slotOf(el: Element): string | undefined {
+  const own = el.getAttribute("data-slot")
+  if (own) return own
+  for (const [sel, name] of ADOPTED_SLOTS) if (el.matches(sel)) return name
+  return undefined
+}
+
 export function parentOf(slot: string): string | undefined {
   const fam = FAMILIES.find((f) => slot.startsWith(`${f}-`))
   return fam ? pascal(fam) : undefined
@@ -323,7 +337,7 @@ export function inspectElement(root: Element, opts: InspectOptions = {}): Inspec
     ...(type.get(t)!.specificity === -1 ? { inherited: true } : {}),
   }))
 
-  const slotName = root.getAttribute("data-slot") ?? root.tagName.toLowerCase()
+  const slotName = slotOf(root) ?? root.tagName.toLowerCase()
   const parent = parentOf(slotName)
   return {
     component: pascal(slotName),

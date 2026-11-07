@@ -93,6 +93,15 @@ the contract too, but the **semantic** tier is what components should consume.
   unpins first, then closes an open overlay, then exits inspect mode, and the inspector
   panel sits above overlays and stays interactive inside a modal dialog without dismissing
   it. These attributes ship to registry consumers; visual output is unchanged.
+- **Token inspector reaches the remaining components.** `data-slot` on the Sidebar parts
+  (`sidebar`, `sidebar-item`, …), Calendar root, LineChart legend (`line-chart-legend`) and
+  dark hover tooltip (`line-chart-tooltip`), and the showcase BorderChase. Sonner toasts
+  are adopted by the inspector even though they carry no `data-slot` (matched by Sonner's own
+  markup), and the class parser now reads Sonner's `group-[.toaster]:` / `group-[.toast]:`
+  scoping variants as resting colors, so a toast reports `--popover` / `--foreground` /
+  `--border` like any other component. SidebarItem also gains a `data-active` attribute.
+  Known: the LineChart tooltip is `pointer-events:none` (Recharts), so it is listed under the
+  chart's **Contains** rather than clicked directly.
 - Inspector engine: nested components are listed under **Contains** instead of being mixed
   into the report; a pinned part names its parent ("in Card") with an ↑ button to inspect
   it; inline-style and SVG `fill` / `stroke` colors are read, with non-token values shown as

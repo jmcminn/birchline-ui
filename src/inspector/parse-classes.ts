@@ -78,6 +78,10 @@ const STATE_VARIANTS: Record<string, StateKey> = {
   "data-[state=closed]": "rest",
   "data-[state=inactive]": "rest",
   "data-[state=off]": "rest",
+  // Sonner scopes a toast's colours by DOM context, not interaction state, so
+  // `group-[.toaster]:bg-popover` / `group-[.toast]:text-...` are resting colours.
+  "group-[.toaster]": "rest",
+  "group-[.toast]": "rest",
 }
 
 const COLOR_PREFIXES: [string, ColorProp][] = [

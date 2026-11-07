@@ -23,6 +23,7 @@ function Calendar({
 
   return (
     <DayPicker
+      data-slot="calendar"
       showOutsideDays={showOutsideDays}
       navLayout="around"
       captionLayout={captionLayout}
