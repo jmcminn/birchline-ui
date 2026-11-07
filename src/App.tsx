@@ -1506,7 +1506,7 @@ function App() {
                 aria-pressed={inspecting}
                 aria-label={inspecting ? "Exit token inspector" : "Inspect component tokens"}
                 title={inspecting ? "Exit token inspector (Esc)" : "Inspect component tokens"}
-                className={cn(inspecting && "bg-accent border-gray-500")}
+                className={cn(inspecting && "border-2 border-primary bg-primary/15 text-primary hover:border-primary hover:bg-primary/20")}
               >
                 <ScanSearch className="h-4 w-4" />
               </Button>
