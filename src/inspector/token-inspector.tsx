@@ -200,7 +200,8 @@ function Panel({ el, rect, onClose }: { el: HTMLElement; rect: DOMRect; onClose:
       <div className="px-4 pb-4 pt-3 font-mono text-[11.5px] leading-[1.5]">
         <SectionTitle>Colors</SectionTitle>
         {/* One shared grid: label | token | uses. The token column sizes to the longest
-            token, so every "uses" string starts at the same left edge. */}
+            token, so every "uses" string starts at the same left edge. The 12px column
+            gap plus the token's mr-3 gives 24px between token and uses. */}
         <div className="grid grid-cols-[72px_max-content_1fr] gap-x-3">
           {report.states.map((block, i) => (
             <StateRows key={block.state} label={STATE_LABEL[block.state]} block={block} first={i === 0} />
@@ -244,7 +245,7 @@ function StateRows({ label, block, first }: { label: string; block: InspectRepor
         block.colors.map((row, i) => (
           <div key={`${row.token}/${row.opacity ?? ""}`} className="contents">
             {i > 0 && <div />}
-            <span className={`flex items-center gap-1.5 whitespace-nowrap ${i > 0 ? "mt-1" : gap}`}>
+            <span className={`mr-3 flex items-center gap-1.5 whitespace-nowrap ${i > 0 ? "mt-1" : gap}`}>
               <Swatch token={row.token} opacity={row.opacity} />
               --{row.token}
               {row.opacity !== undefined && <span className="text-muted-foreground">/{row.opacity}%</span>}
