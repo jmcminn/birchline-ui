@@ -17,6 +17,8 @@ import { STATE_LABEL } from "./parse-classes"
 const SLOT_SELECTOR = "[data-slot]"
 const UI_SELECTOR = "[data-inspector-ui]"
 const PANEL_WIDTH = 540
+/** Rough panel height, used to decide whether it opens below or above its target. */
+const PANEL_EST_HEIGHT = 480
 
 function findSlot(target: EventTarget | null): HTMLElement | null {
   if (!(target instanceof Element)) return null
@@ -167,7 +169,7 @@ function Panel({ el, rect, onClose }: { el: HTMLElement; rect: DOMRect; onClose:
   const vw = window.innerWidth
   const vh = window.innerHeight
   const left = Math.min(Math.max(12, rect.left), vw - PANEL_WIDTH - 12)
-  const below = vh - rect.bottom > 280 || rect.top < 280
+  const below = vh - rect.bottom > PANEL_EST_HEIGHT || rect.top < PANEL_EST_HEIGHT
   const style: React.CSSProperties = below
     ? { top: rect.bottom + 10, left, width: PANEL_WIDTH }
     : { bottom: vh - rect.top + 10, left, width: PANEL_WIDTH }
@@ -180,7 +182,7 @@ function Panel({ el, rect, onClose }: { el: HTMLElement; rect: DOMRect; onClose:
     <div
       role="dialog"
       aria-label={`Tokens for ${report.component}`}
-      className="fixed z-[61] max-h-[70vh] overflow-y-auto rounded-md border border-border bg-popover text-popover-foreground shadow-lg"
+      className="fixed z-[61] max-h-[85vh] overflow-y-auto rounded-md border border-border bg-popover text-popover-foreground shadow-lg"
       style={style}
     >
       <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
@@ -271,7 +273,7 @@ function StateRows({ label, block, first }: { label: string; block: InspectRepor
 function Swatch({ token, opacity }: { token: string; opacity?: number }) {
   return (
     <span
-      className="inline-block h-2.5 w-2.5 shrink-0 rounded-[2px] border border-border"
+      className="inline-block h-4 w-4 shrink-0 rounded-[3px] border border-border"
       style={{ background: `var(--color-${token})`, opacity: opacity !== undefined ? opacity / 100 : undefined }}
     />
   )
