@@ -3020,18 +3020,28 @@ function App() {
             style={{ backgroundColor: separatorBg }}
           >
             {/* Horizontal dividers — half column width, extended 200px to the right */}
-            <div className="flex-1 min-w-0 flex flex-col justify-between py-4" style={{ gap: "64px" }}>
-              <Separator className="w-[calc(50%+200px)]" style={{ backgroundColor: separatorColor }} />
-              <Separator className="w-[calc(50%+200px)]" style={{ backgroundColor: separatorColor }} />
-              <Separator className="h-[2px] w-[calc(50%+200px)]" style={{ backgroundColor: separatorColor }} />
-              <Separator className="h-[2px] w-[calc(50%+200px)]" style={{ backgroundColor: separatorColor }} />
+            <div className="flex-1 min-w-0 flex flex-col justify-around py-4">
+              <div className="w-[calc(50%+200px)]">
+                <LabeledItem label="1px">
+                  <Separator style={{ backgroundColor: separatorColor }} />
+                </LabeledItem>
+              </div>
+              <div className="w-[calc(50%+200px)]">
+                <LabeledItem label="2px">
+                  <Separator className="h-[2px]" style={{ backgroundColor: separatorColor }} />
+                </LabeledItem>
+              </div>
             </div>
             {/* Vertical dividers */}
-            <div className="flex-1 flex justify-between px-8" style={{ height: "300px" }}>
-              <Separator orientation="vertical" style={{ backgroundColor: separatorColor }} />
-              <Separator orientation="vertical" style={{ backgroundColor: separatorColor }} />
-              <Separator orientation="vertical" className="w-[2px]" style={{ backgroundColor: separatorColor }} />
-              <Separator orientation="vertical" className="w-[2px]" style={{ backgroundColor: separatorColor }} />
+            <div className="flex-1 flex justify-around px-8" style={{ height: "300px" }}>
+              <div className="flex items-center gap-2.5 h-full">
+                <Separator orientation="vertical" style={{ backgroundColor: separatorColor }} />
+                <span className="font-mono text-[11px] text-muted-foreground">1px</span>
+              </div>
+              <div className="flex items-center gap-2.5 h-full">
+                <Separator orientation="vertical" className="w-[2px]" style={{ backgroundColor: separatorColor }} />
+                <span className="font-mono text-[11px] text-muted-foreground">2px</span>
+              </div>
             </div>
           </div>
         </section>
