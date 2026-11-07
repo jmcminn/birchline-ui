@@ -16,7 +16,7 @@ import { STATE_LABEL } from "./parse-classes"
 
 const SLOT_SELECTOR = "[data-slot]"
 const UI_SELECTOR = "[data-inspector-ui]"
-const PANEL_WIDTH = 480
+const PANEL_WIDTH = 540
 
 function findSlot(target: EventTarget | null): HTMLElement | null {
   if (!(target instanceof Element)) return null
@@ -197,7 +197,7 @@ function Panel({ el, rect, onClose }: { el: HTMLElement; rect: DOMRect; onClose:
         </button>
       </div>
 
-      <div className="px-4 pb-4 pt-3 font-mono text-[11.5px] leading-[1.5]">
+      <div className="px-4 pb-4 pt-3 font-mono text-[13px] leading-[1.5]">
         <SectionTitle>Colors</SectionTitle>
         {/* One shared grid: label | token | uses. The token column sizes to the longest
             token, so every "uses" string starts at the same left edge. The 12px column
@@ -230,7 +230,7 @@ function Panel({ el, rect, onClose }: { el: HTMLElement; rect: DOMRect; onClose:
 }
 
 function SectionTitle({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <div className={`mb-2 text-[10px] uppercase tracking-[0.08em] text-muted-foreground ${className}`}>{children}</div>
+  return <div className={`mb-2 text-xs font-medium uppercase tracking-[0.08em] text-muted-foreground ${className}`}>{children}</div>
 }
 
 function StateRows({ label, block, first }: { label: string; block: InspectReport["states"][number]; first: boolean }) {
