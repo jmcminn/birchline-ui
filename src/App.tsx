@@ -1,5 +1,6 @@
 import { useState, useMemo, useRef, useEffect, useCallback, useLayoutEffect } from "react"
-import { format } from "date-fns"
+import type { DateRange } from "react-day-picker"
+import { formatSelectedDate, formatSelectedRange } from "@/lib/date-format"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -524,24 +525,11 @@ function DraggableTableHeader({
   )
 }
 
-// Show the year unless the toggle is off AND the date falls in the current year.
-function formatSelectedDate(date: Date, showCurrentYear: boolean) {
-  const isCurrentYear = date.getFullYear() === new Date().getFullYear()
-  return format(date, showCurrentYear || !isCurrentYear ? "MMM d, yyyy" : "MMM d")
-}
-
 function DatePickerDemo({ showCurrentYear }: { showCurrentYear: boolean }) {
   const [date, setDate] = useState<Date>()
   const [open, setOpen] = useState(false)
-  const [hadDateOnOpen, setHadDateOnOpen] = useState(false)
   return (
-    <Popover
-      open={open}
-      onOpenChange={(o) => {
-        if (o) setHadDateOnOpen(!!date)
-        setOpen(o)
-      }}
-    >
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button variant="outline" className={cn("w-auto justify-start text-left font-normal px-2", !date && "text-muted-foreground")}>
           <IconCalendar className="mr-2 h-4 w-4" stroke={2} />
@@ -563,20 +551,71 @@ function DatePickerDemo({ showCurrentYear }: { showCurrentYear: boolean }) {
           selected={date}
           onSelect={setDate}
           footer={
-            hadDateOnOpen ? (
-              <div className="flex flex-col items-center mt-2 pt-3 border-t border-border">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setDate(undefined)
-                    setOpen(false)
-                  }}
-                  className="text-xs font-medium text-danger hover:underline"
-                >
-                  Clear Selected Date
-                </button>
-              </div>
-            ) : undefined
+            // Always present; dimmed and inert until a date is picked, then red.
+            <div className="flex flex-col items-center mt-2 pt-3 border-t border-border">
+              <button
+                type="button"
+                disabled={!date}
+                onClick={() => {
+                  setDate(undefined)
+                  setOpen(false)
+                }}
+                className="text-xs font-medium text-danger hover:underline disabled:text-muted-foreground disabled:hover:no-underline disabled:cursor-default"
+              >
+                Clear Selected Date
+              </button>
+            </div>
+          }
+        />
+      </PopoverContent>
+    </Popover>
+  )
+}
+
+export function DatePickerRangeDemo({ showCurrentYear }: { showCurrentYear: boolean }) {
+  const [range, setRange] = useState<DateRange | undefined>()
+  const [open, setOpen] = useState(false)
+  const label = formatSelectedRange(range, showCurrentYear)
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button variant="outline" className={cn("w-auto justify-start text-left font-normal px-2", !label && "text-muted-foreground")}>
+          <IconCalendar className="mr-2 h-4 w-4" stroke={2} />
+          {label ?? "Pick a date range"}
+          {label && (
+            <span
+              role="button"
+              aria-label="Clear date range"
+              onClick={(e) => { e.stopPropagation(); setRange(undefined) }}
+              className="ml-2 text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <X className="h-3.5 w-3.5" />
+            </span>
+          )}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-0" align="start">
+        <Calendar
+          mode="range"
+          min={1}
+          selected={range}
+          onSelect={setRange}
+          defaultMonth={range?.from}
+          footer={
+            // Always present; dimmed and inert until a date is picked, then red.
+            <div className="flex flex-col items-center mt-2 pt-3 border-t border-border">
+              <button
+                type="button"
+                disabled={!range?.from}
+                onClick={() => {
+                  setRange(undefined)
+                  setOpen(false)
+                }}
+                className="text-xs font-medium text-danger hover:underline disabled:text-muted-foreground disabled:hover:no-underline disabled:cursor-default"
+              >
+                Clear Selected Date
+              </button>
+            </div>
           }
         />
       </PopoverContent>
@@ -1928,9 +1967,9 @@ function App() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="lg">Large (lg)</SelectItem>
-                  <SelectItem value="md">Medium (md)</SelectItem>
-                  <SelectItem value="sm">Small (sm)</SelectItem>
+                  <SelectItem value="lg">Large (14px)</SelectItem>
+                  <SelectItem value="md">Medium (13px)</SelectItem>
+                  <SelectItem value="sm">Small (12px)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -1953,9 +1992,9 @@ function App() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="lg">Large (lg)</SelectItem>
-                  <SelectItem value="md">Medium (md)</SelectItem>
-                  <SelectItem value="sm">Small (sm)</SelectItem>
+                  <SelectItem value="lg">Large (16px)</SelectItem>
+                  <SelectItem value="md">Medium (14px)</SelectItem>
+                  <SelectItem value="sm">Small (13px)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -2012,9 +2051,9 @@ function App() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="lg">Large (lg)</SelectItem>
-                  <SelectItem value="md">Medium (md)</SelectItem>
-                  <SelectItem value="sm">Small (sm)</SelectItem>
+                  <SelectItem value="lg">Large (16px)</SelectItem>
+                  <SelectItem value="md">Medium (14px)</SelectItem>
+                  <SelectItem value="sm">Small (13px)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -2786,6 +2825,10 @@ function App() {
             <div className="w-16" />
             <LabeledItem label="Date picker - tasks">
               <DatePickerTasksDemo showCurrentYear={showCurrentYear} />
+            </LabeledItem>
+            <div className="w-16" />
+            <LabeledItem label="Date picker - range">
+              <DatePickerRangeDemo showCurrentYear={showCurrentYear} />
             </LabeledItem>
             <div className="w-16" />
             <LabeledItem label="Inline calendar">

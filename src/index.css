@@ -38,8 +38,13 @@ body {
   align-items: flex-start !important;
 }
 
+/* The first row (icon + title) is vertically centered: the icon box is as tall as the title's
+   24px line box and centers the glyph inside it. !important because Sonner injects its own
+   icon sizing after this stylesheet. */
 [data-sonner-toast] [data-icon] {
-  margin-top: 3px;
+  height: 24px !important;
+  margin-top: 0 !important;
+  align-items: center !important;
 }
 
 /* Color-swatch copy tooltip ("Copy hex code" -> "Copied to clipboard"), from the Figma frames

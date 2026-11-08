@@ -32,6 +32,11 @@ the contract too, but the **semantic** tier is what components should consume.
 
 ### Changed
 
+- **Size menus show the font size instead of the size name.** The Button, Input and Select Size menus read `Large (14px)` / `Medium (13px)` / `Small (12px)` for Button and `Large (16px)` / `Medium (14px)` / `Small (13px)` for Input and Select (was `Large (lg)` etc.). Showcase labels only; the values and sizes are unchanged.
+- **Toast icon and title are vertically centered** on the first row (the icon was about 1px high). Applies to every toast with an icon; the action button already sat on the same center line. Showcase stylesheet only.
+- **Calendar range mode: days between the start and end now render as a soft band** (`bg-accent`,
+  foreground text) instead of solid clay; the start and end days stay solid clay. `calendar.tsx`
+  ships in the registry, so registry consumers using `mode="range"` get the new look.
 - **LineChart zoom (+ / −) icons use a 2px stroke** (was 1.5px), matching the default Lucide icon weight used elsewhere, e.g. the Button arrow.
 - **Avatar showcase "Image" initials match the fallback.** The sample image's baked-in initials
   (DiceBear) rendered larger and bolder than the fallback's 15px / medium text; the URL now sets
@@ -81,6 +86,12 @@ the contract too, but the **semantic** tier is what components should consume.
 
 ### Added
 
+- **"Date picker - range" example in the showcase Calendar block.** A popover date picker for
+  choosing a start and end date. The button shows the range compactly: `Nov 10–24` within one
+  month, `Nov 25 – Dec 10` across months, `Nov 10 –` while only the start is picked, and
+  both years when a range crosses years. The "Display the current year" toggle applies as for the
+  single-date pickers. Includes the × clear button and a "Clear Selected Date" link that is always in the popover:
+  dimmed and inert until a date is picked, then red. Showcase only.
 - **Click-to-copy on the Color palette swatches.** In the showcase's Color section, each
   swatch's color square and hex value are now buttons that copy the live hex (the
   mode-aware value shown) to the clipboard. Hovering shows a "Copy hex code" tooltip (12px
