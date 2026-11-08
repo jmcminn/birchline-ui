@@ -71,7 +71,10 @@ function Calendar({
         today: "bg-accent text-foreground rounded-sm",
         outside: "day-outside text-muted-foreground aria-selected:bg-accent/50 aria-selected:text-muted-foreground",
         disabled: "text-muted-foreground opacity-50",
-        range_middle: "aria-selected:bg-accent aria-selected:text-foreground",
+        // Middle days of a range read as a soft band between the solid start/end days, so the
+        // `selected` button fill is cancelled here (important so source order can't matter).
+        range_middle:
+          "aria-selected:bg-accent aria-selected:text-foreground [&>button]:bg-transparent! [&>button]:text-foreground! [&>button]:hover:bg-transparent! [&>button]:hover:text-foreground!",
         hidden: "invisible",
         ...classNames,
       }}

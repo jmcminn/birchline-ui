@@ -1,5 +1,6 @@
 import { useState, useMemo, useRef, useEffect, useCallback, useLayoutEffect } from "react"
-import { format } from "date-fns"
+import type { DateRange } from "react-day-picker"
+import { formatSelectedDate, formatSelectedRange } from "@/lib/date-format"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -66,6 +67,7 @@ import {
 import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem, CommandShortcut, CommandSeparator } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
+import { IconCalendar } from "@tabler/icons-react"
 import { Progress } from "@/components/ui/progress"
 import { Skeleton } from "@/components/ui/skeleton"
 import { LineChart, type LineChartSeries } from "@/components/ui/line-chart"
@@ -77,7 +79,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
 import { Sidebar, SidebarHeader, SidebarContent, SidebarGroup, SidebarGroupLabel, SidebarItem, SidebarFooter } from "@/components/ui/sidebar"
 import { UserSelector, type User } from "@/components/ui/user-selector"
-import { Apple, Globe, Smartphone, MoreHorizontal, Plus, Search, Trash2, Copy, Pencil, ArrowRight, Info, PanelRight, Bell, CalendarDays, Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, LayoutGrid, List, Home, Settings, FolderOpen, Inbox, FileText, BarChart3, AlertCircle, CheckCircle, AlertTriangle, InfoIcon, Terminal, ChevronRight, Check, Palette, ArrowUpDown, ArrowUp, ArrowDown, X, GripVertical, Sun, Moon, ScanSearch } from "lucide-react"
+import { Apple, Globe, Smartphone, MoreHorizontal, Plus, Search, Trash2, Copy, Pencil, ArrowRight, Info, PanelRight, Bell, Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, LayoutGrid, List, Home, Settings, FolderOpen, Inbox, FileText, BarChart3, AlertCircle, CheckCircle, AlertTriangle, InfoIcon, Terminal, ChevronRight, Check, Palette, ArrowUpDown, ArrowUp, ArrowDown, X, GripVertical, Sun, Moon, ScanSearch } from "lucide-react"
 import {
   useTable,
   tableFeatures,
@@ -523,27 +525,14 @@ function DraggableTableHeader({
   )
 }
 
-// Show the year unless the toggle is off AND the date falls in the current year.
-function formatSelectedDate(date: Date, showCurrentYear: boolean) {
-  const isCurrentYear = date.getFullYear() === new Date().getFullYear()
-  return format(date, showCurrentYear || !isCurrentYear ? "MMM d, yyyy" : "MMM d")
-}
-
 function DatePickerDemo({ showCurrentYear }: { showCurrentYear: boolean }) {
   const [date, setDate] = useState<Date>()
   const [open, setOpen] = useState(false)
-  const [hadDateOnOpen, setHadDateOnOpen] = useState(false)
   return (
-    <Popover
-      open={open}
-      onOpenChange={(o) => {
-        if (o) setHadDateOnOpen(!!date)
-        setOpen(o)
-      }}
-    >
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button variant="outline" className={cn("w-auto justify-start text-left font-normal px-2", !date && "text-muted-foreground")}>
-          <CalendarDays className="mr-2 h-4 w-4" />
+          <IconCalendar className="mr-2 h-4 w-4" stroke={2} />
           {date ? formatSelectedDate(date, showCurrentYear) : "Pick a date"}
           {date && (
             <span
@@ -562,20 +551,71 @@ function DatePickerDemo({ showCurrentYear }: { showCurrentYear: boolean }) {
           selected={date}
           onSelect={setDate}
           footer={
-            hadDateOnOpen ? (
-              <div className="flex flex-col items-center mt-2 pt-3 border-t border-border">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setDate(undefined)
-                    setOpen(false)
-                  }}
-                  className="text-xs font-medium text-danger hover:underline"
-                >
-                  Clear Selected Date
-                </button>
-              </div>
-            ) : undefined
+            // Always present; dimmed and inert until a date is picked, then red.
+            <div className="flex flex-col items-center mt-2 pt-3 border-t border-border">
+              <button
+                type="button"
+                disabled={!date}
+                onClick={() => {
+                  setDate(undefined)
+                  setOpen(false)
+                }}
+                className="text-xs font-medium text-danger hover:underline disabled:text-muted-foreground disabled:hover:no-underline disabled:cursor-default"
+              >
+                Clear Selected Date
+              </button>
+            </div>
+          }
+        />
+      </PopoverContent>
+    </Popover>
+  )
+}
+
+export function DatePickerRangeDemo({ showCurrentYear }: { showCurrentYear: boolean }) {
+  const [range, setRange] = useState<DateRange | undefined>()
+  const [open, setOpen] = useState(false)
+  const label = formatSelectedRange(range, showCurrentYear)
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button variant="outline" className={cn("w-auto justify-start text-left font-normal px-2", !label && "text-muted-foreground")}>
+          <IconCalendar className="mr-2 h-4 w-4" stroke={2} />
+          {label ?? "Pick a date range"}
+          {label && (
+            <span
+              role="button"
+              aria-label="Clear date range"
+              onClick={(e) => { e.stopPropagation(); setRange(undefined) }}
+              className="ml-2 text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <X className="h-3.5 w-3.5" />
+            </span>
+          )}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-0" align="start">
+        <Calendar
+          mode="range"
+          min={1}
+          selected={range}
+          onSelect={setRange}
+          defaultMonth={range?.from}
+          footer={
+            // Always present; dimmed and inert until a date is picked, then red.
+            <div className="flex flex-col items-center mt-2 pt-3 border-t border-border">
+              <button
+                type="button"
+                disabled={!range?.from}
+                onClick={() => {
+                  setRange(undefined)
+                  setOpen(false)
+                }}
+                className="text-xs font-medium text-danger hover:underline disabled:text-muted-foreground disabled:hover:no-underline disabled:cursor-default"
+              >
+                Clear Selected Date
+              </button>
+            </div>
           }
         />
       </PopoverContent>
@@ -606,7 +646,7 @@ function DatePickerTasksDemo({ showCurrentYear }: { showCurrentYear: boolean }) 
     >
       <PopoverTrigger asChild>
         <Button variant="outline" className={cn("w-auto justify-start text-left font-normal px-2", !date && "text-muted-foreground")}>
-          <CalendarDays className="mr-2 h-4 w-4" />
+          <IconCalendar className="mr-2 h-4 w-4" stroke={2} />
           {date ? formatSelectedDate(date, showCurrentYear) : "Pick a date"}
           {date && (
             <span
@@ -1927,9 +1967,9 @@ function App() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="lg">Large (lg)</SelectItem>
-                  <SelectItem value="md">Medium (md)</SelectItem>
-                  <SelectItem value="sm">Small (sm)</SelectItem>
+                  <SelectItem value="lg">Large (14px)</SelectItem>
+                  <SelectItem value="md">Medium (13px)</SelectItem>
+                  <SelectItem value="sm">Small (12px)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -1952,9 +1992,9 @@ function App() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="lg">Large (lg)</SelectItem>
-                  <SelectItem value="md">Medium (md)</SelectItem>
-                  <SelectItem value="sm">Small (sm)</SelectItem>
+                  <SelectItem value="lg">Large (16px)</SelectItem>
+                  <SelectItem value="md">Medium (14px)</SelectItem>
+                  <SelectItem value="sm">Small (13px)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -2011,9 +2051,9 @@ function App() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="lg">Large (lg)</SelectItem>
-                  <SelectItem value="md">Medium (md)</SelectItem>
-                  <SelectItem value="sm">Small (sm)</SelectItem>
+                  <SelectItem value="lg">Large (16px)</SelectItem>
+                  <SelectItem value="md">Medium (14px)</SelectItem>
+                  <SelectItem value="sm">Small (13px)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -2787,6 +2827,10 @@ function App() {
               <DatePickerTasksDemo showCurrentYear={showCurrentYear} />
             </LabeledItem>
             <div className="w-16" />
+            <LabeledItem label="Date picker - range">
+              <DatePickerRangeDemo showCurrentYear={showCurrentYear} />
+            </LabeledItem>
+            <div className="w-16" />
             <LabeledItem label="Inline calendar">
               <div className="border border-border rounded-md bg-card">
                 <Calendar mode="single" className="rounded-md" />
@@ -3020,18 +3064,28 @@ function App() {
             style={{ backgroundColor: separatorBg }}
           >
             {/* Horizontal dividers — half column width, extended 200px to the right */}
-            <div className="flex-1 min-w-0 flex flex-col justify-between py-4" style={{ gap: "64px" }}>
-              <Separator className="w-[calc(50%+200px)]" style={{ backgroundColor: separatorColor }} />
-              <Separator className="w-[calc(50%+200px)]" style={{ backgroundColor: separatorColor }} />
-              <Separator className="h-[2px] w-[calc(50%+200px)]" style={{ backgroundColor: separatorColor }} />
-              <Separator className="h-[2px] w-[calc(50%+200px)]" style={{ backgroundColor: separatorColor }} />
+            <div className="flex-1 min-w-0 flex flex-col justify-around py-4">
+              <div className="w-[calc(50%+200px)]">
+                <LabeledItem label="1px">
+                  <Separator style={{ backgroundColor: separatorColor }} />
+                </LabeledItem>
+              </div>
+              <div className="w-[calc(50%+200px)]">
+                <LabeledItem label="2px">
+                  <Separator className="h-[2px]" style={{ backgroundColor: separatorColor }} />
+                </LabeledItem>
+              </div>
             </div>
             {/* Vertical dividers */}
-            <div className="flex-1 flex justify-between px-8" style={{ height: "300px" }}>
-              <Separator orientation="vertical" style={{ backgroundColor: separatorColor }} />
-              <Separator orientation="vertical" style={{ backgroundColor: separatorColor }} />
-              <Separator orientation="vertical" className="w-[2px]" style={{ backgroundColor: separatorColor }} />
-              <Separator orientation="vertical" className="w-[2px]" style={{ backgroundColor: separatorColor }} />
+            <div className="flex-1 flex justify-around px-8" style={{ height: "300px" }}>
+              <div className="flex items-center gap-2.5 h-full">
+                <Separator orientation="vertical" style={{ backgroundColor: separatorColor }} />
+                <span className="font-mono text-[11px] text-muted-foreground">1px</span>
+              </div>
+              <div className="flex items-center gap-2.5 h-full">
+                <Separator orientation="vertical" className="w-[2px]" style={{ backgroundColor: separatorColor }} />
+                <span className="font-mono text-[11px] text-muted-foreground">2px</span>
+              </div>
             </div>
           </div>
         </section>
