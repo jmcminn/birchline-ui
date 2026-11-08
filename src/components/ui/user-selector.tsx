@@ -83,7 +83,7 @@ function UserRow({
         {multiSelect ? (
           <Checkbox checked={selected} tabIndex={-1} className="pointer-events-none" />
         ) : (
-          selected && <Check className="h-4 w-4 text-foreground" />
+          selected && <Check className="h-4 w-4 text-primary" />
         )}
       </span>
       <Avatar className="h-8 w-8 shrink-0">
@@ -265,7 +265,7 @@ function UserSelector({
                   className="flex items-center gap-3 px-3 py-2.5"
                 >
                   <span className="w-5 shrink-0 flex items-center justify-center">
-                    {value === null && <Check className="h-4 w-4 text-foreground" />}
+                    {value === null && <Check className="h-4 w-4 text-primary" />}
                   </span>
                   <div className="h-8 w-8 rounded-full border-2 border-dashed border-border flex items-center justify-center shrink-0">
                     <UserRound className="h-4 w-4 text-gray-300" />

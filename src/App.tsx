@@ -1595,7 +1595,7 @@ function App() {
   const typeSectionName = colorName(useResolvedHex(typeSectionBg))
   const separatorColorName = colorName(useResolvedHex(separatorColor))
   const separatorBgName = colorName(useResolvedHex(separatorBg))
-  const [selectedUserId, setSelectedUserId] = useState<string | null>("u7")
+  const [selectedUserId, setSelectedUserId] = useState<string | null>("u2")
   const [multiSelectedUserIds, setMultiSelectedUserIds] = useState<string[]>(["u7", "u3"])
   const [sorting, setSorting] = useState<SortingState>([{ id: "priority", desc: false }])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
