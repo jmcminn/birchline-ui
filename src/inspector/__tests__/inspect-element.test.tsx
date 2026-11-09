@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react"
-import { Plus } from "lucide-react"
+import { IconPlus } from "@tabler/icons-react"
 import { Button } from "@/components/ui/button"
 import { semantic, aliases } from "../../../tokens/birchline.tokens.mjs"
 import { parseClass, splitVariants } from "../parse-classes"
@@ -90,7 +90,7 @@ describe("inspectElement · Button", () => {
   })
 
   it("lists inheriting icons with the text colour", () => {
-    render(<Button><Plus className="mr-2 h-4 w-4" /> New task</Button>)
+    render(<Button><IconPlus className="mr-2 h-4 w-4" /> New task</Button>)
     const r = inspectElement(screen.getByRole("button"), { isColorToken, hasBorder, dark: false })
     const text = r.states[0].colors.find((c) => c.token === "primary-foreground")!
     expect(text.uses).toEqual(['"New task" text', "plus icon"])

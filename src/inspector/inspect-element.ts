@@ -86,8 +86,8 @@ export function defaultIsColorToken(name: string): boolean {
 /** Human label for the element a colour lands on. */
 export function describeTarget(el: Element): string {
   if (el.tagName.toLowerCase() === "svg") {
-    const lucide = Array.from(el.classList).find((c) => c.startsWith("lucide-") && c !== "lucide-icon")
-    if (lucide) return `${lucide.slice(7).replace(/-/g, " ")} icon`
+    const tabler = Array.from(el.classList).find((c) => c.startsWith("tabler-icon-"))
+    if (tabler) return `${tabler.slice(12).replace(/-/g, " ")} icon`
     return el.getAttribute("aria-label") ? `${el.getAttribute("aria-label")} icon` : "icon"
   }
   // SVG text (chart axes) groups as one row instead of one per tick.

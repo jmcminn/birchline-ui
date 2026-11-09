@@ -67,7 +67,7 @@ import {
 import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem, CommandShortcut, CommandSeparator } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
-import { IconCalendar } from "@tabler/icons-react"
+import { IconAlertCircle, IconAlertTriangle, IconAlignCenter, IconAlignLeft, IconAlignRight, IconApple, IconArrowNarrowDown, IconArrowNarrowUp, IconArrowRight, IconBell, IconBold, IconCalendar, IconChartBar, IconCheck, IconChevronRight, IconCircleCheck, IconCopy, IconDeviceMobile, IconDots, IconFileText, IconFolderOpen, IconGripVertical, IconHome, IconInbox, IconInfoCircle, IconItalic, IconLayoutGrid, IconLayoutSidebarRight, IconList, IconMoon, IconPalette, IconPencil, IconPlus, IconSearch, IconSettings, IconSun, IconTerminal, IconTrash, IconUnderline, IconWorld, IconX, IconZoomScan } from "@tabler/icons-react"
 import { Progress } from "@/components/ui/progress"
 import { Skeleton } from "@/components/ui/skeleton"
 import { LineChart, type LineChartSeries } from "@/components/ui/line-chart"
@@ -79,7 +79,6 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
 import { Sidebar, SidebarHeader, SidebarContent, SidebarGroup, SidebarGroupLabel, SidebarItem, SidebarFooter } from "@/components/ui/sidebar"
 import { UserSelector, type User } from "@/components/ui/user-selector"
-import { Apple, Globe, Smartphone, MoreHorizontal, Plus, Search, Trash2, Copy, Pencil, ArrowRight, Info, PanelRight, Bell, Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, LayoutGrid, List, Home, Settings, FolderOpen, Inbox, FileText, BarChart3, AlertCircle, CheckCircle, AlertTriangle, InfoIcon, Terminal, ChevronRight, Check, Palette, ArrowUpDown, ArrowUp, ArrowDown, X, GripVertical, Sun, Moon, ScanSearch } from "lucide-react"
 import {
   useTable,
   tableFeatures,
@@ -483,11 +482,11 @@ function DraggableTableHeader({
           </span>
           {header.column.getCanSort() && !draggingColumnId && (
             header.column.getIsSorted() === "asc" ? (
-              <ArrowUp className="h-3.5 w-3.5 shrink-0 text-primary" />
+              <IconArrowNarrowUp className="h-3.5 w-3.5 shrink-0 text-primary" />
             ) : header.column.getIsSorted() === "desc" ? (
-              <ArrowDown className="h-3.5 w-3.5 shrink-0 text-primary" />
+              <IconArrowNarrowDown className="h-3.5 w-3.5 shrink-0 text-primary" />
             ) : (
-              <ArrowUpDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground/50" />
+              <span className="inline-flex shrink-0 items-center -space-x-1 text-muted-foreground/50"><IconArrowNarrowUp className="h-3 w-3" /><IconArrowNarrowDown className="h-3 w-3" /></span>
             )
           )}
         </div>
@@ -500,7 +499,7 @@ function DraggableTableHeader({
           {...attributes}
           {...listeners}
         >
-          <GripVertical className="h-3.5 w-3.5" />
+          <IconGripVertical className="h-3.5 w-3.5" />
         </button>
         {header.column.getCanResize() && !isLastColumn && (
           <div
@@ -540,7 +539,7 @@ function DatePickerDemo({ showCurrentYear }: { showCurrentYear: boolean }) {
               onClick={(e) => { e.stopPropagation(); setDate(undefined) }}
               className="ml-2 text-muted-foreground hover:text-foreground transition-colors"
             >
-              <X className="h-3.5 w-3.5" />
+              <IconX className="h-3.5 w-3.5" />
             </span>
           )}
         </Button>
@@ -589,7 +588,7 @@ export function DatePickerRangeDemo({ showCurrentYear }: { showCurrentYear: bool
               onClick={(e) => { e.stopPropagation(); setRange(undefined) }}
               className="ml-2 text-muted-foreground hover:text-foreground transition-colors"
             >
-              <X className="h-3.5 w-3.5" />
+              <IconX className="h-3.5 w-3.5" />
             </span>
           )}
         </Button>
@@ -654,7 +653,7 @@ function DatePickerTasksDemo({ showCurrentYear }: { showCurrentYear: boolean }) 
               onClick={(e) => { e.stopPropagation(); setDate(undefined) }}
               className="ml-2 text-muted-foreground hover:text-foreground transition-colors"
             >
-              <X className="h-3.5 w-3.5" />
+              <IconX className="h-3.5 w-3.5" />
             </span>
           )}
         </Button>
@@ -829,7 +828,7 @@ function ColorMenuItems({
       {!defaultInPalette && (
         <DropdownMenuItem onClick={() => onSelect(defaultHex)} className="gap-3">
           <span className="w-4 shrink-0 flex items-center justify-center">
-            {onDefault && <Check className="h-3.5 w-3.5 text-primary" />}
+            {onDefault && <IconCheck className="h-3.5 w-3.5 text-primary" />}
           </span>
           <div
             className="w-6 h-6 rounded-xs border border-black/10 shrink-0"
@@ -848,7 +847,7 @@ function ColorMenuItems({
         return (
           <DropdownMenuItem key={c.token} onClick={() => onSelect(c.live)} className="gap-3">
             <span className="w-4 shrink-0 flex items-center justify-center">
-              {isSelected && <Check className="h-3.5 w-3.5 text-primary" />}
+              {isSelected && <IconCheck className="h-3.5 w-3.5 text-primary" />}
             </span>
             <div
               className="w-6 h-6 rounded-xs border border-black/10 shrink-0"
@@ -971,9 +970,9 @@ const sampleUsers: User[] = [
 // LineChart demo: 8 weeks of synthetic, seeded events split by platform.
 const lineChartSample = createSampleEvents()
 const platformSeries: LineChartSeries[] = [
-  { key: "web", label: "Web", color: "var(--color-chart-2)", tooltipColor: "var(--color-blue-400)", icon: <Globe /> },
-  { key: "ios", label: "iOS", color: "var(--color-chart-3)", tooltipColor: "var(--color-green-400)", icon: <Apple /> },
-  { key: "android", label: "Android", color: "var(--color-chart-4)", tooltipColor: "var(--color-bronze-400)", icon: <Smartphone /> },
+  { key: "web", label: "Web", color: "var(--color-chart-2)", tooltipColor: "var(--color-blue-400)", icon: <IconWorld /> },
+  { key: "ios", label: "iOS", color: "var(--color-chart-3)", tooltipColor: "var(--color-green-400)", icon: <IconApple /> },
+  { key: "android", label: "Android", color: "var(--color-chart-4)", tooltipColor: "var(--color-bronze-400)", icon: <IconDeviceMobile /> },
 ]
 
 const recentUserIds = ["u1", "u2", "u3", "u4", "u5"]
@@ -1389,7 +1388,7 @@ function BorderChaseDemo() {
               />
             ))}
           </div>
-          <Palette className="h-3.5 w-3.5" />
+          <IconPalette className="h-3.5 w-3.5" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[320px]">
@@ -1405,7 +1404,7 @@ function BorderChaseDemo() {
                 onClick={() => setPaletteKey(key)}
               >
                 <span className="w-4 shrink-0 flex items-center justify-center">
-                  {isActive && <Check className="h-3.5 w-3.5 text-primary" />}
+                  {isActive && <IconCheck className="h-3.5 w-3.5 text-primary" />}
                 </span>
                 <div className="flex -space-x-1 shrink-0">
                   {palette.swatches.slice(0, 4).map((s) => (
@@ -1734,7 +1733,7 @@ function App() {
                 title={inspecting ? "Exit token inspector (Esc)" : "Inspect component tokens"}
                 className={cn(inspecting && "border-2 border-primary bg-primary/15 text-primary hover:border-primary hover:bg-primary/20")}
               >
-                <ScanSearch className="h-4 w-4" />
+                <IconZoomScan className="h-4 w-4" />
               </Button>
               <Button
                 variant="outline"
@@ -1743,7 +1742,7 @@ function App() {
                 aria-label={mode === "dark" ? "Switch to light mode" : "Switch to dark mode"}
                 title={mode === "dark" ? "Switch to light mode" : "Switch to dark mode"}
               >
-                {mode === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                {mode === "dark" ? <IconSun className="h-4 w-4" /> : <IconMoon className="h-4 w-4" />}
               </Button>
             </div>
           </div>
@@ -1980,7 +1979,7 @@ function App() {
             <LabeledItem label="Destructive"><Button size={buttonSize} variant="destructive">Delete</Button></LabeledItem>
             <LabeledItem label="Outline"><Button size={buttonSize} variant="outline">Export</Button></LabeledItem>
             <LabeledItem label="With icon">
-              <Button size={buttonSize}><Plus className="mr-2 h-4 w-4" /> New task</Button>
+              <Button size={buttonSize}><IconPlus className="mr-2 h-4 w-4" /> New task</Button>
             </LabeledItem>
           </ComponentBlock>
 
@@ -2011,7 +2010,7 @@ function App() {
             </LabeledItem>
             <LabeledItem label="With icon">
               <div className="w-[200px] relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground z-10" />
+                <IconSearch className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground z-10" />
                 <Input className={cn(INPUT_SIZE_SPECS[inputSize], "pl-9")} placeholder="Search…" />
               </div>
             </LabeledItem>
@@ -2095,7 +2094,7 @@ function App() {
                           ? (() => { const labels: Record<string, string> = { "site-plan": "Site Plan", "floor-1": "Floor 1", "floor-2": "Floor 2", "roof": "Roof", "electrical": "Electrical", "plumbing": "Plumbing", "window-schedule": "Window Schedule" }; return labels[multiSelectValues[0]] ?? multiSelectValues[0] })()
                         : "Choose sheets…"}
                     </span>
-                    <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground rotate-90" />
+                    <IconChevronRight className="h-4 w-4 shrink-0 text-muted-foreground rotate-90" />
                   </button>
                 </PopoverTrigger>
                 <PopoverContent className="w-fit max-w-[400px] p-1" align="start">
@@ -2140,7 +2139,7 @@ function App() {
                           ? (() => { const labels: Record<string, string> = { "site-plan": "Site Plan", "floor-1": "Floor 1", "floor-2": "Floor 2", "roof": "Roof", "electrical": "Electrical", "plumbing": "Plumbing", "window-schedule": "Window Schedule" }; return labels[multiSearchValues[0]] ?? multiSearchValues[0] })()
                         : "Choose sheets…"}
                     </span>
-                    <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground rotate-90" />
+                    <IconChevronRight className="h-4 w-4 shrink-0 text-muted-foreground rotate-90" />
                   </button>
                 </PopoverTrigger>
                 <PopoverContent className="w-fit max-w-[400px] p-0" align="start">
@@ -2157,7 +2156,7 @@ function App() {
                           onClick={() => setMultiSearchQuery("")}
                           className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                         >
-                          <X className="h-3.5 w-3.5" />
+                          <IconX className="h-3.5 w-3.5" />
                         </button>
                       )}
                     </div>
@@ -2235,18 +2234,18 @@ function App() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" size="icon" className="h-8 w-8">
-                    <MoreHorizontal className="h-4 w-4" />
+                    <IconDots className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start">
                   {showMenuName && <DropdownMenuLabel>Actions</DropdownMenuLabel>}
                   {showMenuName && <DropdownMenuSeparator />}
-                  <DropdownMenuItem><Pencil className="mr-2 h-4 w-4" /> Edit task</DropdownMenuItem>
-                  <DropdownMenuItem><Copy className="mr-2 h-4 w-4" /> Duplicate</DropdownMenuItem>
-                  <DropdownMenuItem><ArrowRight className="mr-2 h-4 w-4" /> Move to…</DropdownMenuItem>
+                  <DropdownMenuItem><IconPencil className="mr-2 h-4 w-4" /> Edit task</DropdownMenuItem>
+                  <DropdownMenuItem><IconCopy className="mr-2 h-4 w-4" /> Duplicate</DropdownMenuItem>
+                  <DropdownMenuItem><IconArrowRight className="mr-2 h-4 w-4" /> Move to…</DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem className="text-danger focus:text-danger">
-                    <Trash2 className="mr-2 h-4 w-4" /> Delete
+                    <IconTrash className="mr-2 h-4 w-4" /> Delete
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -2255,29 +2254,29 @@ function App() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" size="icon" className="h-8 w-8">
-                    <MoreHorizontal className="h-4 w-4" />
+                    <IconDots className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start">
                   {showMenuName && <DropdownMenuLabel>Actions</DropdownMenuLabel>}
                   {showMenuName && <DropdownMenuSeparator />}
-                  <DropdownMenuItem><Pencil className="mr-2 h-4 w-4" /> Edit task</DropdownMenuItem>
-                  <DropdownMenuItem><Copy className="mr-2 h-4 w-4" /> Duplicate</DropdownMenuItem>
+                  <DropdownMenuItem><IconPencil className="mr-2 h-4 w-4" /> Edit task</DropdownMenuItem>
+                  <DropdownMenuItem><IconCopy className="mr-2 h-4 w-4" /> Duplicate</DropdownMenuItem>
                   <DropdownMenuSub>
-                    <DropdownMenuSubTrigger><ArrowRight className="mr-2 h-4 w-4" /> Move to…</DropdownMenuSubTrigger>
+                    <DropdownMenuSubTrigger><IconArrowRight className="mr-2 h-4 w-4" /> Move to…</DropdownMenuSubTrigger>
                     <DropdownMenuSubContent className="w-[200px]">
                       {showMenuName && <DropdownMenuLabel>Projects</DropdownMenuLabel>}
                       {showMenuName && <DropdownMenuSeparator />}
-                      <DropdownMenuItem><FolderOpen className="mr-2 h-4 w-4" /> Q3 Roadmap</DropdownMenuItem>
-                      <DropdownMenuItem><FolderOpen className="mr-2 h-4 w-4" /> Marketing Site</DropdownMenuItem>
-                      <DropdownMenuItem><FolderOpen className="mr-2 h-4 w-4" /> Mobile App</DropdownMenuItem>
+                      <DropdownMenuItem><IconFolderOpen className="mr-2 h-4 w-4" /> Q3 Roadmap</DropdownMenuItem>
+                      <DropdownMenuItem><IconFolderOpen className="mr-2 h-4 w-4" /> Marketing Site</DropdownMenuItem>
+                      <DropdownMenuItem><IconFolderOpen className="mr-2 h-4 w-4" /> Mobile App</DropdownMenuItem>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem><Plus className="mr-2 h-4 w-4" /> New project…</DropdownMenuItem>
+                      <DropdownMenuItem><IconPlus className="mr-2 h-4 w-4" /> New project…</DropdownMenuItem>
                     </DropdownMenuSubContent>
                   </DropdownMenuSub>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem className="text-danger focus:text-danger">
-                    <Trash2 className="mr-2 h-4 w-4" /> Delete
+                    <IconTrash className="mr-2 h-4 w-4" /> Delete
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -2402,7 +2401,7 @@ function App() {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button variant="outline" size="icon" className="h-8 w-8">
-                    <Info className="h-4 w-4" />
+                    <IconInfoCircle className="h-4 w-4" />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -2414,7 +2413,7 @@ function App() {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button variant="outline" size="icon" className="h-8 w-8">
-                    <Bell className="h-4 w-4" />
+                    <IconBell className="h-4 w-4" />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -2458,7 +2457,7 @@ function App() {
             <LabeledItem label="Form modal">
             <Dialog>
               <DialogTrigger asChild>
-                <Button><Plus className="mr-2 h-4 w-4" /> Create task</Button>
+                <Button><IconPlus className="mr-2 h-4 w-4" /> Create task</Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
@@ -2501,7 +2500,7 @@ function App() {
             <LabeledItem label="Destructive confirm">
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant="destructive"><Trash2 className="mr-2 h-4 w-4" /> Delete project</Button>
+                <Button variant="destructive"><IconTrash className="mr-2 h-4 w-4" /> Delete project</Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
@@ -2525,7 +2524,7 @@ function App() {
             <LabeledItem label="Right panel">
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="outline"><PanelRight className="mr-2 h-4 w-4" /> Open detail panel</Button>
+                <Button variant="outline"><IconLayoutSidebarRight className="mr-2 h-4 w-4" /> Open detail panel</Button>
               </SheetTrigger>
               <SheetContent>
                 <SheetHeader>
@@ -2586,13 +2585,13 @@ function App() {
                       className="h-7 text-xs"
                       onClick={() => { setSorting([]); setGlobalFilter(""); setColumnFilters([]) }}
                     >
-                      <X className="h-3 w-3 mr-1" />
+                      <IconX className="h-3 w-3 mr-1" />
                       Reset Sorting
                     </Button>
                   )}
                 </div>
                 <div className="relative w-[200px]">
-                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground z-10" />
+                  <IconSearch className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground z-10" />
                   <Input
                     placeholder="Filter tasks…"
                     value={globalFilter}
@@ -2604,7 +2603,7 @@ function App() {
                       onClick={() => setGlobalFilter("")}
                       className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                     >
-                      <X className="h-3.5 w-3.5" />
+                      <IconX className="h-3.5 w-3.5" />
                     </button>
                   )}
                 </div>
@@ -2742,7 +2741,7 @@ function App() {
               </CardContent>
               <CardFooter className="justify-between">
                 <Button variant="ghost" size="md">Skip</Button>
-                <Button size="md">Continue <ArrowRight className="ml-2 h-4 w-4" /></Button>
+                <Button size="md">Continue <IconArrowRight className="ml-2 h-4 w-4" /></Button>
               </CardFooter>
             </Card>
             </LabeledItem>
@@ -2758,14 +2757,14 @@ function App() {
                 <CommandList>
                   <CommandEmpty>No results found.</CommandEmpty>
                   <CommandGroup heading="Suggestions">
-                    <CommandItem><FileText className="mr-2 h-4 w-4" /> New document<CommandShortcut>⌘N</CommandShortcut></CommandItem>
-                    <CommandItem><Search className="mr-2 h-4 w-4" /> Search tasks<CommandShortcut>⌘K</CommandShortcut></CommandItem>
-                    <CommandItem><Settings className="mr-2 h-4 w-4" /> Settings<CommandShortcut>⌘,</CommandShortcut></CommandItem>
+                    <CommandItem><IconFileText className="mr-2 h-4 w-4" /> New document<CommandShortcut>⌘N</CommandShortcut></CommandItem>
+                    <CommandItem><IconSearch className="mr-2 h-4 w-4" /> Search tasks<CommandShortcut>⌘K</CommandShortcut></CommandItem>
+                    <CommandItem><IconSettings className="mr-2 h-4 w-4" /> Settings<CommandShortcut>⌘,</CommandShortcut></CommandItem>
                   </CommandGroup>
                   <CommandSeparator />
                   <CommandGroup heading="Recent">
-                    <CommandItem><FolderOpen className="mr-2 h-4 w-4" /> Q3 Roadmap</CommandItem>
-                    <CommandItem><BarChart3 className="mr-2 h-4 w-4" /> Analytics Dashboard</CommandItem>
+                    <CommandItem><IconFolderOpen className="mr-2 h-4 w-4" /> Q3 Roadmap</CommandItem>
+                    <CommandItem><IconChartBar className="mr-2 h-4 w-4" /> Analytics Dashboard</CommandItem>
                   </CommandGroup>
                 </CommandList>
               </Command>
@@ -2914,28 +2913,28 @@ function App() {
 
           <ComponentBlock name="Toggle">
             <LabeledItem label="Default">
-              <Toggle aria-label="Toggle bold" className="h-8 w-8 min-w-0 px-0"><Bold className="h-4 w-4" /></Toggle>
+              <Toggle aria-label="Toggle bold" className="h-8 w-8 min-w-0 px-0"><IconBold className="h-4 w-4" /></Toggle>
             </LabeledItem>
             <LabeledItem label="Outline">
-              <Toggle variant="outline" aria-label="Toggle italic" className="h-8 w-8 min-w-0 px-0"><Italic className="h-4 w-4" /></Toggle>
+              <Toggle variant="outline" aria-label="Toggle italic" className="h-8 w-8 min-w-0 px-0"><IconItalic className="h-4 w-4" /></Toggle>
             </LabeledItem>
             <LabeledItem label="With text">
-              <Toggle aria-label="Toggle underline"><Underline className="h-4 w-4 mr-2" /> Underline</Toggle>
+              <Toggle aria-label="Toggle underline"><IconUnderline className="h-4 w-4 mr-2" /> Underline</Toggle>
             </LabeledItem>
           </ComponentBlock>
 
           <ComponentBlock name="ToggleGroup">
             <LabeledItem label="Text alignment">
               <ToggleGroup type="single" defaultValue="left" variant="outline">
-                <ToggleGroupItem value="left" aria-label="Left" className="h-8 w-8 min-w-0 px-0"><AlignLeft className="h-4 w-4" /></ToggleGroupItem>
-                <ToggleGroupItem value="center" aria-label="Center" className="h-8 w-8 min-w-0 px-0"><AlignCenter className="h-4 w-4" /></ToggleGroupItem>
-                <ToggleGroupItem value="right" aria-label="Right" className="h-8 w-8 min-w-0 px-0"><AlignRight className="h-4 w-4" /></ToggleGroupItem>
+                <ToggleGroupItem value="left" aria-label="Left" className="h-8 w-8 min-w-0 px-0"><IconAlignLeft className="h-4 w-4" /></ToggleGroupItem>
+                <ToggleGroupItem value="center" aria-label="Center" className="h-8 w-8 min-w-0 px-0"><IconAlignCenter className="h-4 w-4" /></ToggleGroupItem>
+                <ToggleGroupItem value="right" aria-label="Right" className="h-8 w-8 min-w-0 px-0"><IconAlignRight className="h-4 w-4" /></ToggleGroupItem>
               </ToggleGroup>
             </LabeledItem>
             <LabeledItem label="View switcher">
               <ToggleGroup type="single" defaultValue="grid" variant="outline">
-                <ToggleGroupItem value="grid" aria-label="Grid" className="h-8 w-8 min-w-0 px-0"><LayoutGrid className="h-4 w-4" /></ToggleGroupItem>
-                <ToggleGroupItem value="list" aria-label="List" className="h-8 w-8 min-w-0 px-0"><List className="h-4 w-4" /></ToggleGroupItem>
+                <ToggleGroupItem value="grid" aria-label="Grid" className="h-8 w-8 min-w-0 px-0"><IconLayoutGrid className="h-4 w-4" /></ToggleGroupItem>
+                <ToggleGroupItem value="list" aria-label="List" className="h-8 w-8 min-w-0 px-0"><IconList className="h-4 w-4" /></ToggleGroupItem>
               </ToggleGroup>
             </LabeledItem>
           </ComponentBlock>
@@ -2943,35 +2942,35 @@ function App() {
           <ComponentBlock name="Alert" align="start">
             <LabeledItem label="Default">
               <Alert className="w-[400px]">
-                <Terminal className="h-4 w-4" />
+                <IconTerminal />
                 <AlertTitle>Heads up!</AlertTitle>
                 <AlertDescription>You can add components to your app using the CLI.</AlertDescription>
               </Alert>
             </LabeledItem>
             <LabeledItem label="Destructive">
               <Alert variant="destructive" className="w-[400px]">
-                <AlertCircle className="h-4 w-4" />
+                <IconAlertCircle />
                 <AlertTitle>Error</AlertTitle>
                 <AlertDescription>Your session has expired. Please log in again.</AlertDescription>
               </Alert>
             </LabeledItem>
             <LabeledItem label="Success">
               <Alert variant="success" className="w-[400px]">
-                <CheckCircle className="h-4 w-4" />
+                <IconCircleCheck />
                 <AlertTitle>Success</AlertTitle>
                 <AlertDescription>Your changes have been saved successfully.</AlertDescription>
               </Alert>
             </LabeledItem>
             <LabeledItem label="Warning">
               <Alert variant="warning" className="w-[400px]">
-                <AlertTriangle className="h-4 w-4" />
+                <IconAlertTriangle />
                 <AlertTitle>Warning</AlertTitle>
                 <AlertDescription>You are approaching your storage limit.</AlertDescription>
               </Alert>
             </LabeledItem>
             <LabeledItem label="Info">
               <Alert variant="info" className="w-[400px]">
-                <InfoIcon className="h-4 w-4" />
+                <IconInfoCircle />
                 <AlertTitle>Note</AlertTitle>
                 <AlertDescription>This feature is currently in beta.</AlertDescription>
               </Alert>
@@ -2987,16 +2986,16 @@ function App() {
                 <SidebarContent>
                   <SidebarGroup>
                     <SidebarGroupLabel>Navigation</SidebarGroupLabel>
-                    <SidebarItem active><Home className="h-4 w-4" /> Dashboard</SidebarItem>
-                    <SidebarItem><Inbox className="h-4 w-4" /> Inbox</SidebarItem>
-                    <SidebarItem><FileText className="h-4 w-4" /> Tasks</SidebarItem>
-                    <SidebarItem><BarChart3 className="h-4 w-4" /> Reports</SidebarItem>
+                    <SidebarItem active><IconHome className="h-4 w-4" /> Dashboard</SidebarItem>
+                    <SidebarItem><IconInbox className="h-4 w-4" /> Inbox</SidebarItem>
+                    <SidebarItem><IconFileText className="h-4 w-4" /> Tasks</SidebarItem>
+                    <SidebarItem><IconChartBar className="h-4 w-4" /> Reports</SidebarItem>
                   </SidebarGroup>
                   <SidebarGroup>
                     <SidebarGroupLabel>Projects</SidebarGroupLabel>
-                    <SidebarItem><ChevronRight className="h-4 w-4" /> Q3 Roadmap</SidebarItem>
-                    <SidebarItem><ChevronRight className="h-4 w-4" /> Design System</SidebarItem>
-                    <SidebarItem><ChevronRight className="h-4 w-4" /> API Migration</SidebarItem>
+                    <SidebarItem><IconChevronRight className="h-4 w-4" /> Q3 Roadmap</SidebarItem>
+                    <SidebarItem><IconChevronRight className="h-4 w-4" /> Design System</SidebarItem>
+                    <SidebarItem><IconChevronRight className="h-4 w-4" /> API Migration</SidebarItem>
                   </SidebarGroup>
                 </SidebarContent>
                 <SidebarFooter>

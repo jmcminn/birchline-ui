@@ -1,4 +1,5 @@
 import { Toaster as Sonner } from "sonner"
+import { IconAlertCircle, IconAlertTriangle, IconCircleCheck, IconInfoCircle, IconLoader4 } from "@tabler/icons-react"
 
 type ToasterProps = React.ComponentProps<typeof Sonner>
 
@@ -6,6 +7,13 @@ const Toaster = ({ ...props }: ToasterProps) => {
   return (
     <Sonner
       className="toaster group"
+      icons={{
+        success: <IconCircleCheck className="size-5" />,
+        info: <IconInfoCircle className="size-5" />,
+        warning: <IconAlertTriangle className="size-5" />,
+        error: <IconAlertCircle className="size-5" />,
+        loading: <IconLoader4 className="size-5 animate-spin" />,
+      }}
       toastOptions={{
         classNames: {
           toast:

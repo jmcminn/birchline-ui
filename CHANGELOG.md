@@ -32,6 +32,7 @@ the contract too, but the **semantic** tier is what components should consume.
 
 ### Changed
 
+- **Icons are now Tabler (`@tabler/icons-react`) instead of Lucide.** Every component, the inspector, the demo, and the Sonner toast icons (success / info / warning / error / loading) use Tabler at the same stroke weights as before (Badge ✕ 2.5, Checkbox ✓ 3, LineChart calendar 1.5, zoom +/− 2, everything else the default 2). **Registry consumers:** components now depend on `@tabler/icons-react`, not `lucide-react`; install it when adding components. The table sort header uses narrow arrows (`IconArrowNarrowUp` / `IconArrowNarrowDown`) for all three states, and the unsorted state shows both arrows.
 - **Size menus show the font size instead of the size name.** The Button, Input and Select Size menus read `Large (14px)` / `Medium (13px)` / `Small (12px)` for Button and `Large (16px)` / `Medium (14px)` / `Small (13px)` for Input and Select (was `Large (lg)` etc.). Showcase labels only; the values and sizes are unchanged.
 - **Toast icon and title are vertically centered** on the first row (the icon was about 1px high). Applies to every toast with an icon; the action button already sat on the same center line. Showcase stylesheet only.
 - **Calendar range mode: days between the start and end now render as a soft band** (`bg-accent`,
