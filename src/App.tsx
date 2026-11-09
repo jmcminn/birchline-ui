@@ -67,7 +67,7 @@ import {
 import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem, CommandShortcut, CommandSeparator } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
-import { IconAlertCircle, IconAlertTriangle, IconAlignCenter, IconAlignLeft, IconAlignRight, IconApple, IconArrowNarrowDown, IconArrowNarrowUp, IconArrowRight, IconBell, IconBold, IconCalendar, IconChartBar, IconCheck, IconChevronRight, IconCircleCheck, IconCopy, IconDeviceMobile, IconDots, IconFileText, IconFolderOpen, IconGripVertical, IconHome, IconInbox, IconInfoCircle, IconItalic, IconLayoutGrid, IconLayoutSidebarRight, IconList, IconMoon, IconPalette, IconPencil, IconPlus, IconSearch, IconSettings, IconSun, IconTerminal, IconTrash, IconUnderline, IconWorld, IconX, IconZoomScan } from "@tabler/icons-react"
+import { IconAlertCircle, IconAlertTriangle, IconAlignCenter, IconAlignLeft, IconAlignRight, IconApple, IconArrowNarrowDown, IconArrowNarrowUp, IconArrowRight, IconBell, IconBold, IconCalendar, IconChartBar, IconCheck, IconChevronRight, IconCircleCheck, IconCopy, IconDeviceMobile, IconDots, IconFileText, IconFolderOpen, IconGripVertical, IconHome, IconInbox, IconInfoCircle, IconItalic, IconLayoutGrid, IconLayoutSidebarRight, IconList, IconMinus, IconMoon, IconPalette, IconPencil, IconPlus, IconSearch, IconSettings, IconSun, IconTerminal, IconTrash, IconUnderline, IconWorld, IconX, IconZoomScan } from "@tabler/icons-react"
 import { Progress } from "@/components/ui/progress"
 import { Skeleton } from "@/components/ui/skeleton"
 import { LineChart, type LineChartSeries } from "@/components/ui/line-chart"
@@ -1594,6 +1594,7 @@ function App() {
   const typeSectionName = colorName(useResolvedHex(typeSectionBg))
   const separatorColorName = colorName(useResolvedHex(separatorColor))
   const separatorBgName = colorName(useResolvedHex(separatorBg))
+  const [techOpen, setTechOpen] = useState(false)
   const [selectedUserId, setSelectedUserId] = useState<string | null>("u2")
   const [multiSelectedUserIds, setMultiSelectedUserIds] = useState<string[]>(["u7", "u3"])
   const [sorting, setSorting] = useState<SortingState>([{ id: "priority", desc: false }])
@@ -1753,6 +1754,45 @@ function App() {
             <a href="https://x.com/trq212" target="_blank" rel="noreferrer" className="text-primary hover:underline">Thariq’s</a> original{" "}
             <a href="https://thariqs.github.io/html-effectiveness/05-design-system.html" target="_blank" rel="noreferrer" className="text-primary hover:underline">Birchline design system</a>, expanded with additional capabilities and components.
           </p>
+          <button
+            type="button"
+            onClick={() => setTechOpen((o) => !o)}
+            aria-expanded={techOpen}
+            aria-controls="technical-details"
+            className="mt-6 inline-flex items-center gap-1.5 text-primary font-sans font-medium text-base leading-[1.55] cursor-pointer rounded-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          >
+            {techOpen ? <IconMinus className="h-4 w-4" /> : <IconPlus className="h-4 w-4" />}
+            Technical Details
+          </button>
+          <div
+            id="technical-details"
+            aria-hidden={!techOpen}
+            className={cn(
+              "grid transition-[grid-template-rows,opacity] duration-300 ease-out motion-reduce:transition-none",
+              techOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+            )}
+          >
+            <div className="overflow-hidden">
+              <dl className="pt-4 grid grid-cols-[max-content_1fr] gap-x-8 gap-y-2 font-sans text-base leading-[1.55]">
+              {[
+                ["Framework", "React 19 + TypeScript"],
+                ["Styling", "Tailwind CSS 4"],
+                ["Primitives", "Radix UI, following shadcn/ui conventions"],
+                ["Icons", "Tabler (@tabler/icons-react), 2px stroke"],
+                ["Typography", "Inter (variable)"],
+                ["Tokens", "Three tiers (primitive, alias, semantic), light and dark modes"],
+                ["Charts", "Recharts 3"],
+                ["Tables", "TanStack Table v9"],
+                ["Install", "shadcn registry at jmcminn.github.io/birchline-ui/r/{name}.json"],
+              ].map(([term, desc]) => (
+                <div key={term} className="contents">
+                  <dt className="text-muted-foreground">{term}</dt>
+                  <dd>{desc}</dd>
+                </div>
+              ))}
+            </dl>
+            </div>
+          </div>
         </header>
 
         {/* ── COLOR ── */}
