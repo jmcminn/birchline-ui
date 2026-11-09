@@ -15,7 +15,7 @@
  * registry component.
  */
 import { useCallback, useEffect, useRef, useState } from "react"
-import { X } from "lucide-react"
+import { IconX } from "@tabler/icons-react"
 import { ADOPTED_SELECTOR, inspectElement, slotOf, type InspectReport } from "./inspect-element"
 import { STATE_LABEL } from "./parse-classes"
 
@@ -260,7 +260,7 @@ function Panel({
           aria-label="Close inspector"
           className="rounded-xs p-1 text-muted-foreground hover:bg-accent hover:text-foreground cursor-pointer"
         >
-          <X className="h-3.5 w-3.5" />
+          <IconX className="h-3.5 w-3.5" />
         </button>
       </div>
 

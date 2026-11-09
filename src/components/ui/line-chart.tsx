@@ -1,6 +1,6 @@
 import * as React from "react"
 import { Area, CartesianGrid, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
-import { Calendar, Minus, Plus } from "lucide-react"
+import { IconCalendar, IconMinus, IconPlus } from "@tabler/icons-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -116,7 +116,7 @@ export function LineChartTooltipContent({ row, series, breakdown, unit, seriesHe
   return (
     <div data-slot="line-chart-tooltip" className={cn("rounded-xl border border-ink bg-ink p-2 text-white shadow-[0_10px_40px_rgba(0,0,0,0.5)]", hasSeries ? "min-w-60" : "min-w-44")}>
       <div className="mb-2 flex items-center gap-2 px-2 pb-2 pt-1 text-base font-semibold">
-        <Calendar className="size-4" strokeWidth={1.5} aria-hidden="true" />
+        <IconCalendar className="size-4" stroke={1.5} aria-hidden="true" />
         {formatTooltipDate(row.date)}
       </div>
       <div className="px-2 py-1">
@@ -278,7 +278,7 @@ function LineChart({
               disabled={weeks <= 1}
               onClick={() => zoomTo(weeks - 1)}
             >
-              <Plus className="size-4" strokeWidth={2} />
+              <IconPlus className="size-4" stroke={2} />
             </Button>
             <Button
               variant="outline"
@@ -288,7 +288,7 @@ function LineChart({
               disabled={weeks >= maxWeeks}
               onClick={() => zoomTo(weeks + 1)}
             >
-              <Minus className="size-4" strokeWidth={2} />
+              <IconMinus className="size-4" stroke={2} />
             </Button>
           </div>
         </div>

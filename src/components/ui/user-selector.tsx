@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react"
-import { Check, UserPlus, UserRound, X } from "lucide-react"
+import { IconCheck, IconUser, IconUserPlus, IconX } from "@tabler/icons-react"
 import { cn } from "@/lib/utils"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem, CommandSeparator } from "@/components/ui/command"
@@ -83,7 +83,7 @@ function UserRow({
         {multiSelect ? (
           <Checkbox checked={selected} tabIndex={-1} className="pointer-events-none" />
         ) : (
-          selected && <Check className="h-4 w-4 text-foreground" />
+          selected && <IconCheck className="h-4 w-4 text-primary" />
         )}
       </span>
       <Avatar className="h-8 w-8 shrink-0">
@@ -188,14 +188,14 @@ function UserSelector({
                     onClick={(e) => { e.stopPropagation(); onValuesChange?.([]) }}
                     className="ml-auto text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    <X className="h-3.5 w-3.5" />
+                    <IconX className="h-3.5 w-3.5" />
                   </span>
                 )}
               </>
             ) : (
               <>
                 <div className="h-6 w-6 rounded-full border-[1.5px] border-dashed border-border flex items-center justify-center shrink-0">
-                  <UserRound className="h-3 w-3 text-gray-300" />
+                  <IconUser className="h-3 w-3 text-gray-300" />
                 </div>
                 <span className="text-muted-foreground">{noAssigneeLabel}</span>
               </>
@@ -214,14 +214,14 @@ function UserSelector({
                   onClick={(e) => { e.stopPropagation(); onSelect?.(null) }}
                   className="ml-auto text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  <X className="h-3.5 w-3.5" />
+                  <IconX className="h-3.5 w-3.5" />
                 </span>
               )}
             </>
           ) : value === null ? (
             <>
               <div className="h-6 w-6 rounded-full border-[1.5px] border-dashed border-border flex items-center justify-center shrink-0">
-                <UserRound className="h-3 w-3 text-gray-300" />
+                <IconUser className="h-3 w-3 text-gray-300" />
               </div>
               <span className="text-muted-foreground">{noAssigneeLabel}</span>
             </>
@@ -251,7 +251,7 @@ function UserSelector({
                 onClick={() => setSearch("")}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
               >
-                <X className="h-3.5 w-3.5" />
+                <IconX className="h-3.5 w-3.5" />
               </button>
             )}
           </div>
@@ -265,10 +265,10 @@ function UserSelector({
                   className="flex items-center gap-3 px-3 py-2.5"
                 >
                   <span className="w-5 shrink-0 flex items-center justify-center">
-                    {value === null && <Check className="h-4 w-4 text-foreground" />}
+                    {value === null && <IconCheck className="h-4 w-4 text-primary" />}
                   </span>
                   <div className="h-8 w-8 rounded-full border-2 border-dashed border-border flex items-center justify-center shrink-0">
-                    <UserRound className="h-4 w-4 text-gray-300" />
+                    <IconUser className="h-4 w-4 text-gray-300" />
                   </div>
                   <span className="text-sm font-medium">No Assignee</span>
                 </CommandItem>
@@ -318,7 +318,7 @@ function UserSelector({
                 >
                   <span className="w-5 shrink-0" />
                   <div className="h-8 w-8 flex items-center justify-center shrink-0">
-                    <UserPlus className="h-4 w-4 text-muted-foreground" />
+                    <IconUserPlus className="h-4 w-4 text-muted-foreground" />
                   </div>
                   <span className="text-sm">Invite User</span>
                 </CommandItem>

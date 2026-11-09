@@ -1,5 +1,5 @@
 import * as React from "react"
-import { X } from "lucide-react"
+import { IconX } from "@tabler/icons-react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
@@ -71,7 +71,7 @@ function Badge({
             "transition-opacity"
           )}
         >
-          <X className="size-[1em]" strokeWidth={2.5} />
+          <IconX className="size-[1em]" stroke={2.5} />
         </button>
       )}
     </div>
