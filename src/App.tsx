@@ -1595,7 +1595,7 @@ function App() {
   const separatorColorName = colorName(useResolvedHex(separatorColor))
   const separatorBgName = colorName(useResolvedHex(separatorBg))
   const [techOpen, setTechOpen] = useState(false)
-  const [selectedUserId, setSelectedUserId] = useState<string | null>("u2")
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
   const [multiSelectedUserIds, setMultiSelectedUserIds] = useState<string[]>(["u7", "u3"])
   const [sorting, setSorting] = useState<SortingState>([{ id: "priority", desc: false }])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -2237,7 +2237,7 @@ function App() {
           </ComponentBlock>
 
           <ComponentBlock name="UserSelector" align="start" gap="gap-16">
-            <LabeledItem label="Basic - Single Select" subtitle="With selection">
+            <LabeledItem label="Basic - Single Select" subtitle="No selection">
               <UserSelector
                 users={sampleUsers}
                 recentIds={recentUserIds}
